@@ -6,7 +6,6 @@
 
 * [Requisitos](#requisitos)
 * [Instalación](#instalación)
-* [Configuración](#configuración)
 * [Pasos](#pasos)
 * [Versiones](#versiones)
 
@@ -31,8 +30,6 @@
 10. Si todo está bien recuerda cambiar la variable Modo Prueba a NO y empieza a recibir pagos de forma instantánea y segura con ePayco.
 
 
-
-
 ## Pasos
 
 <img src="ImgTutorialWooCommerce/tuto-1.jpg" width="400px"/>
@@ -43,12 +40,6 @@
 <img src="ImgTutorialWooCommerce/tuto-6.jpg" width="400px"/>
 <img src="ImgTutorialWooCommerce/tuto-7.jpg" width="400px"/>
 <img src="ImgTutorialWooCommerce/tuto-8.jpg" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-9.jpg" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-10.jpg" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-11.jpg" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-12.jpg" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-13.jpg" width="400px"/>
-
 
 
 ## Versiones
