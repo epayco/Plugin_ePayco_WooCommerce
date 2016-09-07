@@ -21,15 +21,15 @@ function woocommerce_payco_init() {
     /**
 	 * Payco Gateway Class
      * @access public
-     * @param 
-     * @return 
+     * @param
+     * @return
      */
 	class WC_payco extends WC_Payment_Gateway{
-		
+
 		public function __construct(){
 			global $woocommerce;
 			// $this->load_plugin_textdomain();
-    
+
             /* settings */
 
 			$this->id = 'payco';
@@ -54,7 +54,7 @@ function woocommerce_payco_init() {
 			}else{
 				$this->liveurl = 'https://secure.payco.co/checkout.php';
 			}
-			
+
 
 			/* mesagges */
 
@@ -72,11 +72,11 @@ function woocommerce_payco_init() {
 			$this->msg['class'] 	= "";
 
 			$this->log = new WC_Logger();
-					
+
 			add_action('payco_init', array( $this, 'payco_successful_request'));
 			add_action( 'woocommerce_receipt_payco', array( $this, 'receipt_page' ) );
 			add_action( 'woocommerce_api_' . strtolower( get_class( $this ) ), array( $this, 'check_payco_response' ) );
-			
+
 			if ( version_compare( WOOCOMMERCE_VERSION, '2.0.0', '>=' ) ) {
 				/* 2.0.0 */
 				add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( &$this, 'process_admin_options' ) );
@@ -84,7 +84,7 @@ function woocommerce_payco_init() {
 				/* 1.6.6 */
 				add_action( 'woocommerce_update_options_payment_gateways', array( &$this, 'process_admin_options' ) );
 			}
-			
+
 		}
 
 	  //   public function load_plugin_textdomain()
@@ -92,7 +92,7 @@ function woocommerce_payco_init() {
 			// load_plugin_textdomain( 'payco-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . "/languages" );
 	  //   }
     	/**
-		 * Check if Gateway can be display 
+		 * Check if Gateway can be display
 	     * @access public
 	     * @return void
 	     */
@@ -100,11 +100,11 @@ function woocommerce_payco_init() {
 			global $woocommerce;
 
 			if ( $this->enabled=="yes" ) :
-				
+
 				if ( !$this->is_valid_currency()) return false;
-				
+
 				if ( $woocommerce->version < '1.5.8' ) return false;
-				
+
 				if (!$this->p_cust_id_cliente || !$this->p_key ) return false;
 
 				return true;
@@ -133,26 +133,26 @@ function woocommerce_payco_init() {
 					'type'			=> 'text',
 					'default' 		=> __('ePayco - Pagar con Tarjeta de Credito, Debito / Efectivo', 'payco-woocommerce'),
 					'description' 	=> __('Ingrese el titulo que el usuario ve durante el pago', 'payco-woocommerce'),
-					
+
 				),
       			'p_description' => array(
 					'title' 		=> __('Descripción:', 'payco-woocommerce'),
 					'type' 			=> 'textarea',
 					'default' 		=> __('Recibe Pagos  Con Tarjetas De Credito, Debito / Efectivo','payco-woocommerce'),
 					'description' 	=> __('Ingrese la descripción que el usuario ve durante el pago', 'payco-woocommerce'),
-					
+
 				),
 				'p_cust_id_cliente' => array(
 					'title' 		=> __('P_CUST_ID_CLIENTE', 'payco-woocommerce'),
 					'type' 			=> 'text',
 					'description' 	=> __('Código de identificación del comercio, lo puedes ver en el panel de clientes ingresando a: https://secure.payco.co/clientes', 'payco-woocommerce'),
-					
+
 				),
 				'p_key' => array(
 					'title' 		=> __('P_KEY', 'payco-woocommerce'),
 					'type' 			=> 'text',
 					'description' 	=>  __('LLave transaccional del comercio, la puedes ver en el panel de clientes ingresando a: https://secure.payco.co/clientes', 'payco-woocommerce'),
-					
+
 		        ),
 		      	'en_pruebas' => array(
 					'title' 		=> __('Modo Prueba', 'payco-woocommerce'),
@@ -161,7 +161,7 @@ function woocommerce_payco_init() {
 					'label' 		=> __('Modo prueba', 'payco-woocommerce'),
 					'default' 		=> 'FALSE',
 					'description' 	=> __('Enviar las transacciones en modo de pruebas Si/No', 'payco-woocommerce'),
-					
+
 		        ),
 		         'taxes' => array(
 					 'title' 		=> __('Tasa de impuestos', 'payco-woocommerce'),
@@ -169,7 +169,7 @@ function woocommerce_payco_init() {
 					 'label' 		=> __('Tasa de impuestos', 'payco-woocommerce'),
 					 'default' 		=> '0',
 					 'description' 	=> __('Ingrese el % de impuestos de la compra: ejemplo iva 16% o 0 si la compra tiene los impuestos incluidos', 'payco-woocommerce'),
-					
+
 		         ),
 		        'currency' => array(
 					'title' 		=> __('Moneda', 'payco-woocommerce'),
@@ -178,7 +178,7 @@ function woocommerce_payco_init() {
 					'label' 		=> __('Moneda', 'payco-woocommerce'),
 					'default' 		=> 'COP',
 					'description' 	=> __('Moneda en la cual se cobra y se envia la transacción', 'payco-woocommerce'),
-					
+
 		        ),
 		        'form_method' => array(
 					'title' 		=> __('Metodo del Formulario', 'payco-woocommerce'),
@@ -186,17 +186,17 @@ function woocommerce_payco_init() {
 					'default' 		=> 'POST',
 					'options' 		=> array('POST' => 'POST'),
 					'description' 	=> __('Permite seleccionar el metodo del formulario', 'payco-woocommerce'),
-					
+
 		        ),
 		      	'redirect_page_id' => array(
 					'title' 		=> __('Página Respuesta', 'payco-woocommerce'),
 					'type' 			=> 'select',
 					'options' 		=> $this->get_pages(__('Seleccionar pagina', 'payco-woocommerce')),
 					'description' 	=> __('Seleccione la página de respuesta luego de finalizar el paga en ePayco', 'payco-woocommerce'),
-					
+
 		        ),
-			);      
-		} 
+			);
+		}
 
         /**
 	     * @access public
@@ -242,19 +242,19 @@ function woocommerce_payco_init() {
 			$order = new WC_Order( $order_id );
 			$txnid = $order->order_key;
 			$total=round($order->order_total,2);
-			
+
 			$redirect_url = ($this->redirect_page_id=="" || $this->redirect_page_id==0)?get_site_url() . "/":get_permalink($this->redirect_page_id);
 			$redirect_url = add_query_arg( 'wc-api', get_class( $this ), $redirect_url );
 			$redirect_url = add_query_arg( 'order_id', $order_id, $redirect_url );
 			$redirect_url = add_query_arg( '', $this->endpoint, $redirect_url );
 
 			$productinfo = $this->getDescriptionOrder($order);
-     		
+
      		$p_signature=md5($this->p_cust_id_cliente.'^'.$this->p_key.'^'.$txnid.'^'.$total.'^'.$this->currency);
 			$tax=$this->getTaxesOrder($order);
 			$tax=round($tax,2);
 			if((int)$tax>0){
-				$base_tax=$total-$tax;	
+				$base_tax=$total-$tax;
 			}else{
 				$base_tax=0;
 			}
@@ -270,7 +270,7 @@ function woocommerce_payco_init() {
 				'p_tax' 			=> $tax,
 			    'p_amount_base'		=> $base_tax,
 				'p_currency_code' 	=> $this->currency,
-				'p_test_request'    => $this->en_pruebas,								
+				'p_test_request'    => $this->en_pruebas,
 		        'p_billing_name'    => $order->billing_first_name,
 		        'p_billing_lastname'=> $order->billing_last_name,
 		        'p_billing_address' => $order->billing_address_1,
@@ -282,7 +282,7 @@ function woocommerce_payco_init() {
 		        'p_billing_email'   => $order->billing_email,
 				'p_url_response'    => $redirect_url,
 				'p_url_confirmation'=> $redirect_url,
-				'p_customer_ip'		=> $_SERVER['REMOTE_ADDR'],		
+				'p_customer_ip'		=> $_SERVER['REMOTE_ADDR'],
 				'p_extra1'			=> "plugin_woocommerce",
 				'p_extra2'			=> "",
 				'p_extra3'			=> "",
@@ -403,23 +403,23 @@ function woocommerce_payco_init() {
 		function payco_successful_request( $posted ) {
 			global $woocommerce;
 			// Custom holds post ID
-			 
-			
+
+
 			//$posted['x_respuesta']='Pendiente';
 
 		    if ( !empty( $posted['x_ref_payco'] )) {
 
 			    $order = $this->get_payco_order( $posted );
-			 	//Comprabar la respuesta para continuar 
+			 	//Comprabar la respuesta para continuar
 			    $checkTransaction=$this->checkTransactionPayco($order,$posted);
 			    $estado_orden=$order->get_status();
-		    
-			   	     	   
+
+
 		        if (!empty($posted['x_respuesta'])) {
 			        // We are here so lets check status and do actions
         			if ( ! empty( $posted['x_ref_payco'] ) )
 	                	update_post_meta( $order->id, __('Referencia ePayco', 'payco-woocommerce'), $posted['x_ref_payco'] );
-	                
+
 	            	if ( ! empty( $posted['x_approval_code'] ) )
 	                	update_post_meta( $order->id, __('Autorizacion', 'payco-woocommerce'), $posted['x_approval_code'] );
 
@@ -429,7 +429,7 @@ function woocommerce_payco_init() {
 
 	                if ( ! empty( $posted['x_franchise'] ) )
 	                	update_post_meta( $order->id, __('Franquicia', 'payco-woocommerce'), $posted['x_franchise'] );
-	                
+
 	                	//Actualizando el metodo de pago pasarlo a payco
 	                if ( ! empty( $posted['x_respuesta'] ) )
 	                	update_post_meta( $order->id, __('Respuesta', 'payco-woocommerce'), $posted['x_respuesta'] );
@@ -442,27 +442,27 @@ function woocommerce_payco_init() {
 					    	update_post_meta('payco',__('Transacción Log','payco-woocommerce'),$checkTransaction['error']);
 					    	$this->msg['message'] = $checkTransaction['error'];
 							$this->msg['class'] = 'woocommerce-error';
-							
+
 							$woocommerce->cart->empty_cart();
-							
+
 					 }else{
 					    	$errores=false;
 					 }
-					if(!$errores){ 
+					if(!$errores){
 			        switch ( $posted['x_respuesta'] ) {
 			            case 'Aceptada' :
 			            case 'Pendiente' :
 			                /*Cambiar la orden a completa  y aprobada*/
 			                if ($posted['x_respuesta'] == 'Aceptada' ) {
-			                    $order->update_status( 'completed', __( $posted['x_response_reason_text'], 'payco-woocommerce' ));
+			                    $order->update_status( 'processing', __( $posted['x_response_reason_text'], 'payco-woocommerce' ));
 			                	$order->add_order_note( __( 'Transacción Aceptada', 'payco-woocommerce') );
-								
+
 								$this->msg['message'] =  $posted['x_response_reason_text'];
 								$this->msg['class'] = 'woocommerce-message';
-								
+
 			                	$order->payment_complete();
 			                	//Si la transaccion ya esta aceptada no reducir stock;
-			                	
+
 			                	if($estado_orden=='pending'){
 			                		$order->reduce_order_stock();
 			                	}
@@ -475,7 +475,7 @@ function woocommerce_payco_init() {
 								$this->msg['class'] = 'woocommerce-info';
 								$woocommerce->cart->empty_cart();
 			                }
-			                
+
 			            	if ( 'yes' == $this->debug )
 			                	$this->log->add( 'payco', __('Pago completado.', 'payco-woocommerce') );
 
@@ -489,15 +489,15 @@ function woocommerce_payco_init() {
 								$this->msg['message'] = $posted['x_response_reason_text'];
 								$this->msg['class'] = 'woocommerce-error';
 								$woocommerce->cart->empty_cart();
-								break;			
-							
+								break;
+
 			            break;
 			            case 'Fallida' :
 			            	  	$order->update_status( 'failed', __( $posted['x_response_reason_text'], 'payco-woocommerce' ));
 								$this->msg['message'] = $posted['x_response_reason_text'];
 								$this->msg['class'] = 'woocommerce-error';
 								$woocommerce->cart->empty_cart();
-						break;	
+						break;
 			            default :
 			               	 	$order->update_status( 'failed', __( $posted['x_response_reason_text'], 'payco-woocommerce' ));
 								$this->msg['message'] = $posted['x_response_reason_text'];
@@ -505,8 +505,8 @@ function woocommerce_payco_init() {
 								$woocommerce->cart->empty_cart();
 			            break;
 			        	}
-		        	
-		        	} 
+
+		        	}
 				}
 				$redirect_url = ($this->redirect_page_id=="" || $this->redirect_page_id==0)?get_site_url() . "/":get_permalink($this->redirect_page_id);
                 //For wooCoomerce 2.0
@@ -517,7 +517,7 @@ function woocommerce_payco_init() {
                 $redirect_url = add_query_arg($arguments , $redirect_url );
 
                 wp_redirect( $redirect_url );
-                
+
 		    }
 		    //confirmation process
 		}
@@ -529,19 +529,19 @@ function woocommerce_payco_init() {
 		 */
 		public function checkTransactionPayco($order,$posted){
 
-	    $url_confirm_payment='https://secure.payco.co/pasarela/estadotransaccion?id_transaccion='.$posted['x_ref_payco'];		
+	    $url_confirm_payment='https://secure.payco.co/pasarela/estadotransaccion?id_transaccion='.$posted['x_ref_payco'];
 
 	    $data=json_decode($this->getPaycoContentUrl($url_confirm_payment));
 	    $error="";
-	   
+
 	    if(is_object($data)){
-	    	//Comprobar el precio  	
-	   		
+	    	//Comprobar el precio
+
 		 	// Validate Amount
 		 	//x_amount//Variable original del cliente
 		 	//Simpre se devuelve en pesos;
 
-		 	
+
 		 	 if ((int) $order->get_total() != (int) $data->data->x_amount ) {
 		     	$error='Payment error: Monto invalido (Monto ' . $posted['x_amount_ok'] . ')';
 		     	$response=array('success'=>false,'error'=>$error);
@@ -549,7 +549,7 @@ function woocommerce_payco_init() {
 		     if((int)$data->data->x_amount_ok!=(int) $posted['x_amount_ok']){
 		     	$error='Payment error: Monto invalido (Monto ' . $posted['x_amount_ok'] . ')';
 		     	$response=array('success'=>false,'error'=>$error);
-		     } 	 	
+		     }
 		     if($data->data->x_cust_id_cliente!=$posted['x_cust_id_cliente']){
 		     	$error='Payment error: x_cust_id_cliente invalido (x_cust_id_cliente ' . $data->data->x_cust_id_cliente . ')';
 		     	$response=array('success'=>false,'error'=>$error);
@@ -565,22 +565,22 @@ function woocommerce_payco_init() {
 		     	$response=array('success'=>false,'error'=>$error);
 		     }
 		     if($error==""){
-		     	$response=array('success'=>true,'error'=>'');	
+		     	$response=array('success'=>true,'error'=>'');
 		     }
-		     
-	   		
+
+
 	   		//return true;
 		    }else{
 		    	$response=array('success'=>false,'error'=>'No se pudo validar la transacción');
-		    }		    
+		    }
 		    return $response;
 		}
 
 		public function getPaycoContentUrl($url){
-			
-			$ch = curl_init($url);				
+
+			$ch = curl_init($url);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");	
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
 			$response = curl_exec($ch);
 			curl_close($ch);
 			if(!$response) {
@@ -600,10 +600,10 @@ function woocommerce_payco_init() {
 			$custom =  $posted['x_id_factura'];
 
 	    	// Backwards comp for IPN requests
-	    	
+
 		    $order_id = (int) $_GET['order_id'] ;
 		    $order_key = $posted['x_id_factura'];
-	    	
+
 			$order = new WC_Order( $order_id );
 
 			if ( ! isset( $order->id ) ) {
@@ -636,7 +636,7 @@ function woocommerce_payco_init() {
 				//var_dump($item);
 				$order_description=$name_item.' $'.round($subtotal_item,2).' '.get_woocommerce_currency();
 				$order_description.=',';
-			}			
+			}
 			$order_description=substr($order_description,0,strlen($order_description)-1);
 			return $order_description;
 		}
@@ -678,7 +678,7 @@ function woocommerce_payco_init() {
 
 			return true;
 		}
-		
+
 		/**
 		 * Get pages for return page setting
 		 *
@@ -707,7 +707,7 @@ function woocommerce_payco_init() {
     		}
 		}
 		/**
-		 * Add all currencys supported by Payco Latem so it can be display 
+		 * Add all currencys supported by Payco Latem so it can be display
 		 * in the woocommerce settings
 		 *
 		 * @access public
@@ -719,7 +719,7 @@ function woocommerce_payco_init() {
 			return $currencies;
 		}
 		/**
-		 * Add simbols for all currencys in Payco so it can be display 
+		 * Add simbols for all currencys in Payco so it can be display
 		 * in the woocommerce settings
 		 *
 		 * @access public
