@@ -6,7 +6,7 @@
  * @wordpress-plugin
  * Plugin Name:       ePayco WooCommerce
  * Description:       Plugin ePayco WooCommerce.
- * Version:           3.2.1
+ * Version:           3.0.0
  * Author:            ePayco
  * Author URI:        http://epayco.co
  *Lice
@@ -57,6 +57,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $this->epayco_endorder_state=$this->get_option('epayco_endorder_state');
                 $this->epayco_url_response=$this->get_option('epayco_url_response');
                 $this->epayco_url_confirmation=$this->get_option('epayco_url_confirmation');
+                $this->epayco_lang=$this->get_option('epayco_lang')?$this->get_option('epayco_lang'):'es';
 
 
                 add_filter('woocommerce_thankyou_order_received_text', array(&$this, 'order_received_message'), 10, 2 );
@@ -239,7 +240,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         'type' => 'select',
                         'description' => __('Url de la tienda donde ePayco confirma el pago', 'epayco_woocommerce'),
                         'options'       => $this->get_pages(__('Seleccionar pagina', 'payco-woocommerce')),
-                    )
+                    ),
+
+                    'epayco_lang' => array(
+                        'title' => __('Idioma del Checkout', 'epayco_woocommerce'),
+                        'type' => 'select',
+                        'description' => __('Seleccione el idioma del checkout', 'epayco_woocommerce'),
+                        'options' => array('es'=>"Español","en"=>"Inglés"),
+                    ),
 
                 );
             }
@@ -361,12 +369,13 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             data-epayco-email-billing="%s"
                             data-epayco-name-billing="%s"
                             data-epayco-address-billing="%s"
+                            data-epayco-lang="%s"
                            data-epayco-mobilephone-billing="%s"
                             >
                         </script>
                     </form>
                 ',$this->epayco_publickey, $order->get_total(),$tax,$base_tax, $descripcion, $descripcion, $currency, $order->id, $basedCountry, $testMode, $external, $redirect_url,$confirm_url,
-                    $email_billing,$name_billing,$address_billing,$phone_billing);
+                    $email_billing,$name_billing,$address_billing,$this->epayco_lang,$phone_billing);
                    
                     $messageload = __('Espere por favor..Cargando checkout.','payco-woocommerce');
                     $js = "if(jQuery('button.epayco-button-render').length)    
