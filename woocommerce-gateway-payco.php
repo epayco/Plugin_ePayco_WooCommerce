@@ -350,6 +350,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }
 
                  echo sprintf('
+                    <p style="text-align: center;">
+                       Enviando a transacción de pago... si el pedido no se envia automaticamente de click en el botón "Pagar con ePayco"
+                    </p>
                     <form>
                         <script src="https://checkout.epayco.co/checkout.js"
                             class="epayco-button"
@@ -382,20 +385,11 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 {
                 jQuery('button.epayco-button-render').css('margin','auto');
                 jQuery('button.epayco-button-render').css('display','block');
-                " . $this->block($messageload) . "
-                var refreshId = setInterval(function() {
-                if(jQuery('iframe#checkout-epayco').length) {
-                console.log('Cargado el formulario');
-                jQuery('body').unblock();
-                clearInterval(refreshId);
-                }else{
-                callform();
                 }
-                }, 100);
-                }
-                function callform(){
-                jQuery('button.epayco-button-render').trigger('click');    
-                }";
+                    setTimeout(function(){ 
+                       document.getElementsByClassName('epayco-button-render' )[0].click();
+                    }, 2500);
+                ";
 
                 if (version_compare(WOOCOMMERCE_VERSION, '2.1', '>=')){
                     wc_enqueue_js($js);
@@ -488,14 +482,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $signature="";
 
                     if(isset($_REQUEST['x_signature'])){
-                        $order_id=$_REQUEST['order_id'];
+                        $explode=explode('?',$_GET['order_id']);
+                        $order_id=$explode[0];
+                        //$order_id=$_REQUEST['order_id'];
                         $ref_payco=$_REQUEST['x_ref_payco'];
                     }else{
                          //Viene por el onpage
                         $explode=explode('?',$_GET['order_id']);
-
+                        $order_id=$explode[0];
                         if(count($explode)>=2){
-                            $order_id=$explode[0];
                             $strref_payco=explode("=",$explode[1]);
                             $ref_payco=$strref_payco[1];
 
@@ -508,6 +503,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             $validationData = $jsonData['data'];
 
                         }
+                        echo "else";
 
                     }
                     //Validamos la firma
@@ -557,12 +553,21 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 $order->add_order_note('Pago fallido');
                                 $this->restore_order_stock($order->id);
                             }break;
+                            default:{
+                                $message = 'Pago '.$_REQUEST['x_transaction_state'];
+                                $messageClass = 'woocommerce-error';
+                                $order->update_status('failed');
+                                $order->add_order_note($message);
+                                $this->restore_order_stock($order->id);
+                            }break;
+
                         }
                     }else {
                         $message = 'Firma no valida';
                         $messageClass = 'error';
                         $order->update_status('failed');
                         $order->add_order_note('Failed');
+                        $this->restore_order_stock($order_id);
                     }
 
                     
@@ -594,6 +599,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $arguments['msg']=urlencode($message);
                     $arguments['type']=$messageClass;
                     $redirect_url = add_query_arg($arguments , $redirect_url );
+
                     wp_redirect($redirect_url);
                     die();
             }
