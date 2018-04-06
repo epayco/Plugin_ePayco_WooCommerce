@@ -331,10 +331,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $confirm_url = add_query_arg( 'order_id', $order_id, $confirm_url );
                 $confirm_url = add_query_arg( 'confirmation', 1 );
 
-                $name_billing=$order->billing_first_name.' '.$order->billing_last_name;
-                $address_billing=$this->$order->billing_address_1;
-                $phone_billing=$order->billing_phone;
-                $email_billing=$order->billing_email;
+                $name_billing=$order->get_billing_first_name().' '.$order->get_billing_last_name();
+                $address_billing=$order->get_billing_address_1();
+                $phone_billing=@$order->billing_phone;
+                $email_billing=@$order->billing_email;
                 
 
                 $order = new WC_Order($order_id);
@@ -377,7 +377,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             >
                         </script>
                     </form>
-                ',$this->epayco_publickey, $order->get_total(),$tax,$base_tax, $descripcion, $descripcion, $currency, $order->id, $basedCountry, $testMode, $external, $redirect_url,$confirm_url,
+                ',$this->epayco_publickey, $order->get_total(),$tax,$base_tax, $descripcion, $descripcion, $currency, $order->get_id(), $basedCountry, $testMode, $external, $redirect_url,$confirm_url,
                     $email_billing,$name_billing,$address_billing,$this->epayco_lang,$phone_billing);
                    
                     $messageload = __('Espere por favor..Cargando checkout.','payco-woocommerce');
