@@ -329,7 +329,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                 $confirm_url = add_query_arg( 'wc-api', get_class( $this ), $confirm_url );
                 $confirm_url = add_query_arg( 'order_id', $order_id, $confirm_url );
-                $confirm_url = add_query_arg( 'confirmation', 1 );
+                $confirm_url = $redirect_url.'&confirmation=1';
+                //$confirm_url = add_query_arg( 'confirmation', 1 );
 
                 $name_billing=$order->get_billing_first_name().' '.$order->get_billing_last_name();
                 $address_billing=$order->get_billing_address_1();
