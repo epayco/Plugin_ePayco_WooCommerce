@@ -6,7 +6,7 @@
  * @wordpress-plugin
  * Plugin Name:       ePayco WooCommerce
  * Description:       Plugin ePayco WooCommerce.
- * Version:           3.0.0
+ * Version:           3.4.0
  * Author:            ePayco
  * Author URI:        http://epayco.co
  *Lice
@@ -34,7 +34,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             public function __construct()
             {
                 $this->id = 'epayco';
-                $this->icon = plugins_url('assets/images/epayco.png', __FILE__);
+                $this->icon = 'https://369969691f476073508a-60bf0867add971908d4f26a64519c2aa.ssl.cf5.rackcdn.com/logos/logo_epayco_200px.png';
                 $this->method_title = __('ePayco Checkout', 'epayco_woocommerce');
                 $this->method_description = __('Acepta tarjetas de credito, depositos y transferencias.', 'epayco_woocommerce');
                 $this->order_button_text = __('Pagar', 'epayco_woocommerce');
@@ -116,7 +116,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             padding: 8px 13px!important;
                             border-radius: 3px;
                             width: 100%!important;
-                            height: 37px;
+                            height: 37px!important;
                     }
                     .epayco-required::before{
                         content: '* ';
@@ -349,13 +349,136 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $base_tax=0;
                     $tax=0;
                 }
+                echo('
+                    <style>
+                        .epayco-title{
+                            max-width: 900px;
+                            display: block;
+                            margin:auto;
+                            color: #444;
+                            font-weight: 700;
+                            margin-bottom: 25px;
+                        }
 
-                 echo sprintf('
-                    <p style="text-align: center;">
-                       Enviando a transacción de pago... si el pedido no se envia automaticamente de click en el botón "Pagar con ePayco"
-                    </p>
-                    <form>
-                        <script src="https://checkout.epayco.co/checkout.js"
+                        .loader-container{
+                            position: relative;
+                            padding: 20px;
+                            color: #f0943e;
+                        }
+
+                        .epayco-subtitle{
+                            font-size: 14px;
+                        }
+                        .epayco-button-render{
+                            transition: all 500ms cubic-bezier(0.000, 0.445, 0.150, 1.025);
+                            transform: scale(1.1);
+                            box-shadow: 0 0 4px rgba(0,0,0,0);
+                        }
+                        .epayco-button-render:hover {
+                            /*box-shadow: 0 0 4px rgba(0,0,0,.5);*/
+                            transform: scale(1.2);
+                        }
+
+                        .animated-points::after{
+                            content: "";
+                            animation-duration: 2s;
+                            animation-fill-mode: forwards;
+                            animation-iteration-count: infinite;
+                            animation-name: animatedPoints;
+                            animation-timing-function: linear;
+                            position: absolute;
+                        }
+
+                        .animated-background {
+                            animation-duration: 2s;
+                            animation-fill-mode: forwards;
+                            animation-iteration-count: infinite;
+                            animation-name: placeHolderShimmer;
+                            animation-timing-function: linear;
+                            color: #f6f7f8;
+                            background: linear-gradient(to right, #7b7b7b 8%, #999 18%, #7b7b7b 33%);
+                            background-size: 800px 104px;
+                            position: relative;
+                            background-clip: text;
+                            -webkit-background-clip: text;
+                            -webkit-text-fill-color: transparent;
+                        }
+                        
+                        .loading::before{
+                            -webkit-background-clip: padding-box;
+                            background-clip: padding-box;
+                            box-sizing: border-box;
+                            border-width: 2px;
+                            border-color: currentColor currentColor currentColor transparent;
+                            position: absolute;
+                            margin: auto;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            content: " ";
+                            display: inline-block;
+                            background: center center no-repeat;
+                            background-size: cover;
+                            border-radius: 50%;
+                            border-style: solid;
+                            width: 30px;
+                            height: 30px;
+                            opacity: 1;
+                            -webkit-animation: loaderAnimation 1s infinite linear,fadeIn 0.5s ease-in-out;
+                            -moz-animation: loaderAnimation 1s infinite linear, fadeIn 0.5s ease-in-out;
+                            animation: loaderAnimation 1s infinite linear, fadeIn 0.5s ease-in-out;
+                        }
+
+                        @keyframes animatedPoints{
+                            33%{
+                                content: "."
+                            }
+                            66%{
+                                content: ".."
+                            }
+                            100%{
+                                content: "..."
+                            }
+
+                        }
+                        @keyframes placeHolderShimmer{
+                            0%{
+                                background-position: -800px 0
+                            }
+                            100%{
+                                background-position: 800px 0
+                            }
+                        }
+                        @keyframes loaderAnimation{
+                            0%{
+                                -webkit-transform:rotate(0);
+                                transform:rotate(0);
+                                animation-timing-function:cubic-bezier(.55,.055,.675,.19)
+                            }
+                            50%{
+                                -webkit-transform:rotate(180deg);
+                                transform:rotate(180deg);
+                                animation-timing-function:cubic-bezier(.215,.61,.355,1)
+                            }
+                            100%{
+                                -webkit-transform:rotate(360deg);
+                                transform:rotate(360deg)
+                            }
+                        }
+                    </style>
+
+                    ');
+                echo sprintf('
+                        <div class="loader-container">
+                            <div class="loading"></div>
+                        </div>
+                        <p style="text-align: center;" class="epayco-title">
+                            <span class="animated-points">Cargando metodos de pago</span>
+                           <br><small class="epayco-subtitle"> Si no se cargan automáticamente, de clic en el botón "Pagar con ePayco"</small>
+                        </p>                        
+                        <form id="epayco_form" style="text-align: center;">
+                            <script src="https://checkout.epayco.co/checkout.js"
                             class="epayco-button"
                             data-epayco-key="%s"
                             data-epayco-amount="%s"
@@ -374,7 +497,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             data-epayco-name-billing="%s"
                             data-epayco-address-billing="%s"
                             data-epayco-lang="%s"
-                           data-epayco-mobilephone-billing="%s"
+                            data-epayco-mobilephone-billing="%s"
+                            data-epayco-button="https://369969691f476073508a-60bf0867add971908d4f26a64519c2aa.ssl.cf5.rackcdn.com/btns/btn4.png"
+                            data-epayco-autoClick="true"
                             >
                         </script>
                     </form>
@@ -387,9 +512,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 jQuery('button.epayco-button-render').css('margin','auto');
                 jQuery('button.epayco-button-render').css('display','block');
                 }
-                    setTimeout(function(){ 
-                       document.getElementsByClassName('epayco-button-render' )[0].click();
-                    }, 2500);
                 ";
 
                 if (version_compare(WOOCOMMERCE_VERSION, '2.1', '>=')){
