@@ -11,19 +11,6 @@ class EpaycoOrder{
 	public $order_stock_discount;
 	public $order_status;
 	
-	public static $definition = array(
-		'table' => _DB_PREFIX_.'payco',
-		'primary' => 'id',
-		'multilang' => false,
-		'fields' => array(
-				'id' => array('type' => self::TYPE_INT, 'required' => false),
-				'id_payco' => array('type' => self::TYPE_INT, 'required' => false),
-				'order_id' => array('type' => self::TYPE_INT, 'required' => false),
-				'order_stock_restore' => array('type' => self::TYPE_INT, 'required' => false),
-				'order_stock_discount' => array('type' => self::TYPE_INT, 'required' => false),
-				'order_status' => array('type' => self::TYPE_STRING, 'required' => false)
-		)
-	);
 	
 	/**
 	 * Guarda el registro de una oden
