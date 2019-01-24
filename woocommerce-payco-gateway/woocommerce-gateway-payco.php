@@ -42,13 +42,13 @@ function woocommerce_payco_init() {
 			$this->language = get_bloginfo('language');
 			$this->en_pruebas = $this->settings['en_pruebas'];
 			$this->title = $this->settings['title'];
-			$this->description = $this->settings['description'];
+			$this->description = $this->settings['p_description'];
 		    $this->taxes = $this->settings['taxes'];
 			$this->p_cust_id_cliente = $this->settings['p_cust_id_cliente'];
 			$this->p_key =$this->settings['p_key'];
 			$this->redirect_page_id = $this->settings['redirect_page_id'];
 			$this->currency = ($this->is_valid_currency())?get_woocommerce_currency():'COP';
-			$this->form_method = $this->settings['POST'];
+			$this->form_method = $this->settings['form_method'];
 			if($this->en_pruebas=='TRUE'){
 				$this->liveurl = 'https://secure.payco.co/checkout.php';
 			}else{
