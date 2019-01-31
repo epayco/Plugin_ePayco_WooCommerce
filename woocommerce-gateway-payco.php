@@ -6,7 +6,7 @@
  * @wordpress-plugin
  * Plugin Name:       ePayco WooCommerce
  * Description:       Plugin ePayco WooCommerce.
- * Version:           3.5.1
+ * Version:           3.5.4
  * Author:            ePayco
  * Author URI:        http://epayco.co
  *Lice
@@ -636,9 +636,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                          //Viene por el onpage
                         $explode=explode('?',$_GET['order_id']);
                         $order_id=$explode[0];
-                        if(count($explode)>=2){
+                       
                             $strref_payco=explode("=",$explode[1]);
-                            $ref_payco=$strref_payco[1];
+                            $ref_payco=$_REQUEST['ref_payco'];
 
                             //Consultamos los datos
                             $message = __('Esperando respuesta por parte del servidor.','payco-woocommerce');
@@ -647,8 +647,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             $responseData = $this->agafa_dades($url,false,$this->goter());
                             $jsonData = @json_decode($responseData, true);
                             $validationData = $jsonData['data'];
-
-                        }
+                           $ref_payco = $validationData['x_ref_payco'];
+                        
                     }
                     //Validamos la firma
                     if ($order_id!="" && $ref_payco!="") {
