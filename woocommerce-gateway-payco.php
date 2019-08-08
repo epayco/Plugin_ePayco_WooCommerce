@@ -6,7 +6,7 @@
  * @wordpress-plugin
  * Plugin Name:       ePayco WooCommerce
  * Description:       Plugin ePayco WooCommerce.
- * Version:           3.5.4
+ * Version:           3.6.5
  * Author:            ePayco
  * Author URI:        http://epayco.co
  *Lice
@@ -53,7 +53,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $this->epayco_customerid = $this->get_option('epayco_customerid');
                 $this->epayco_secretkey = $this->get_option('epayco_secretkey');
                 $this->epayco_publickey = $this->get_option('epayco_publickey');
-                $this->epayco_description = $this->get_option('epayco_description');
+                $this->description = $this->get_option('description');
                 $this->epayco_testmode = $this->get_option('epayco_testmode');
                 if ($this->get_option('epayco_reduce_stock_pending') !== null ) {
                     $this->epayco_reduce_stock_pending = $this->get_option('epayco_reduce_stock_pending');
@@ -180,7 +180,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         //'desc_tip' => true,
                     ),
 
-                    'epayco_description' => array(
+                    'description' => array(
                         'title' => __('<span class="epayco-required">Descripción</span>', 'epayco_woocommerce'),
                         'type' => 'textarea',
                         'description' => __('Corresponde a la descripción que verá el usuaro durante el checkout', 'epayco_woocommerce'),
@@ -233,7 +233,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         'title' => __('Estado Final del Pedido', 'epayco_woocommerce'),
                         'type' => 'select',
                         'description' => __('Seleccione el estado del pedido que se aplicará a la hora de aceptar y confirmar el pago de la orden', 'epayco_woocommerce'),
-                        'options' => array('processing'=>"Procesando","completed"=>"Completado"),
+                        'options' => array('epayco-processing'=>"ePayco Procesando Pago","epayco-completed"=>"ePayco Pago Completado"),
                     ),
 
                     'epayco_url_response' => array(
@@ -689,7 +689,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             case 2: {
                                 $message = 'Pago rechazado';
                                 $messageClass = 'woocommerce-error';
-                                $order->update_status('failed');
+                                $order->update_status('epayco-failed');
                                 $order->add_order_note('Pago fallido');
                                 //$this->restore_order_stock($order->id);
                             }break;
@@ -705,20 +705,20 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                                 $message = 'Pago pendiente de aprobación';
                                 $messageClass = 'woocommerce-info';
-                                $order->update_status('on-hold');
+                                $order->update_status('epayco-on-hold');
                                 $order->add_order_note('Pago pendiente');
                             }break;
                             case 4:{
                                 $message = 'Pago fallido';
                                 $messageClass = 'woocommerce-error';
-                                $order->update_status('failed');
+                                $order->update_status('epayco-failed');
                                 $order->add_order_note('Pago fallido');
                                 //$this->restore_order_stock($order->id);
                             }break;
                             default:{
                                 $message = 'Pago '.$_REQUEST['x_transaction_state'];
                                 $messageClass = 'woocommerce-error';
-                                $order->update_status('failed');
+                                $order->update_status('epayco-failed');
                                 $order->add_order_note($message);
                                // $this->restore_order_stock($order->id);
                             }break;
@@ -868,4 +868,110 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     }
 
     add_action('plugins_loaded', 'epayco_update_db_check');
+
+    function register_epayco_order_status() {
+        register_post_status( 'wc-epayco-failed', array(
+            'label'                     => 'ePayco Pago Fallido',
+            'public'                    => true,
+            'show_in_admin_status_list' => true,
+            'show_in_admin_all_list'    => true,
+            'exclude_from_search'       => false,
+            'label_count'               => _n_noop( 'ePayco Pago Fallido <span class="count">(%s)</span>', 'ePayco Pago Fallido <span class="count">(%s)</span>' )
+        ));
+        register_post_status( 'wc-epayco-canceled', array(
+            'label'                     => 'ePayco Pago Cancelado',
+            'public'                    => true,
+            'show_in_admin_status_list' => true,
+            'show_in_admin_all_list'    => true,
+            'exclude_from_search'       => false,
+            'label_count'               => _n_noop( 'ePayco Pago Cancelado <span class="count">(%s)</span>', 'ePayco Pago Cancelado <span class="count">(%s)</span>' )
+        ));
+        register_post_status( 'wc-epayco-on-hold', array(
+            'label'                     => 'ePayco Pago Pendiente',
+            'public'                    => true,
+            'show_in_admin_status_list' => true,
+            'show_in_admin_all_list'    => true,
+            'exclude_from_search'       => false,
+            'label_count'               => _n_noop( 'ePayco Pago Pendiente <span class="count">(%s)</span>', 'ePayco Pago Pendiente <span class="count">(%s)</span>' )
+        ));
+        register_post_status( 'wc-epayco-processing', array(
+            'label'                     => 'ePayco Procesando Pago',
+            'public'                    => true,
+            'show_in_admin_status_list' => true,
+            'show_in_admin_all_list'    => true,
+            'exclude_from_search'       => false,
+            'label_count'               => _n_noop( 'ePayco Procesando Pago <span class="count">(%s)</span>', 'ePayco Procesando Pago <span class="count">(%s)</span>' )
+        ));
+        register_post_status( 'wc-epayco-completed', array(
+            'label'                     => 'ePayco Pago Completado',
+            'public'                    => true,
+            'show_in_admin_status_list' => true,
+            'show_in_admin_all_list'    => true,
+            'exclude_from_search'       => false,
+            'label_count'               => _n_noop( 'ePayco Pago Completado <span class="count">(%s)</span>', 'ePayco Pago Completado <span class="count">(%s)</span>' )
+        ));
+    }
+    add_action( 'plugins_loaded', 'register_epayco_order_status' );
+
+    function add_epayco_to_order_statuses( $order_statuses ) {
+
+        $new_order_statuses = array();
+
+        foreach ( $order_statuses as $key => $status ) {
+
+            $new_order_statuses[ $key ] = $status;
+            if ( 'wc-cancelled' === $key ) {
+                $new_order_statuses['wc-epayco-cancelled'] = 'ePayco Pago Cancelado';
+            }
+            if ( 'wc-failed' === $key ) {
+                $new_order_statuses['wc-epayco-failed'] = 'ePayco Pago Fallido';
+            }
+            if ( 'wc-on-hold' === $key ) {
+                $new_order_statuses['wc-epayco-on-hold'] = 'ePayco Pago Pendiente';
+            }
+            if ( 'wc-processing' === $key ) {
+                $new_order_statuses['wc-epayco-processing'] = 'ePayco Procesando Pago';
+            }
+            if ( 'wc-completed' === $key ) {
+                $new_order_statuses['wc-epayco-completed'] = 'ePayco Pago Completado';
+            }
+        }
+
+        return $new_order_statuses;
+    }
+    add_filter( 'wc_order_statuses', 'add_epayco_to_order_statuses' );
+
+    add_action('admin_head', 'styling_admin_order_list' );
+    function styling_admin_order_list() {
+        global $pagenow, $post;
+
+        if( $pagenow != 'edit.php') return; // Exit
+        if( get_post_type($post->ID) != 'shop_order' ) return; // Exit
+
+        // HERE we set your custom status
+        $order_status_failed = 'epayco-failed';
+        $order_status_on_hold = 'epayco-on-hold';
+        $order_status_processing = 'epayco-processing';
+        $order_status_completed = 'epayco-completed';
+        ?>
+        <style>
+            .order-status.status-<?php echo sanitize_title( $order_status_failed); ?> {
+                background: #eba3a3;
+                color: #761919;
+            }
+            .order-status.status-<?php echo sanitize_title( $order_status_on_hold); ?> {
+                background: #f8dda7;
+                color: #94660c;
+            }
+            .order-status.status-<?php echo sanitize_title( $order_status_processing ); ?> {
+                background: #c8d7e1;
+                color: #2e4453;
+            }
+            .order-status.status-<?php echo sanitize_title( $order_status_completed ); ?> {
+                background: #d7f8a7;
+                color: #0c942b;
+            }
+        </style>
+        <?php
+    }
 }
