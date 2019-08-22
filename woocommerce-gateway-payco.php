@@ -371,6 +371,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $this->restore_order_stock($order_id);
                     EpaycoOrder::create($order_id,1);
                 }
+                $msgEpaycoCheckout = '<span class="animated-points">Cargando metodos de pago</span>
+                           <br><small class="epayco-subtitle"> Si no se cargan automáticamente, de clic en el botón "Pagar con ePayco</small>';
+               $epaycoButtonImage = 'https://369969691f476073508a-60bf0867add971908d4f26a64519c2aa.ssl.cf5.rackcdn.com/btns/epayco/boton_de_cobro_epayco6.png';
+                if ($this->epayco_lang !== "es") {
+                    $msgEpaycoCheckout = '<span class="animated-points">Loading payment methods</span>
+                               <br><small class="epayco-subtitle"> If they do not load automatically, click on the "Pay with ePayco" button</small>';
+                    $epaycoButtonImage = 'https://369969691f476073508a-60bf0867add971908d4f26a64519c2aa.ssl.cf5.rackcdn.com/btns/btn7.png';
+                }
                 echo('
                     <style>
                         .epayco-title{
@@ -385,7 +393,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         .loader-container{
                             position: relative;
                             padding: 20px;
-                            color: #f0943e;
+                            color: #ff5700;
                         }
 
                         .epayco-subtitle{
@@ -495,9 +503,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         <div class="loader-container">
                             <div class="loading"></div>
                         </div>
-                        <p style="text-align: center;" class="epayco-title">
-                            <span class="animated-points">Cargando metodos de pago</span>
-                           <br><small class="epayco-subtitle"> Si no se cargan automáticamente, de clic en el botón "Pagar con ePayco"</small>
+                        <p style="text-align: center;" class="epayco-title">'.$msgEpaycoCheckout
+                            .'
                         </p>                        
                         <form id="epayco_form" style="text-align: center;">
                             <script src="https://checkout.epayco.co/checkout.js"
@@ -520,7 +527,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             data-epayco-address-billing="%s"
                             data-epayco-lang="%s"
                             data-epayco-mobilephone-billing="%s"
-                            data-epayco-button="https://369969691f476073508a-60bf0867add971908d4f26a64519c2aa.ssl.cf5.rackcdn.com/btns/btn4.png"
+                            data-epayco-button="'.$epaycoButtonImage.'"
                             data-epayco-autoClick="true"
                             >
                         </script>
