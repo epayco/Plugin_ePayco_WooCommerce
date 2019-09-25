@@ -6,7 +6,7 @@
  * @wordpress-plugin
  * Plugin Name:       ePayco WooCommerce
  * Description:       Plugin ePayco WooCommerce.
- * Version:           3.6.5
+ * Version:           3.7.0
  * Author:            ePayco
  * Author URI:        http://epayco.co
  *Lice
