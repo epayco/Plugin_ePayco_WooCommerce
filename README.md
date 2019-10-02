@@ -3,6 +3,7 @@
 **Si usted tiene alguna pregunta o problema, no dude en ponerse en contacto con nuestro soporte técnico: desarrollo@payco.co.**
 
 ## Versiones
+* [ePayco plugin WooCommerce v3.7.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/3.7.0).
 * [ePayco plugin WooCommerce v3.6.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/3.6.5).
 * [ePayco plugin WooCommerce v3.5.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/3.5.3).
 * [ePayco plugin WooCommerce v3.4.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/3.4.2).
