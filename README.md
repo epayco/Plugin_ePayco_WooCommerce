@@ -3,6 +3,7 @@
 **Si usted tiene alguna pregunta o problema, no dude en ponerse en contacto con nuestro soporte técnico: desarrollo@payco.co.**
 
 ## Versiones
+* [ePayco plugin WooCommerce v3.8.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/3.8.0).
 * [ePayco plugin WooCommerce v3.7.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/3.7.0).
 * [ePayco plugin WooCommerce v3.6.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/3.6.5).
 * [ePayco plugin WooCommerce v3.5.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/3.5.3).
@@ -42,13 +43,13 @@
 
 ## Pasos
 
-<img src="ImgTutorialWooCommerce/tuto-1.jpg" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-2.jpg" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-3.jpg" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-4.jpg" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-5.jpg" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-6.jpg" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-7.jpg" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-8.jpg" width="400px"/>
+<img src="ImgTutorialWooCommerce/tuto-1.png" width="400px"/>
+<img src="ImgTutorialWooCommerce/tuto-2.png" width="400px"/>
+<img src="ImgTutorialWooCommerce/tuto-3.png" width="400px"/>
+<img src="ImgTutorialWooCommerce/tuto-4.png" width="400px"/>
+<img src="ImgTutorialWooCommerce/tuto-5.png" width="400px"/>
+<img src="ImgTutorialWooCommerce/tuto-6.png" width="400px"/>
+<img src="ImgTutorialWooCommerce/tuto-7.png" width="400px"/>
+<img src="ImgTutorialWooCommerce/tuto-8.png" width="400px"/>
 
 
