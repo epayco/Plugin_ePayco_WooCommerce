@@ -614,6 +614,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                         $this->restore_order_stock($order_id,'decrease');
                                     }
                                 }
+                                var_dump('case 1');
                                 $message = 'Pago exitoso';
                                 $messageClass = 'woocommerce-message';
                                 $order->payment_complete($validationData['x_ref_payco']);
@@ -622,11 +623,12 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 
                             }break;
                             case 2: {
+                                var_dump('case 2');
                                 $message = 'Pago rechazado';
                                 $messageClass = 'woocommerce-error';
                                 $order->update_status('failed');
                                 $order->add_order_note('Pago fallido');
-                                //$this->restore_order_stock($order->id);
+                                $this->restore_order_stock($order->id);
                             }break;
                             case 3:{
                                 //Busca si ya se restauro el stock y si se configuro reducir el stock en transacciones pendientes  
@@ -636,17 +638,19 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                         $this->restore_order_stock($order_id,'decrease');
                                     }
                                 }
+                                var_dump('case 3');
                                 $message = 'Pago pendiente de aprobación';
                                 $messageClass = 'woocommerce-info';
                                 $order->update_status('on-hold');
                                 $order->add_order_note('Pago pendiente');
                             }break;
                             case 4:{
+                                var_dump('case 4');
                                 $message = 'Pago fallido';
                                 $messageClass = 'woocommerce-error';
                                 $order->update_status('failed');
                                 $order->add_order_note('Pago fallido');
-                                //$this->restore_order_stock($order->id);
+                                $this->restore_order_stock($order->id);
                             }break;
                             default:{
                                 $message = 'Pago '.$_REQUEST['x_transaction_state'];
