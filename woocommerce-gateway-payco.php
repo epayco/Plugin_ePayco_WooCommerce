@@ -288,7 +288,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $descripcionParts[] = $this->string_sanitize($product['name']);
                 }
                 $descripcion = implode(' - ', $descripcionParts);
-                $currency = get_woocommerce_currency();
+                $currency = strtolower(get_woocommerce_currency());
                 $testMode = $this->epayco_testmode == "yes" ? "true" : "false";
                 $basedCountry = WC()->countries->get_base_country();
                 $external=$this->epayco_type_checkout;
