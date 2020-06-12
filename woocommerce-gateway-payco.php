@@ -624,11 +624,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             }break;
                             case 2: {
                                 var_dump('case 2');
-                                $message = 'Pago rechazado';
-                                $messageClass = 'woocommerce-error';
-                                $order->update_status('failed');
-                                $order->add_order_note('Pago fallido');
-                                $this->restore_order_stock($order->id);
+                                if( $current_state=="failed"){
+                                }else{
+                                    $message = 'Pago rechazado';
+                                    $messageClass = 'woocommerce-error';
+                                    $order->update_status('failed');
+                                    $order->add_order_note('Pago fallido');
+                                    $this->restore_order_stock($order->id);
+                                }
                             }break;
                             case 3:{
                                 //Busca si ya se restauro el stock y si se configuro reducir el stock en transacciones pendientes  
