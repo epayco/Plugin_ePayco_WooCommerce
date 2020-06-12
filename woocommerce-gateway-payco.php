@@ -604,7 +604,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $current_state = $order->get_status();
                     if($signature == $validationData['x_signature']){
                         
-                        switch ((int)$validationData['x_cod_response']) {
+                        switch ((int)$validationData['x_cod_transaction_state']) {
                             case 1:{
                                 //Busca si ya se descontó el stock
                                 if (!EpaycoOrder::ifStockDiscount($order_id)) {
