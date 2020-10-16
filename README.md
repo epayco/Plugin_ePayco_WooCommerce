@@ -4,6 +4,7 @@
 
 ## Versiones
 
+* [ePayco plugin WooCommerce v4.5.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.5.x).
 * [ePayco plugin WooCommerce v4.4.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.4.x).
 * [ePayco plugin WooCommerce v4.3.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.3.x).
 * [ePayco plugin WooCommerce v4.2.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.2.x).
