@@ -1,4 +1,4 @@
-#ePayco plugin para WooCommerce v2.6
+#ePayco plugin para WooCommerce
 
 **Si usted tiene alguna pregunta o problema, no dude en ponerse en contacto con nuestro soporte técnico: desarrollo@payco.co.**
 
