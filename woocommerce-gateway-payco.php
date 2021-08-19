@@ -440,7 +440,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             <div class="loading"></div>
                         </div>
                         <p style="text-align: center;" class="epayco-title">
-                            <span class="animated-points">Cargando metodos de pago</span>
+                            <span class="animated-points">Cargando métodos de pago</span>
                            <br><small class="epayco-subtitle"> Si no se cargan automáticamente, de clic en el botón "Pagar con ePayco"</small>
                         </p>                        
                         <form id="epayco_form" style="text-align: center;">
