@@ -267,7 +267,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     'monto_maximo' => array(
                         'title' => __('monto maximo', 'epayco_woocommerce'),
                         'type' => 'text',
-                        'description' => __('ingresa el monto maximo permitido ha pagar por el metodo de pago', 'epayco_woocommerce'),
+                        'description' => __('ingresa el monto maximo permitido ha pagar por el métodoo de pago', 'epayco_woocommerce'),
                         'default' => '3000000',
                         //'desc_tip' => true,
                         'placeholder' => '3000000',
@@ -374,7 +374,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                <br><small class="epayco-subtitle"> If they do not load automatically, click on the "Pay with ePayco" button</small>';
                     $epaycoButtonImage = 'https://369969691f476073508a-60bf0867add971908d4f26a64519c2aa.ssl.cf5.rackcdn.com/btns/btn7.png';
                 }else{
-                    $msgEpaycoCheckout = '<span class="animated-points">Cargando metodos de pago</span>
+                    $msgEpaycoCheckout = '<span class="animated-points">Cargando métodos de pago</span>
                     <br><small class="epayco-subtitle"> Si no se cargan automáticamente, de clic en el botón "Pagar con ePayco</small>';
                     $epaycoButtonImage = 'https://369969691f476073508a-60bf0867add971908d4f26a64519c2aa.ssl.cf5.rackcdn.com/btns/epayco/boton_de_cobro_epayco6.png';
                 }
