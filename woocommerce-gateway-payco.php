@@ -267,7 +267,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     'monto_maximo' => array(
                         'title' => __('monto maximo', 'epayco_woocommerce'),
                         'type' => 'text',
-                        'description' => __('ingresa el monto maximo permitido ha pagar por el métodoo de pago', 'epayco_woocommerce'),
+                        'description' => __('ingresa el monto maximo permitido ha pagar por el método de pago', 'epayco_woocommerce'),
                         'default' => '3000000',
                         //'desc_tip' => true,
                         'placeholder' => '3000000',
