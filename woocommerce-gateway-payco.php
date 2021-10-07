@@ -4,8 +4,8 @@
  * @package           ePayco_Woocommerce
  *
  * @wordpress-plugin
- * Plugin Name:       ePayco WooCommerce
- * Description:       Plugin ePayco WooCommerce.
+ * Plugin Name:       ePayco Gateway WooCommerce
+ * Description:       Plugin ePayco Gateway for WooCommerce.
  * Version:           5.2.x
  * Author:            ePayco
  * Author URI:        http://epayco.co
