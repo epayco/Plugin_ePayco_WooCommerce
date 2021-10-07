@@ -128,7 +128,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 </style>
                 <div class="container-fluid">
                     <div class="panel panel-default" style="">
-                        <img  src="https://369969691f476073508a-60bf0867add971908d4f26a64519c2aa.ssl.cf5.rackcdn.com/logos/logo_epayco_200px.png">
+                        <img  src="https://multimedia.epayco.co/epayco-landing/btns/epayco-logo-fondo-claro-lite.png">
                         <div class="panel-heading">
                             <h3 class="panel-title"><i class="fa fa-pencil"></i>Configuración <?php _e('ePayco', 'epayco_woocommerce'); ?></h3>
                         </div>
@@ -234,14 +234,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         'type' => 'select',
                         'css' =>'line-height: inherit',
                         'description' => __('Url de la tienda donde se redirecciona al usuario luego de pagar el pedido', 'epayco_woocommerce'),
-                        'options'       => $this->get_pages(__('Seleccionar pagina', 'payco-woocommerce')),
+                        'options'       => $this->get_pages(__('Seleccionar pagina', 'epayco-woocommerce')),
                     ),
                     'epayco_url_confirmation' => array(
                         'title' => __('Página de Confirmación', 'epayco_woocommerce'),
                         'type' => 'select',
                         'css' =>'line-height: inherit',
                         'description' => __('Url de la tienda donde ePayco confirma el pago', 'epayco_woocommerce'),
-                        'options'       => $this->get_pages(__('Seleccionar pagina', 'payco-woocommerce')),
+                        'options'       => $this->get_pages(__('Seleccionar pagina', 'epayco-woocommerce')),
                     ),
                     'epayco_reduce_stock_pending' => array(
                         'title' => __('Reducir el stock en transacciones pendientes', 'epayco_woocommerce'),
@@ -360,11 +360,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $base_tax=$order->get_total();
                     $tax=0;
                 }
-                //Busca si ya se restauro el stock
 
+                //Busca si ya se restauro el stock
                 if (!EpaycoOrder::ifExist($order_id)) {
                     //si no se restauro el stock restaurarlo inmediatamente
-                    $this->restore_order_stock($order_id);
                     EpaycoOrder::create($order_id,1);
                 }
 
@@ -376,7 +375,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }else{
                     $msgEpaycoCheckout = '<span class="animated-points">Cargando métodos de pago</span>
                     <br><small class="epayco-subtitle"> Si no se cargan automáticamente, de clic en el botón "Pagar con ePayco</small>';
-                    $epaycoButtonImage = 'https://369969691f476073508a-60bf0867add971908d4f26a64519c2aa.ssl.cf5.rackcdn.com/btns/epayco/boton_de_cobro_epayco6.png';
+                    $epaycoButtonImage = 'https://multimedia.epayco.co/epayco-landing/btns/Boton-epayco-color1.png';
                 }
 
                 echo('
@@ -533,7 +532,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                   mobilephone_billing: "%s",
                                   extra1: "WooCommerce",
                                   }
+
                                   handler.open(data)
+
                             function theFunction () {
                                     handler.open(data)
                             }
@@ -601,6 +602,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $order_id = sanitize_text_field($_GET['order_id']);
                 $ref_payco = sanitize_text_field($_GET['ref_payco']);
                 $isConfirmation = sanitize_text_field($_GET['confirmation']) == 1;
+
                 if ($isConfirmation){
                     $x_signature = sanitize_text_field($_REQUEST['x_signature']);
                     $x_cod_transaction_state = sanitize_text_field($_REQUEST['x_cod_transaction_state']);
@@ -610,6 +612,12 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $x_currency_code = sanitize_text_field($_REQUEST['x_currency_code']);
                 }
                 else {
+
+                    if (!$ref_payco) 
+                    {
+                        $explode=explode('=',$order_id);
+                        $ref_payco=$explode[1];
+                    }
                     $url = 'https://secure.epayco.co/validation/v1/reference/'.$ref_payco;
                     $response = wp_remote_get(  $url );
                     $body = wp_remote_retrieve_body( $response );
@@ -656,14 +664,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                     switch ($x_cod_transaction_state) {
                         case 1: {
-                            //Busca si ya se descontó el stock
-                            if (!EpaycoOrder::ifStockDiscount($order_id)){
-                                //se descuenta el stock
-                                if (EpaycoOrder::updateStockDiscount($order_id,1)){
-                                    $this->restore_order_stock($order_id,'decrease');
-                                }
-                            }
 
+                             //Busca si ya se descontó el stock
+                            if (!EpaycoOrder::ifStockDiscount($order_id)){
+                                
+                                //se descuenta el stock
+                                EpaycoOrder::updateStockDiscount($order_id,1);
+                                    
+                            }
+                        
                             $message = 'Pago exitoso';
                             $messageClass = 'woocommerce-message';
                             $order->payment_complete($x_ref_payco);
@@ -689,12 +698,17 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             }
                         } break;
                         case 3: {
+                            
                             //Busca si ya se restauro el stock y si se configuro reducir el stock en transacciones pendientes
-                            if (!EpaycoOrder::ifStockDiscount($order_id) && $this->get_option('epayco_reduce_stock_pending') == 'yes') {
-                                //reducir el stock
+                            if (!EpaycoOrder::ifStockDiscount($order_id)) {
+                                
                                 if (EpaycoOrder::updateStockDiscount($order_id,1)) {
-                                    $this->restore_order_stock($order_id,'decrease');
+                                     //actualizar el stock
+                                    if($this->get_option('epayco_reduce_stock_pending') != 'yes'){
+                                        $this->restore_order_stock($order_id);
+                                    }
                                 }
+                                
                             }
 
                             $message = 'Pago pendiente de aprobación';
@@ -737,7 +751,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 $messageClass = 'woocommerce-error';
                                 $order->update_status('epayco-failed');
                                 $order->add_order_note($message);
-                                // $this->restore_order_stock($order->id);
+                                $this->restore_order_stock($order->id);
                             }
                         } break;
                     }
