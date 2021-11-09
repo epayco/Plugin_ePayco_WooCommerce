@@ -502,6 +502,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $x_transaction_id = sanitize_text_field($_REQUEST['x_transaction_id']);
                     $x_amount = sanitize_text_field($_REQUEST['x_amount']);
                     $x_currency_code = sanitize_text_field($_REQUEST['x_currency_code']);
+                    $x_test_request = trim(sanitize_text_field($_REQUEST['x_test_request']));
                 }
                 else {
 
@@ -522,6 +523,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $x_transaction_id = trim($validationData['x_transaction_id']);
                     $x_amount = trim($validationData['x_amount']);
                     $x_currency_code = trim($validationData['x_currency_code']);
+                    $x_test_request = trim($validationData['x_test_request']);
                 }
 
                 // Validamos la firma
@@ -551,7 +553,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $current_state = $order->get_status();
 
                 $epayco_order = $this->get_option('epayco_testmode');
-                $isTestMode = $epayco_order == "yes" ? "true" : "false";
+                $isTestTransaction = $x_test_request == 'TRUE' ? "yes" : "no";
+                update_option('epayco_testmode', $isTestTransaction);
+                $isTestMode = get_option('epayco_testmode') == "yes" ? "true" : "false";
                 
                 if($authSignature == $x_signature){
 
