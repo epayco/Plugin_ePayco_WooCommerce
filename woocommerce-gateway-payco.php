@@ -747,12 +747,12 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     $current_state == "processing_test" ||
                                     $current_state == "completed_test"
                                 ){
-                                    $order->update_status('epayco_failed');
-                                    $order->add_order_note('Pago fallido Prueba');
+                                    $order->update_status('epayco_cancelled');
+                                    $order->add_order_note('Pago Cancelado Prueba');
                                 }else{
-                                    $message = 'Pago Fallido Prueba: ' .$x_ref_payco;
+                                    $message = 'Pago Cancelado Prueba: ' .$x_ref_payco;
                                     $messageClass = 'woocommerce-error';
-                                    $order->update_status('epayco_failed');
+                                    $order->update_status('epayco_cancelled');
                                     $order->add_order_note($message);
                                     $this->restore_order_stock($order->id);
                                 }
@@ -765,13 +765,13 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     $current_state == "processing" ||
                                     $current_state == "completed"
                                 ){
-                                    $order->update_status('epayco-failed');
-                                    $order->add_order_note('Pago fallido');
+                                    $order->update_status('epayco-cancelled');
+                                    $order->add_order_note('Pago Cancelado');
                                 }else{
-                                    $message = 'Pago Fallido' .$x_ref_payco;
+                                    $message = 'Pago Cancelado' .$x_ref_payco;
                                     $messageClass = 'woocommerce-error';
-                                    $order->update_status('epayco-failed');
-                                    $order->add_order_note('Pago fallido');
+                                    $order->update_status('epayco-cancelled');
+                                    $order->add_order_note('Pago Cancelado');
                                     $this->restore_order_stock($order->id);
                                 }
                             }
