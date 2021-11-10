@@ -532,21 +532,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $authSignature = $this->authSignature($x_ref_payco, $x_transaction_id, $x_amount, $x_currency_code);
                 }
               
-                if (!$x_ref_payco) {
-                    $order->update_status('epayco-on-hold');
-                    $order->add_order_note('Pago pendiente');
-
-                    if ($this->get_option('epayco_url_response' ) == 0) {
-                            $redirect_url = $order->get_checkout_order_received_url();
-                        } else {
-                            $woocommerce->cart->empty_cart();
-                            $redirect_url = get_permalink($this->get_option('epayco_url_response'));
-                        }
-
-                    wp_redirect($redirect_url);
-                    die();
-                }
-
                 $message = '';
                 $messageClass = '';
                 $current_state = $order->get_status();
