@@ -489,6 +489,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $order_id_explode = explode('=',$order_id_info);
                 $order_id_rpl  = str_replace('?ref_payco','',$order_id_explode);
                 $order_id = $order_id_rpl[0];
+                $order = new WC_Order($order_id);
                 $ref_payco = sanitize_text_field($_GET['ref_payco']);
                 $isConfirmation = sanitize_text_field($_GET['confirmation']) == 1;
                 if(empty($ref_payco)){
@@ -529,11 +530,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 // Validamos la firma
                 if ($order_id != "" && $x_ref_payco != "") {
                     $authSignature = $this->authSignature($x_ref_payco, $x_transaction_id, $x_amount, $x_currency_code);
-                    $order = new WC_Order($order_id);
                 }
               
                 if (!$x_ref_payco) {
-                    $order = new WC_Order($order_id);
                     $order->update_status('epayco-on-hold');
                     $order->add_order_note('Pago pendiente');
 
@@ -552,10 +551,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $messageClass = '';
                 $current_state = $order->get_status();
 
-                $epayco_order = $this->get_option('epayco_testmode');
                 $isTestTransaction = $x_test_request == 'TRUE' ? "yes" : "no";
-                update_option('epayco_testmode', $isTestTransaction);
-                $isTestMode = get_option('epayco_testmode') == "yes" ? "true" : "false";
+                update_option('epayco_order_status', $isTestTransaction);
+                $isTestMode = get_option('epayco_order_status') == "yes" ? "true" : "false";
                 
                 if($authSignature == $x_signature){
 
