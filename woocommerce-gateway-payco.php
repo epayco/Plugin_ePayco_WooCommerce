@@ -71,7 +71,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
                 add_action('wp_ajax_nopriv_returndata',array($this,'datareturnepayco_ajax'));
                 add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-                update_option('epayco_order_status', $this->get_option('epayco_testmode'));
                 if ($this->epayco_testmode == "yes") {
                     if (class_exists('WC_Logger')) {
                         $this->log = new WC_Logger();
@@ -535,11 +534,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $message = '';
                 $messageClass = '';
                 $current_state = $order->get_status();
-
+                
                 $isTestTransaction = $x_test_request == 'TRUE' ? "yes" : "no";
                 update_option('epayco_order_status', $isTestTransaction);
                 $isTestMode = get_option('epayco_order_status') == "yes" ? "true" : "false";
-                
                 if($authSignature == $x_signature){
 
                     switch ($x_cod_transaction_state) {
@@ -721,6 +719,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             }
                         } break;
                         case 11:{
+                            
                             if($isTestMode=="true"){
                                 if($current_state =="epayco_failed" ||
                                     $current_state =="epayco_cancelled" ||
