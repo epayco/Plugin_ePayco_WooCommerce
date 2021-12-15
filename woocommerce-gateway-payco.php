@@ -400,7 +400,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                         <form>
                             <script
-                                src="https://checkout.epayco.co/checkout.js"
+                                src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js?version=1639601662446"
                                 class="epayco-button"
                                 data-epayco-key="%s"
                                 data-epayco-test="%s"
@@ -514,7 +514,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         $ref_payco=$explode[1];
                     }
                     
-                    $url = 'https://secure.epayco.co/validation/v1/reference/'.$ref_payco;
+                    $url = 'https://secure.epayco.io/validation/v1/reference/'.$ref_payco;
                     $response = wp_remote_get(  $url );
                     $body = wp_remote_retrieve_body( $response );
                     $jsonData = @json_decode($body, true);
