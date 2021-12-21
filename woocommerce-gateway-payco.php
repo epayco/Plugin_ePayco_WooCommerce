@@ -400,7 +400,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                         <form id="appGateway">
                             <script
-                                src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js?version=1639601662446"
+                                src="https://checkout.epayco.co/checkout.js"
                                 class="epayco-button"
                                 data-epayco-key="%s"
                                 data-epayco-test="%s"
@@ -427,12 +427,12 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         </form>
                         </center>
                         <script language="Javascript">
-                        const app = document.getElementById("appGateway");
+                        /*const app = document.getElementById("appGateway");
                         window.onload = function() {
                           document.addEventListener("contextmenu", function(e){
                             e.preventDefault();
                           }, false);
-                        } 
+                        }*/ 
                         </script>
                 ',trim($this->epayco_publickey),
                     $testMode,
@@ -522,7 +522,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         $ref_payco=$explode[1];
                     }
                     
-                    $url = 'https://secure.epayco.io/validation/v1/reference/'.$ref_payco;
+                    $url = 'https://secure.epayco.co/validation/v1/reference/'.$ref_payco;
                     $response = wp_remote_get(  $url );
                     $body = wp_remote_retrieve_body( $response );
                     $jsonData = @json_decode($body, true);
@@ -550,8 +550,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 update_option('epayco_order_status', $isTestTransaction);
                 $isTestMode = get_option('epayco_order_status') == "yes" ? "true" : "false";
                 $isTestPluginMode = $this->epayco_testmode;
-                if($order->get_total() == $x_amount){
-                    if("yes" == $isTestPluginMode && $x_approval_code == "000000"){
+                if(floatval($order->get_total()) == floatval($x_amount)){
+                    if("yes" == $isTestPluginMode){
                         $validation = true;
                     }
                     if("no" == $isTestPluginMode ){
@@ -569,9 +569,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }else{
                      $validation = false;
                 }
-
                 if($authSignature == $x_signature && $validation){
-
                     switch ($x_cod_transaction_state) {
                         case 1: {
                             if($current_state == "epayco_failed" ||
@@ -773,7 +771,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             }else{
                                 if(
                                     $current_state == "epayco-processing" ||
+                                    $current_state == "epayco_processing" ||
                                     $current_state == "epayco-completed" ||
+                                    $current_state == "epayco_completed" ||
                                     $current_state == "processing-test" ||
                                     $current_state == "completed-test"||
                                     $current_state == "processing" ||
@@ -813,12 +813,35 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     };
 
                 } else {
-                    $message = 'Firma no valida';
-                    $messageClass = 'error';
-                    echo $message;
-                    $order->update_status('epayco-failed');
-                    $order->add_order_note('Los datos de la orden no concuerdan!');
-                    $this->restore_order_stock($order->id);
+                    if($isTestMode=="true"){
+                        if($x_cod_transaction_state==1){
+                            $message = 'Pago exitoso Prueba';
+                            switch ($this->epayco_endorder_state ){
+                                case 'epayco-processing':{
+                                    $orderStatus ='epayco_processing';
+                                }break;
+                                case 'epayco-completed':{
+                                    $orderStatus ='epayco_completed';
+                                }break;
+                                    case 'processing':{
+                                    $orderStatus ='processing_test';
+                                }break;
+                                    case 'completed':{
+                                    $orderStatus ='completed_test';
+                                }break;
+                            }
+                        } 
+                    }else{  
+                        $message = 'Firma no valida';
+                        $orderStatus = 'epayco-failed';
+                        if($x_cod_transaction_state!=1){
+                            $this->restore_order_stock($order->id);
+                        }
+                    }
+                        $order->update_status($orderStatus);
+                        $order->add_order_note($message);
+                        $messageClass = 'error';
+                        echo $message;
                 }
                 
                  if (isset($_REQUEST['confirmation'])) {
