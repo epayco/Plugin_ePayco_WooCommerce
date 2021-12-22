@@ -424,6 +424,16 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 data-epayco-autoclick="true"
                                 >
                             </script>
+                            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                            <script>
+                            $(document).keydown(function (event) {
+                                if (event.keyCode == 123) {
+                                    return false;
+                                } else if (event.ctrlKey && event.shiftKey && event.keyCode == 73) {        
+                                    return false;
+                                }
+                            });
+                            </script>
                         </form>
                         </center>
                 ',trim($this->epayco_publickey),
