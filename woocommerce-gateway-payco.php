@@ -424,16 +424,18 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 data-epayco-autoclick="true"
                                 >
                             </script>
+                            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                            <script>
+                            $(document).keydown(function (event) {
+                                if (event.keyCode == 123) {
+                                    return false;
+                                } else if (event.ctrlKey && event.shiftKey && event.keyCode == 73) {        
+                                    return false;
+                                }
+                            });
+                            </script>
                         </form>
                         </center>
-                        <script language="Javascript">
-                        /*const app = document.getElementById("appGateway");
-                        window.onload = function() {
-                          document.addEventListener("contextmenu", function(e){
-                            e.preventDefault();
-                          }, false);
-                        }*/ 
-                        </script>
                 ',trim($this->epayco_publickey),
                     $testMode,
                     $descripcion,
@@ -924,6 +926,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
             public function enqueue_scripts()
             {
+                wp_enqueue_script('gateway-epayco', plugin_dir_url(__FILE__).'lib/epayco.js', array(), $this->version, true );
                 wp_enqueue_style('frontend-epayco',  plugin_dir_url(__FILE__).'lib/epayco.css', array(), $this->version, null);
             }
         }
