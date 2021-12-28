@@ -837,6 +837,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 }break;
                             }
                         } 
+                        if($isTestPluginMode == "no" && $x_cod_transaction_state == 1)
+                        {
+                            $this->restore_order_stock($order->id);
+                        }
                     }else{  
                         $message = 'Firma no valida';
                         $orderStatus = 'epayco-failed';
