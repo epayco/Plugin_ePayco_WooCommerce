@@ -515,6 +515,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $x_currency_code = sanitize_text_field($_REQUEST['x_currency_code']);
                     $x_test_request = trim(sanitize_text_field($_REQUEST['x_test_request']));
                     $x_approval_code = trim(sanitize_text_field($_REQUEST['x_approval_code']));
+                    $x_franchise = trim(sanitize_text_field($_REQUEST['x_franchise']));
                 }
                 else {
 
@@ -537,6 +538,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $x_currency_code = trim($validationData['x_currency_code']);
                     $x_test_request = trim($validationData['x_test_request']);
                     $x_approval_code = trim($validationData['x_approval_code']);
+                    $x_franchise = trim($validationData['x_franchise']);
                 }
 
                 // Validamos la firma
@@ -666,8 +668,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 $message = 'Pago pendiente de aprobación';
                                 $orderStatus = "epayco-on-hold";
                             }
-                            $order->update_status($orderStatus);
-                            $order->add_order_note($message);
+                            if($x_franchise != "PSE"){
+                                $order->update_status($orderStatus);
+                                $order->add_order_note($message);
+                            }
                         } break;
                         case 4: {
                             if($isTestMode=="true"){
@@ -833,6 +837,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 }break;
                             }
                         } 
+                        if($isTestPluginMode == "no" && $x_cod_transaction_state == 1)
+                        {
+                            $this->restore_order_stock($order->id);
+                        }
                     }else{  
                         $message = 'Firma no valida';
                         $orderStatus = 'epayco-failed';
