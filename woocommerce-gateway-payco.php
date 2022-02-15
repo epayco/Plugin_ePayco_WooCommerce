@@ -605,19 +605,21 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 $current_state == "epayco-cancelled" ||
                                 $current_state == "epayco-failed"
                             ){
-                                //Busca si ya se descontó el stock
                                 if (!EpaycoOrder::ifStockDiscount($order_id)){
-                                    //se descuenta el stock
+                                //se descuenta el stock
                                     EpaycoOrder::updateStockDiscount($order_id,1);
-                                    if($current_state != $orderStatus){
-                                        if($isConfirmation){
-                                            if($isTestMode=="true"){
-                                              $this->restore_order_stock($order->get_id(),"decrease");  
+                                   if($current_state != $orderStatus){
+                                        if($isTestMode=="true"){
+                                                     $this->restore_order_stock($order->get_id(),"decrease");
+                                             }else{
+                                                 if($orderStatus == "epayco-processing" || $orderStatus == "epayco-completed"){
+                                                     $this->restore_order_stock($order->get_id(),"decrease");
+                                                }
                                             }
-                                            $order->payment_complete($x_ref_payco);
-                                            $order->update_status($orderStatus);
-                                            $order->add_order_note($message);
-                                        } 
+                                        
+                                        $order->payment_complete($x_ref_payco);
+                                        $order->update_status($orderStatus);
+                                        $order->add_order_note($message);
                                     }
                                 }
 
@@ -627,14 +629,30 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     //se descuenta el stock
                                     EpaycoOrder::updateStockDiscount($order_id,1);
                                 }
-                                
                                 if($current_state != $orderStatus){
-                                    if($isConfirmation){
-                                            $this->restore_order_stock($order->get_id());
+                                    if($isTestMode=="true" && $current_state == "epayco_on_hold"){
+                                        if($orderStatus == "processing"){
+                                            $this->restore_order_stock($order->get_id(),"decrease");  
+                                        }
+                                        if($orderStatus == "completed"){
+                                            $this->restore_order_stock($order->get_id(),"decrease");  
+                                        }
+                                    }
+                                    if($isTestMode != "true" && $current_state == "epayco-on-hold"){
+                                        if($orderStatus == "processing"){
+                                            $this->restore_order_stock($order->get_id());  
+                                        }
+                                        if($orderStatus == "completed"){
+                                            $this->restore_order_stock($order->get_id());  
+                                        }
+                                    }
+                                    if($current_state =="pending")
+                                    {
+                                         $this->restore_order_stock($order->get_id());
+                                    }
                                         $order->payment_complete($x_ref_payco);
                                         $order->update_status($orderStatus);
                                         $order->add_order_note($message);
-                                    } 
                                 }
                             }
                         echo "1";
