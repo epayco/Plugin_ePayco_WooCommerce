@@ -834,6 +834,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             if($x_franchise != "PSE"){
                                 $order->update_status($orderStatus);
                                 $order->add_order_note($message);
+                                if($current_state == "epayco_failed" ||
+                                    $current_state == "epayco_cancelled" ||
+                                    $current_state == "failed" ||
+                                    $current_state == "epayco-cancelled" ||
+                                    $current_state == "epayco-failed"
+                                ){
+                                    $this->restore_order_stock($order->get_id(),"decrease");  
+                                }
                             }
                         } break;
                         case 4: {
