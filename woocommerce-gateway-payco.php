@@ -150,6 +150,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         <div id="path_images"  hidden>
                             <?php echo plugin_dir_url(__FILE__).'lib/images' ?>
                         </div>
+                        <div id="path_validate"  hidden>
+                            <?php echo plugin_dir_url(__FILE__).'lib/validate.php' ?>
+                        </div>
                         <div class="panel-heading">
                             <h3 class="panel-title"><i class="fa fa-pencil"></i>Configuración <?php _e('ePayco', 'epayco_agregador_woocommerce'); ?></h3>
                         </div>
@@ -165,13 +168,65 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 <?php
                                 if ($this->is_valid_for_use()) :
                                     $this->generate_settings_html();
-                                    echo'<tr valign="top">
+                                    echo'
+                                    <script src="https://code.jquery.com/jquery-1.12.1.js"></script>
+                                    <script>
+                                        $(document).ready(function() {
+                                            $(".validar").on("click", function() {
+                                            
+                                                var url_validate = $("#path_validate")[0].innerHTML.trim();
+                                                const epayco_publickey = $("#woocommerce_epayco_epayco_publickey")[0].defaultValue.trim();
+                                                const epayco_privatey = $("#woocommerce_epayco_epayco_privatekey")[0].defaultValue.trim();
+                                                const epayco_secretkey = $("#woocommerce_epayco_epayco_secretkey")[0].defaultValue.trim();
+                                                if (epayco_publickey !== "" && 
+                                                    epayco_privatey !== "" &&
+                                                    epayco_secretkey !== "") {
+                                                        var formData = new FormData();
+                                                        formData.append("epayco_publickey",epayco_publickey.replace(/\s/g,""));
+                                                        formData.append("epayco_privatey",epayco_privatey.replace(/\s/g,""));
+                                                        formData.append("epayco_secretkey",epayco_secretkey.replace(/\s/g,""));
+                                                        console.log(formData.values())
+                                                        $.ajax({
+                                                            url: url_validate,
+                                                            type: "post",
+                                                            data: formData,
+                                                            contentType: false,
+                                                            processData: false,
+                                                            success: function(response) {
+                                                                
+                                                                if (response != 0) {
+                                                                    
+                                                                    alert("validacion exitosa!");
+                                                                } else {
+                                                                    alert("Por favor verifique las credenciales y guarde los cambios antes de validar las llaves!");
+                                                                }
+                                                            }
+                                                        });
+                                                }else{
+                                                    alert("Por favor verifique las credenciales y guarde los cambios antes de validar las llaves!")
+                                                }
+                                            });
+                                        });
+                                    </script>               
+                                        <tr valign="top">
+                                            <th scope="row" class="titledesc">
+                                                <label for="woocommerce_epayco_enabled">'. __( 'ePayco: validar llaves', 'epayco-woocommerce' ) .'</label>
+                                            </th>
+                                            <td class="forminp">
+                                                <form method="post" action="#">
+                                                    <label for="woocommerce_epayco_enabled">
+                                                    </label>
+                                                    <input type="button" class="button-primary woocommerce-save-button validar" value="Validar">
+                                                </form>  
+                                                <br>
+                                            </td>
+                                        </tr> 
+                                        <tr valign="top">
                                           <th scope="row" class="titledesc">
                                              <label for="woocommerce_epayco_enabled">'. __( 'ePayco: cambiar logo', 'epayco-woocommerce' ) .'</label>
                                           </th>
                                             <td class="forminp">
-                                            <script src="https://code.jquery.com/jquery-1.12.1.js"></script>
-
+                                            
                                             <script>
                                                 $(document).ready(function() {
                                                     $(".upload").on("click", function() {
@@ -179,9 +234,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                                         send(url)
                                                         return false;
                                                     });
-                                                    async function  send(url){
-                                                        debugger
-                                                        
+                                                    async function  send(url){    
                                                         const imgName = document.getElementById("info").children[0].name;
                                                         const img = $("#path_images")[0].innerHTML.trim()+"/"+imgName+".png";
                                                         await fetch(img, {
@@ -192,10 +245,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                                             return data;
                                                         })
                                                         .then(blob => {
-                                                            debugger
                                                          const files =  new File([blob], "epayco.png", blob);
                                                          var imageNames = imgName;
-                                                         //var files = $("#image")[0].files[0];
+                                                        
                                                          var formData = new FormData();
                                                             formData.append("file",files);
                                                              $.ajax({
@@ -284,7 +336,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                                 <form method="post" action="#" enctype="multipart/form-data">
                                                     <label for="woocommerce_epayco_enabled">
                                                       </label>
-                                                      <input type="button" class="btn btn-primary upload" value="Subir">
+                                                      <input type="button" class="button-primary woocommerce-save-button upload" value="Subir">
                                                       
                                                   </form>  
                                                 <br><br>'.
@@ -299,7 +351,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                                                 if($image != '.' && $image != '..'){
                                                                     if($image == "epayco.png"){
                                                                         $image_ = $url_icon."/".$image;
-                                                                        echo "<img class='card-img-top' src='$image_' width='200px'/><br>";
+                                                                        echo "<img class='card-img-top' src='$image_' width='400px'/><br>";
                                                                     }
                                                                 }
                                                             }
@@ -347,28 +399,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         'description' => __('Corresponde a la descripción que verá el usuaro durante el checkout', 'epayco_woocommerce'),
                         'default' => __('Checkout ePayco (Tarjetas de crédito,debito,efectivo)', 'epayco_woocommerce'),
                         //'desc_tip' => true,
-                    ),
-                    'epayco_customerid' => array(
-                        'title' => __('<span class="epayco-required">P_CUST_ID_CLIENTE</span>', 'epayco_woocommerce'),
-                        'type' => 'text',
-                        'description' => __('ID de cliente que lo identifica en ePayco. Lo puede encontrar en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
-                        'default' => '',
-                        //'desc_tip' => true,
-                        'placeholder' => '',
-                    ),
-                    'epayco_secretkey' => array(
-                        'title' => __('<span class="epayco-required">P_KEY</span>', 'epayco_woocommerce'),
-                        'type' => 'text',
-                        'description' => __('LLave para firmar la información enviada y recibida de ePayco. Lo puede encontrar en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
-                        'default' => '',
-                        'placeholder' => ''
-                    ),
-                    'epayco_publickey' => array(
-                        'title' => __('<span class="epayco-required">PUBLIC_KEY</span>', 'epayco_woocommerce'),
-                        'type' => 'text',
-                        'description' => __('LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
-                        'default' => '',
-                        'placeholder' => ''
                     ),
                     'epayco_testmode' => array(
                         'title' => __('Sitio en pruebas', 'epayco_woocommerce'),
@@ -439,6 +469,35 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         'default' => '3000000',
                         //'desc_tip' => true,
                         'placeholder' => '3000000',
+                    ),
+                    'epayco_customerid' => array(
+                        'title' => __('<span class="epayco-required">P_CUST_ID_CLIENTE</span>', 'epayco_woocommerce'),
+                        'type' => 'text',
+                        'description' => __('ID de cliente que lo identifica en ePayco. Lo puede encontrar en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
+                        'default' => '',
+                        //'desc_tip' => true,
+                        'placeholder' => '',
+                    ),
+                    'epayco_secretkey' => array(
+                        'title' => __('<span class="epayco-required">P_KEY</span>', 'epayco_woocommerce'),
+                        'type' => 'text',
+                        'description' => __('LLave para firmar la información enviada y recibida de ePayco. Lo puede encontrar en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
+                        'default' => '',
+                        'placeholder' => ''
+                    ),
+                    'epayco_publickey' => array(
+                        'title' => __('<span class="epayco-required">PUBLIC_KEY</span>', 'epayco_woocommerce'),
+                        'type' => 'text',
+                        'description' => __('LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
+                        'default' => '',
+                        'placeholder' => ''
+                    ),
+                    'epayco_privatekey' => array(
+                        'title' => __('<span class="epayco-required">PRIVATE_KEY</span>', 'epayco_woocommerce'),
+                        'type' => 'text',
+                        'description' => __('LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
+                        'default' => '',
+                        'placeholder' => ''
                     ),
                 );
             }
