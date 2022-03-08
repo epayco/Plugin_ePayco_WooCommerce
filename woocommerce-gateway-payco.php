@@ -147,11 +147,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         <div id="path_upload"  hidden>
                             <?php echo plugin_dir_url(__FILE__).'lib/upload.php' ?>
                         </div>
-                        <div id="path_delete"  hidden>
-                            <?php echo plugin_dir_url(__FILE__).'lib/delete.php' ?>
+                        <div id="path_images"  hidden>
+                            <?php echo plugin_dir_url(__FILE__).'lib/images' ?>
+                        </div>
+                        <div id="path_validate"  hidden>
+                            <?php echo plugin_dir_url(__FILE__).'lib/validate.php' ?>
                         </div>
                         <div class="panel-heading">
-                            <h3 class="panel-title"><i class="fa fa-pencil"></i>Configuración <?php _e('ePayco', 'epayco_woocommerce'); ?></h3>
+                            <h3 class="panel-title"><i class="fa fa-pencil"></i>Configuración <?php _e('ePayco', 'epayco_agregador_woocommerce'); ?></h3>
                         </div>
 
                         <div style ="color: #31708f; background-color: #d9edf7; border-color: #bce8f1;padding: 10px;border-radius: 5px;">
@@ -159,106 +162,210 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             <br>Si el cliente decide pagar por ePayco, el estado del pedido cambiara a ePayco Esperando Pago
                             <br>Cuando el pago sea Aceptado o Rechazado ePayco envia una configuracion a la tienda para cambiar el estado del pedido.
                         </div>
+
                         <div class="panel-body" style="padding: 15px 0;background: #fff;margin-top: 15px;border-radius: 5px;border: 1px solid #dcdcdc;border-top: 1px solid #dcdcdc;">
                             <table class="form-table epayco-table">
                                 <?php
                                 if ($this->is_valid_for_use()) :
                                     $this->generate_settings_html();
-                                    echo'<tr valign="top">
+                                    echo'
+                                    <script src="https://code.jquery.com/jquery-1.12.1.js"></script>
+                                    <script>
+                                        $(document).ready(function() {
+                                            $(".validar").on("click", function() {
+                                            
+                                                var url_validate = $("#path_validate")[0].innerHTML.trim();
+                                                const epayco_publickey = $("#woocommerce_epayco_epayco_publickey")[0].defaultValue.trim();
+                                                const epayco_privatey = $("#woocommerce_epayco_epayco_privatekey")[0].defaultValue.trim();
+                                                const epayco_secretkey = $("#woocommerce_epayco_epayco_secretkey")[0].defaultValue.trim();
+                                                if (epayco_publickey !== "" && 
+                                                    epayco_privatey !== "" &&
+                                                    epayco_secretkey !== "") {
+                                                        var formData = new FormData();
+                                                        formData.append("epayco_publickey",epayco_publickey.replace(/\s/g,""));
+                                                        formData.append("epayco_privatey",epayco_privatey.replace(/\s/g,""));
+                                                        formData.append("epayco_secretkey",epayco_secretkey.replace(/\s/g,""));
+                                                        console.log(formData.values())
+                                                        $.ajax({
+                                                            url: url_validate,
+                                                            type: "post",
+                                                            data: formData,
+                                                            contentType: false,
+                                                            processData: false,
+                                                            success: function(response) {
+                                                                
+                                                                if (response != 0) {
+                                                                    
+                                                                    alert("validacion exitosa!");
+                                                                } else {
+                                                                    alert("Por favor verifique las credenciales y guarde los cambios antes de validar las llaves!");
+                                                                }
+                                                            }
+                                                        });
+                                                }else{
+                                                    alert("Por favor verifique las credenciales y guarde los cambios antes de validar las llaves!")
+                                                }
+                                            });
+                                        });
+                                    </script>               
+                                        <tr valign="top">
+                                            <th scope="row" class="titledesc">
+                                                <label for="woocommerce_epayco_enabled">'. __( 'ePayco: validar llaves', 'epayco-woocommerce' ) .'</label>
+                                            </th>
+                                            <td class="forminp">
+                                                <form method="post" action="#">
+                                                    <label for="woocommerce_epayco_enabled">
+                                                    </label>
+                                                    <input type="button" class="button-primary woocommerce-save-button validar" value="Validar">
+                                                </form>  
+                                                <br>
+                                            </td>
+                                        </tr> 
+                                        <tr valign="top">
                                           <th scope="row" class="titledesc">
                                              <label for="woocommerce_epayco_enabled">'. __( 'ePayco: cambiar logo', 'epayco-woocommerce' ) .'</label>
                                           </th>
                                             <td class="forminp">
-                                            <script src="https://code.jquery.com/jquery-1.12.1.js"></script>
-
+                                            
                                             <script>
                                                 $(document).ready(function() {
                                                     $(".upload").on("click", function() {
                                                         var url = $("#path_upload")[0].innerHTML.trim();
-                                                        enviar(url,"upload")
+                                                        send(url)
                                                         return false;
                                                     });
-                                                    $(".delete").on("click", function() {
-                                                        var url = $("#path_delete")[0].innerHTML.trim();
-                                                        enviar(url,"delete")
-                                                        return false;
-                                                    });
-                                                  function enviar(url,accion){
-                                                    if(accion == "upload"){
-                                                      var formData = new FormData();
-                                                      var files = $("#image")[0].files[0];
-                                                      formData.append("file",files);
-                                                       $.ajax({
-                                                           url: url,
-                                                           type: "post",
-                                                           data: formData,
-                                                           contentType: false,
-                                                           processData: false,
-                                                           success: function(response) {
-                                                               if (response != 0) {
-                                                                   $(".card-img-top").attr("src", response);
-                                                                    alert("el logo se subio de forma exitosa!");
-                                                               } else {
-                                                                   alert("Formato de imagen incorrecto.");
-                                                               }
-                                                           }
-                                                       });
-                                                    }else{
-                                                        $.ajax({
-                                                           url: url,
-                                                           type: "post",
-                                                           data: {},
-                                                           contentType: false,
-                                                           processData: false,
-                                                           success: function(response) {
-                                                               if (response != 0) {
-                                                                   alert("el logo se elimino de forma exitosa!");
-                                                               } else {
-                                                                   alert("el logo no se elimino!");
-                                                               }
-                                                           }
-                                                       });
+                                                    async function  send(url){    
+                                                        const imgName = document.getElementById("info").children[0].name;
+                                                        const img = $("#path_images")[0].innerHTML.trim()+"/"+imgName+".png";
+                                                        await fetch(img, {
+                                                            method: "GET"
+                                                        })
+                                                        .then(function(res)  {
+                                                            let data = res.blob()
+                                                            return data;
+                                                        })
+                                                        .then(blob => {
+                                                         const files =  new File([blob], "epayco.png", blob);
+                                                         var imageNames = imgName;
+                                                        
+                                                         var formData = new FormData();
+                                                            formData.append("file",files);
+                                                             $.ajax({
+                                                                 url: url,
+                                                                 type: "post",
+                                                                 data: formData,
+                                                                 contentType: false,
+                                                                 processData: false,
+                                                                 success: function(response) {
+                                                                     if (response != 0) {
+                                                                         $(".card-img-top").attr("src", response);
+                                                                          alert("el logo se subio de forma exitosa!");
+                                                                     } else {
+                                                                         alert("Formato de imagen incorrecto.");
+                                                                     }
+                                                                 }
+                                                             });
+                                                            return file;
+                                                        });
                                                     }
-                                                  }  
+                                                   
                                                 });
                                             </script>
                                             <fieldset>
                                                 <legend class="screen-reader-text">
                                                 </legend>
+                                                <style>
+                                                .desc { color:#6b6b6b;}
+                                                .desc a {color:#0092dd;}
+                                                .dropdown dd, .dropdown dt, .dropdown ul { margin:0px; padding:0px; }
+                                                .dropdown dd { position:relative; }
+                                                .dropdown a, .dropdown a:visited { color:#2c3338; text-decoration:none; outline:none;}
+                                                .dropdown a:hover { color:#007cba;}
+                                                .dropdown dt a:hover { color:#007cba; border: 1px solid #07cba;}
+                                                .dropdown dt a {background:#ffffff url("http://www.jankoatwarpspeed.com/wp-content/uploads/examples/reinventing-drop-down/arrow.png") no-repeat scroll right center; display:block; padding-right:20px;
+                                                                border:1px solid #2c3338;width: 400px;}
+                                                .dropdown dt a span {cursor:pointer; display:block; padding:5px;}
+                                                .dropdown dd ul { background:#ffffff none repeat scroll 0 0; border:1px solid #d4ca9a; color:#C5C0B0; display:none;
+                                                                  left:0px; padding:5px 0px; position:absolute; top:2px; width:auto; min-width:170px; list-style:none;}
+                                                .dropdown span.value { display:none;}
+                                                .dropdown dd ul li a { padding:5px; display:block;}
+                                                .dropdown dd ul li a:hover { background-color:#d0c9af;}
+                                                
+                                                .dropdown img.flag { border:none; vertical-align:middle; margin-left:10px; }
+                                                .flagvisibility { display:none;}
+                                                </style>
+                                                    <dl id="sample" class="select  dropdown">
+                                                        <dt><a href="#"><span>Logos</span></a>
+                                                            <div><span id="info"></span></div>
+                                                        </dt>
+                                                        <dd>
+                                                            <ul>
+                                                                <li><a href="#"><img class="flag" src="https://multimedia.epayco.co/epayco-landing/btns/epayco-logo-fondo-oscuro-lite.png" alt="" name="epayco1" /></a></li>
+                                                                <li><a href="#"><img class="flag" src="https://multimedia.epayco.co/epayco-landing/btns/epayco-logo-fondo-claro-lite.png" alt="" name="epayco2" /></a></li>
+                                                                <li><a href="#"><img class="flag" src="https://multimedia.epayco.co/epayco-landing/btns/epayco-logos-medios-de-pago-pequeno-horizontal-fondo-oscuro-powered-by-epayco.png" alt="" name="epayco3" /></a></li>
+                                                                <li><a href="#"><img class="flag" src="https://multimedia.epayco.co/epayco-landing/btns/powered_01.png" alt="" name="epayco4" /></a></li>
+                                                                <li><a href="#"><img class="flag" src="https://multimedia.epayco.co/epayco-landing/btns/epayco-logos-medios-de-pago-pequeno-horizontal-con-fondo-oscuro.png" alt="" name="epayco5" /></a></li>
+                                                                <li><a href="#"><img class="flag" src="https://multimedia.epayco.co/epayco-landing/btns/epayco-logos-medios-de-pago-pequeno-horizontal-con-fondo-blanco.png" alt="" name="epayco6" /></a></li>
+                                                            </ul>
+                                                        </dd>
+                                                    </dl>
+                                                   
+                                                    <span id="result"></span>
+                                             
+                                                <script type="text/javascript">
+                                                $(".dropdown img.flag").addClass("flagvisibility");
+                                                $(".dropdown dt a").click(function(event) {
+                                                    event.preventDefault();
+                                                    $(".dropdown dd ul").toggle();
+                                                });         
+                                                $(".dropdown dd ul li a").click(function(event) {
+                                                    event.preventDefault();
+                                                    var text = $(this).html();
+                                                    $(".dropdown dt div span").html(text);
+                                                    $(".dropdown dd ul").hide();
+                                                   
+                                                });           
+                                                
+                                                $(document).bind("click", function(e) {
+                                                    var $clicked = $(e.target);
+                                                    if (! $clicked.parents().hasClass("dropdown"))
+                                                        $(".dropdown dd ul").hide();
+                                                });
+                                            $(".dropdown img.flag").toggleClass("flagvisibility");
+                                                </script>
                                                 <form method="post" action="#" enctype="multipart/form-data">
                                                     <label for="woocommerce_epayco_enabled">
-                                                     <input type="file" class="form-control-file" name="image" id="image">
                                                       </label>
-                                                      <br><input type="button" class="btn btn-primary upload" value="Subir">
-                                                      <input type="button" class="btn btn-primary delete" value="Eliminar">
+                                                      <input type="button" class="button-primary woocommerce-save-button upload" value="Subir">
+                                                      
                                                   </form>  
-                                                <br>'.
-                                        $path  = '';
-                                    $url_icon = plugin_dir_url(__FILE__)."lib";
-                                    $dir_ = __DIR__."/lib";
-                                    if(is_dir($dir_)) {
-                                        try {
-                                            $gestor = opendir($dir_);
-                                            if($gestor){
-                                                while (($image = readdir($gestor)) !== false){
-                                                    if($image != '.' && $image != '..'){
-                                                        if($image == "epayco.png"){
-                                                            $image_ = $url_icon."/".$image;
-                                                            echo "<img class='card-img-top' src='$image_' width='200px'/><br>";
+                                                <br><br>'.
+                                                $path  = '';
+                                                $url_icon = plugin_dir_url(__FILE__)."lib";
+                                                $dir_ = __DIR__."/lib";
+                                                if(is_dir($dir_)) {
+                                                    try {
+                                                        $gestor = opendir($dir_);
+                                                        if($gestor){
+                                                            while (($image = readdir($gestor)) !== false){
+                                                                if($image != '.' && $image != '..'){
+                                                                    if($image == "epayco.png"){
+                                                                        $image_ = $url_icon."/".$image;
+                                                                        echo "<img class='card-img-top' src='$image_' width='400px'/><br>";
+                                                                    }
+                                                                }
+                                                            }
                                                         }
+                                                    }catch (Exception $e){
+                                                        __return_null();
                                                     }
-                                                }
-                                            }
-                                        }catch (Exception $e){
-                                            __return_null();
-                                        }
-                                    }'.
+                                                }'.
                                             </fieldset>
                                           </td>
                                         </tr>';
                                 else :
                                     if ( is_admin() && ! defined( 'DOING_AJAX')) {
-                                        echo '<div class="error"><p><strong>' . __( 'ePayco: cambio de logo', 'epayco-woocommerce' ) . '</strong>: ' . sprintf(__('%s', 'woocommerce-epayco' ), '<a href="' . admin_url() . 'admin.php?page=wc-settings&tab=general#s2id_woocommerce_currency">' . __( 'Click aquí para configurar!', 'epayco_woocommerce') . '</a>' ) . '</p></div>';
+                                        echo '<div class="error"><p><strong>' . __( 'ePayco: cambio de logo', 'epayco_agregador_woocommerce' ) . '</strong>: ' . sprintf(__('%s', 'epayco_agregador_woocommerce' ), '<a href="' . admin_url() . 'admin.php?page=wc-settings&tab=general#s2id_woocommerce_currency">' . __( 'Click aquí para configurar!', 'epayco_agregador_woocommerce') . '</a>' ) . '</p></div>';
                                     }
                                 endif;
                                 ?>
@@ -268,6 +375,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 </div>
                 <?php
             }
+            
 
             public function init_form_fields()
             {
@@ -291,28 +399,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         'description' => __('Corresponde a la descripción que verá el usuaro durante el checkout', 'epayco_woocommerce'),
                         'default' => __('Checkout ePayco (Tarjetas de crédito,debito,efectivo)', 'epayco_woocommerce'),
                         //'desc_tip' => true,
-                    ),
-                    'epayco_customerid' => array(
-                        'title' => __('<span class="epayco-required">P_CUST_ID_CLIENTE</span>', 'epayco_woocommerce'),
-                        'type' => 'text',
-                        'description' => __('ID de cliente que lo identifica en ePayco. Lo puede encontrar en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
-                        'default' => '',
-                        //'desc_tip' => true,
-                        'placeholder' => '',
-                    ),
-                    'epayco_secretkey' => array(
-                        'title' => __('<span class="epayco-required">P_KEY</span>', 'epayco_woocommerce'),
-                        'type' => 'text',
-                        'description' => __('LLave para firmar la información enviada y recibida de ePayco. Lo puede encontrar en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
-                        'default' => '',
-                        'placeholder' => ''
-                    ),
-                    'epayco_publickey' => array(
-                        'title' => __('<span class="epayco-required">PUBLIC_KEY</span>', 'epayco_woocommerce'),
-                        'type' => 'text',
-                        'description' => __('LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
-                        'default' => '',
-                        'placeholder' => ''
                     ),
                     'epayco_testmode' => array(
                         'title' => __('Sitio en pruebas', 'epayco_woocommerce'),
@@ -383,6 +469,35 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         'default' => '3000000',
                         //'desc_tip' => true,
                         'placeholder' => '3000000',
+                    ),
+                    'epayco_customerid' => array(
+                        'title' => __('<span class="epayco-required">P_CUST_ID_CLIENTE</span>', 'epayco_woocommerce'),
+                        'type' => 'text',
+                        'description' => __('ID de cliente que lo identifica en ePayco. Lo puede encontrar en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
+                        'default' => '',
+                        //'desc_tip' => true,
+                        'placeholder' => '',
+                    ),
+                    'epayco_secretkey' => array(
+                        'title' => __('<span class="epayco-required">P_KEY</span>', 'epayco_woocommerce'),
+                        'type' => 'text',
+                        'description' => __('LLave para firmar la información enviada y recibida de ePayco. Lo puede encontrar en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
+                        'default' => '',
+                        'placeholder' => ''
+                    ),
+                    'epayco_publickey' => array(
+                        'title' => __('<span class="epayco-required">PUBLIC_KEY</span>', 'epayco_woocommerce'),
+                        'type' => 'text',
+                        'description' => __('LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
+                        'default' => '',
+                        'placeholder' => ''
+                    ),
+                    'epayco_privatekey' => array(
+                        'title' => __('<span class="epayco-required">PRIVATE_KEY</span>', 'epayco_woocommerce'),
+                        'type' => 'text',
+                        'description' => __('LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
+                        'default' => '',
+                        'placeholder' => ''
                     ),
                 );
             }
