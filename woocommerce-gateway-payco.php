@@ -140,6 +140,70 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         font-weight: bold;
                     }
 
+                    .modal {
+                        display: none; 
+                        position: fixed; 
+                        z-index: 1; 
+                        padding-top: 100px; 
+                        left: 0;
+                        top: 0;
+                        width: 100%; 
+                        height: 100%; 
+                        overflow: auto; 
+                        background-color: rgb(0,0,0); 
+                        background-color: rgba(0,0,0,0.4);
+                    }
+
+                    /* Modal Content */
+                    .modal-content {
+                        background-color: #ffff;
+                        padding: 20px;
+                        border: 1px solid #888;
+                        width: 27%;
+                        position: absolute;
+                        border-radius: 8px;
+                        left: 35%;
+                        right: 35%;
+                        top: 35%;
+                        bottom: 30%;
+                    }
+
+                    .modal-content p {
+                        position: static;
+                        font-family: 'Open Sans';
+                        font-style: normal;
+                        font-weight: 400;
+                        font-size: 16px;
+                        line-height: 22px;
+                        text-align: center;
+                        color: #5C5B5C;
+                        margin: 8px 0px;
+                    }
+                    /* The Close Button */
+                    .close {
+                        color: #aaaaaa;
+                        float: right;
+                        font-size: 28px;
+                        font-weight: bold;
+                    }
+
+                    .close:hover,
+                    .close:focus {
+                        color: #000;
+                        text-decoration: none;
+                        cursor: pointer;
+                    } 
+                    @media screen and (max-width: 425px) {
+                        .modal-content {
+                            left: 20% ; 
+                            width: 50% ;
+                        }
+                    } 
+                    @media screen and (max-width: 425px) {
+                        .dropdown dt a{
+                            width: 250px !important;
+                        }
+                    }
                 </style>
                 <div class="container-fluid">
                     <div class="panel panel-default" style="">
@@ -168,24 +232,22 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 <?php
                                 if ($this->is_valid_for_use()) :
                                     $this->generate_settings_html();
+                                    $logo=plugin_dir_url(__FILE__).'lib/images/logo_warning.png';
                                     echo'
                                     <script src="https://code.jquery.com/jquery-1.12.1.js"></script>
                                     <script>
                                         $(document).ready(function() {
                                             $(".validar").on("click", function() {
                                             
+                                                var modal = document.getElementById("myModal");
                                                 var url_validate = $("#path_validate")[0].innerHTML.trim();
-                                                const epayco_publickey = $("#woocommerce_epayco_epayco_publickey")[0].defaultValue.trim();
-                                                const epayco_privatey = $("#woocommerce_epayco_epayco_privatekey")[0].defaultValue.trim();
-                                                const epayco_secretkey = $("#woocommerce_epayco_epayco_secretkey")[0].defaultValue.trim();
+                                                const epayco_publickey = $("input:text[name=woocommerce_epayco_epayco_publickey]").val().replace(/\s/g,"");
+                                                const epayco_privatey = $("input:text[name=woocommerce_epayco_epayco_privatekey]").val().replace(/\s/g,"");
                                                 if (epayco_publickey !== "" && 
-                                                    epayco_privatey !== "" &&
-                                                    epayco_secretkey !== "") {
+                                                    epayco_privatey !== "") {
                                                         var formData = new FormData();
                                                         formData.append("epayco_publickey",epayco_publickey.replace(/\s/g,""));
                                                         formData.append("epayco_privatey",epayco_privatey.replace(/\s/g,""));
-                                                        formData.append("epayco_secretkey",epayco_secretkey.replace(/\s/g,""));
-                                                        console.log(formData.values())
                                                         $.ajax({
                                                             url: url_validate,
                                                             type: "post",
@@ -193,17 +255,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                                             contentType: false,
                                                             processData: false,
                                                             success: function(response) {
-                                                                
                                                                 if (response != 0) {
-                                                                    
                                                                     alert("validacion exitosa!");
                                                                 } else {
-                                                                    alert("Por favor verifique las credenciales y guarde los cambios antes de validar las llaves!");
+                                                                    modal.style.display = "block";
                                                                 }
                                                             }
                                                         });
                                                 }else{
-                                                    alert("Por favor verifique las credenciales y guarde los cambios antes de validar las llaves!")
+                                                    modal.style.display = "block";
                                                 }
                                             });
                                         });
@@ -211,16 +271,51 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                         <tr valign="top">
                                             <th scope="row" class="titledesc">
                                                 <label for="woocommerce_epayco_enabled">'. __( 'ePayco: validar llaves', 'epayco-woocommerce' ) .'</label>
+                                                <span hidden id="public_key">0</span>
+                                                <span hidden id="private_key">0</span>
                                             </th>
                                             <td class="forminp">
                                                 <form method="post" action="#">
                                                     <label for="woocommerce_epayco_enabled">
                                                     </label>
                                                     <input type="button" class="button-primary woocommerce-save-button validar" value="Validar">
+                                                    <p class="description">
+                                                    validacion de llaves PUBLIC_KEY y PRIVATE_KEY
+                                                    </p>
                                                 </form>  
                                                 <br>
+
+                                                <!-- The Modal -->
+                                                <div id="myModal" class="modal">
+                                                  <!-- Modal content -->
+                                                  <div class="modal-content">
+                                                    <span class="close">&times;</span>
+                                                    <center>
+                                                      <img src="'.$logo.'">
+                                                    </center>
+                                                    <p><strong>Llaves de comercio inválidas</strong> </p>
+                                                    <p>Las llaves Public Key, Private Key insertadas del comercio son inválidas. 
+                                                      Consúltelas en el apartado de integraciones 
+                                                      Llaves API en su Dashboard ePayco.</p>
+                                                  </div>
+                                                </div>
+
+                                                <script>
+                                                    // Get the modal
+                                                    var modal = document.getElementById("myModal");
+
+                                                    // Get the <span> element that closes the modal
+                                                    var span = document.getElementsByClassName("close")[0];
+
+                                                    // When the user clicks on <span> (x), close the modal
+                                                    span.onclick = function() {
+                                                        modal.style.display = "none";
+                                                    }
+                                                </script>
                                             </td>
                                         </tr> 
+        
+
                                         <tr valign="top">
                                           <th scope="row" class="titledesc">
                                              <label for="woocommerce_epayco_enabled">'. __( 'ePayco: cambiar logo', 'epayco-woocommerce' ) .'</label>
