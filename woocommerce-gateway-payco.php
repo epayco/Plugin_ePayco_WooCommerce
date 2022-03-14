@@ -192,39 +192,11 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         color: #000;
                         text-decoration: none;
                         cursor: pointer;
-                    }
-                    .logo1{
-                        position: absolute;left: 47.5%;top: 14.5%;bottom: 7.69%;    
-                    }
-                    .logo2{
-                        position: absolute;left: 47.5%;top: 22%;    
-                    }
-                    
-                    @media screen and (max-width: 375px) {
-                        .logo1{
-                            left: 46.5% !important;
-                            top: 11.5% !important;
-                        }
-                        .logo2{
-                            left: 46.5%;
-                            top: 18.5%;
-                        }
-                    }
-                    @media screen and (max-width: 320px) {
-                        .logo2{
-                            top: 17.5%;
-                        }
-                    }
+                    } 
                     @media screen and (max-width: 425px) {
                         .modal-content {
                             left: 20% ; 
                             width: 50% ;
-                        }
-                        .logo1{
-                            left: 46.5%;
-                        }
-                        .logo2{
-                            left: 46.5%;
                         }
                     } 
                     @media screen and (max-width: 425px) {
@@ -260,9 +232,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 <?php
                                 if ($this->is_valid_for_use()) :
                                     $this->generate_settings_html();
-                                    $logo1= plugin_dir_url(__FILE__).'lib/images/Path.png';
-                                    $logo2=plugin_dir_url(__FILE__).'lib/images/stroke.png';
-                                    $logo3=plugin_dir_url(__FILE__).'lib/images/path.png';
+                                    $logo=plugin_dir_url(__FILE__).'lib/images/logo_warning.png';
                                     echo'
                                     <script src="https://code.jquery.com/jquery-1.12.1.js"></script>
                                     <script>
@@ -321,9 +291,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                                   <div class="modal-content">
                                                     <span class="close">&times;</span>
                                                     <center>
-                                                      <img src="'.$logo1.'" class="logo1">
-                                                      <img src="'.$logo2.'">
-                                                      <img src="'.$logo3.'" class="logo2">
+                                                      <img src="'.$logo.'">
                                                     </center>
                                                     <p><strong>Llaves de comercio inválidas</strong> </p>
                                                     <p>Las llaves Public Key, Private Key insertadas del comercio son inválidas. 
