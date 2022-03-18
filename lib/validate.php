@@ -23,8 +23,11 @@ if (is_array($_REQUEST) && count($_REQUEST) > 0) {
     );    
     $response =file_get_contents('https://api.secure.payco.co/v1/auth/login', false, stream_context_create($options));
     $data = json_decode($response);
-    $status =  $data;
-    echo $status;
+    if($data->token){
+        echo "suscces";
+    }else{
+        echo 0;
+    }
 }else{
     echo 0;
 }
