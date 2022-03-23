@@ -22,7 +22,7 @@ if (!defined('WPINC')) {
 
 require_once(dirname(__FILE__) . '/lib/EpaycoOrder.php');
 //require_once(dirname(__FILE__) . '/style.css');
-if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
+if (is_plugin_active( 'woocommerce/woocommerce.php' )) {
     add_action('plugins_loaded', 'init_epayco_woocommerce', 0);
     function init_epayco_woocommerce()
     {
