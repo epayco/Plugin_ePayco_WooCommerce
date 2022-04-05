@@ -152,6 +152,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         overflow: auto; 
                         background-color: rgb(0,0,0); 
                         background-color: rgba(0,0,0,0.4);
+                        justify-content: center;
+                        align-items: center;
                     }
 
                     /* Modal Content */
@@ -159,13 +161,11 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         background-color: #ffff;
                         padding: 20px;
                         border: 1px solid #888;
-                        width: 27%;
                         position: absolute;
                         border-radius: 8px;
-                        left: 35%;
-                        right: 35%;
+                        left: 50%;
                         top: 35%;
-                        bottom: 30%;
+                        transform: translate(-50%, -50%);
                     }
 
                     .modal-content p {
@@ -195,7 +195,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     } 
                     @media screen and (max-width: 425px) {
                         .modal-content {
-                            left: 20% ; 
                             width: 50% ;
                         }
                     } 
@@ -294,8 +293,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                                       <img src="'.$logo.'">
                                                     </center>
                                                     <p><strong>Llaves de comercio inválidas</strong> </p>
-                                                    <p>Las llaves Public Key, Private Key insertadas del comercio son inválidas. 
-                                                      Consúltelas en el apartado de integraciones 
+                                                    <p>Las llaves Public Key, Private Key insertadas<br>
+                                                     del comercio son inválidas.<br> 
+                                                      Consúltelas en el apartado de integraciones <br> 
                                                       Llaves API en su Dashboard ePayco.</p>
                                                   </div>
                                                 </div>
