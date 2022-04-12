@@ -14,16 +14,8 @@ if (is_array($_FILES) && count($_FILES) > 0) {
         $oldImageName = stristr($nombre, $typeImage,$posicion);
         $newImageName = 'epayco'.$typeImage;
 
-        $url = __DIR__;
-        $strpos_url = strpos($url, 'wp-content');
-        $strlen_url = strlen($url);
-        $posicion_url = $strlen_url - $strpos_url;
-        $typeUrl = substr($url, -$posicion_url);
-        $newPath = str_replace($typeUrl,'wp-admin/images/',$url);
-
-
+        $newPath = __DIR__;
         $gestor  = opendir($newPath);
-
         if($gestor){
             while (($image = readdir($gestor)) !== false){
                 if($image != '.' && $image != '..'){
@@ -33,21 +25,16 @@ if (is_array($_FILES) && count($_FILES) > 0) {
                     $type_image = substr($image, - $posicion_image);
                     $name_image = substr($image,  0,$strpos_image);
                     if($name_image == "epayco"){
-                        unlink($newPath.$image);
+                        unlink($newPath."/".$image);
                     }
                 }
             }
         }
 
-        if (move_uploaded_file($_FILES["file"]["tmp_name"], $newPath.$newImageName)) {
-            //more code here...
+        if (move_uploaded_file($_FILES["file"]["tmp_name"], $newPath."/".$newImageName)) {
             $url  = $_SERVER['REQUEST_SCHEME']."://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
-            $strpos_url = strpos($url, 'wp-content');
-            $strlen_url = strlen($url);
-            $posicion_url = $strlen_url - $strpos_url;
-            $typeUrl = substr($url, -$posicion_url);
-            $newPath = str_replace($typeUrl,'wp-admin/images/',$url);
-            echo $newPath.$newImageName;
+            $newPath = str_replace('upload.php',$newImageName,$url);
+            echo $newPath;
         } else {
             echo 0;
         }

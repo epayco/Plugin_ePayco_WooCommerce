@@ -1,10 +1,14 @@
 #ePayco plugin para WooCommerce
 
-**Si usted tiene alguna pregunta o problema, no dude en ponerse en contacto con nuestro soporte técnico: desarrollo@payco.co.**
+**Si usted tiene alguna pregunta o problema, no dude en ponerse en contacto con nuestro soporte técnico: desarrollo@epayco.com.**
 
 ** Se recomienda emplear la última versión disponible. **
 
 ## Versiones
+* [epayco plugin WooCommerce v6.0.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V6.0.0).
+* [epayco plugin WooCommerce v5.5.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.5.0).
+* [epayco plugin WooCommerce v5.4.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.4.0).
+* [epayco plugin WooCommerce v5.3.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.3.0).
 * [epayco plugin WooCommerce v5.2.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v5.2.0).
 * [ePayco plugin WooCommerce v5.2.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.2.x).
 * [ePayco plugin WooCommerce v5.1.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.1.X).
