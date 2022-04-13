@@ -80,12 +80,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 add_filter('woocommerce_thankyou_order_received_text', array(&$this, 'order_received_message'), 10, 2 );
                 add_action('ePayco_init', array( $this, 'ePayco_successful_request'));
                 add_action('ePayco_init_validation', array( $this, 'ePayco_successful_validation'));
+                add_action('ePayco_change_logo', array( $this, 'ePayco_new_logo'));
                 add_action('woocommerce_receipt_' . $this->id, array(&$this, 'receipt_page'));
                 add_action( 'woocommerce_api_' . strtolower( get_class( $this ) ), array( $this, 'check_ePayco_response' ) );
                 add_action( 'woocommerce_api_' . strtolower( get_class( $this )."Validation" ), array( $this, 'validate_ePayco_request' ) );
+                add_action( 'woocommerce_api_' . strtolower( get_class( $this )."ChangeLogo" ), array( $this, 'change_logo' ) );
                 add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
                 add_action('wp_ajax_nopriv_returndata',array($this,'datareturnepayco_ajax'));
                 add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+
                 if ($this->epayco_testmode == "yes") {
                     if (class_exists('WC_Logger')) {
                         $this->log = new WC_Logger();
@@ -111,6 +114,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             {
                 $validation_url=get_site_url() . "/";
                 $validation_url = add_query_arg( 'wc-api', get_class( $this )."Validation", $validation_url );
+                $logo_url=get_site_url() . "/";
+                $logo_url = add_query_arg( 'wc-api', get_class( $this )."ChangeLogo", $logo_url );
                 ?>
                 <style>
                     tbody{
@@ -211,7 +216,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     <div class="panel panel-default" style="">
                         <img  src="<?php echo plugin_dir_url(__FILE__).'lib/logo.png' ?>">
                         <div id="path_upload"  hidden>
-                            <?php echo plugin_dir_url(__FILE__).'lib/upload.php' ?>
+                            <?php echo $logo_url ?>
                         </div>
                         <div id="path_images"  hidden>
                             <?php echo plugin_dir_url(__FILE__).'lib/images' ?>
@@ -302,11 +307,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                                 </div>
 
                                                 <script>
-                                                    // Get the modal
                                                     var modal = document.getElementById("myModal");
-                                                    // Get the <span> element that closes the modal
                                                     var span = document.getElementsByClassName("close")[0];
-                                                    // When the user clicks on <span> (x), close the modal
                                                     span.onclick = function() {
                                                         modal.style.display = "none";
                                                     }
@@ -326,7 +328,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                                         send(url)
                                                         return false;
                                                     });
-                                                    async function  send(url){    
+                                                    async function  send(url){
                                                         const imgName = document.getElementById("info").children[0].name;
                                                         const img = $("#path_images")[0].innerHTML.trim()+"/"+imgName+".png";
                                                         await fetch(img, {
@@ -707,7 +709,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                         <form id="appGateway">
                             <script
-                                src="https://checkout.epayco.co/checkout.js"
+                                src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js?version=1643645084821"
                                 class="epayco-button"
                                 data-epayco-key="%s"
                                 data-epayco-test="%s"
@@ -791,6 +793,16 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }
             }
 
+            function change_logo(){
+                @ob_clean();
+                if ( ! empty( $_REQUEST ) ) {
+                    header( 'HTTP/1.1 200 OK' );
+                    do_action( "ePayco_change_logo", $_REQUEST );
+                } else {
+                    wp_die( __("ePayco Request Failure", 'epayco-woocommerce') );
+                }
+            }
+
 
             /**
              * @param $validationData
@@ -808,6 +820,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 if(empty($ref_payco)){
                     $ref_payco =$order_id_rpl[1];
                 }
+
                 if ($isConfirmation){
                     $x_signature = sanitize_text_field($_REQUEST['x_signature']);
                     $x_cod_transaction_state = sanitize_text_field($_REQUEST['x_cod_transaction_state']);
@@ -846,7 +859,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 if ($order_id != "" && $x_ref_payco != "") {
                     $authSignature = $this->authSignature($x_ref_payco, $x_transaction_id, $x_amount, $x_currency_code);
                 }
-              
+
                 $message = '';
                 $messageClass = '';
                 $current_state = $order->get_status();
@@ -1004,9 +1017,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 wp_safe_redirect( wc_get_checkout_url() );
                                 exit();
                             }
-                        echo "2";
                         } break;
                         case 3: {
+
                             //Busca si ya se restauro el stock y si se configuro reducir el stock en transacciones pendientes
                             if (!EpaycoOrder::ifStockDiscount($order_id) && $this->get_option('epayco_reduce_stock_pending') != 'yes') {
                                 //actualizar el stock
@@ -1081,7 +1094,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 wp_safe_redirect( wc_get_checkout_url() );
                                 exit();
                             }
-                            echo "4";
                         } break;
                         case 6: {
                             $message = 'Pago Reversada' .$x_ref_payco;
@@ -1247,22 +1259,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $messageClass = 'error';
                     echo $message;
                 }
-                
-                 if (isset($_REQUEST['confirmation'])) {
-                        $redirect_url = get_permalink($this->get_option('epayco_url_confirmation'));
-                        if ($this->get_option('epayco_url_confirmation' ) == 0) {
-                            echo $current_state;
-                            die();
-                        }
-                    }else{
-                        
-                        if ($this->get_option('epayco_url_response' ) == 0) {
-                            $redirect_url = $order->get_checkout_order_received_url();
-                        } else {
-                            $woocommerce->cart->empty_cart();
-                            $redirect_url = get_permalink($this->get_option('epayco_url_response'));
-                        }
-                    }
 
                 if (isset($_REQUEST['confirmation'])) {
                     $redirect_url = get_permalink($this->get_option('epayco_url_confirmation'));
@@ -1316,6 +1312,59 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }
             }
 
+
+            function ePayco_new_logo()
+            {
+                $file = sanitize_text_field($_FILES);
+                if(empty($file)){
+                    $file = $_FILES;
+                }
+                if (is_array($file) && count($file) > 0) {
+                    if (($file["file"]["type"] == "image/pjpeg")
+                        || ($file["file"]["type"] == "image/jpeg")
+                        || ($file["file"]["type"] == "image/png")
+                        || ($file["file"]["type"] == "image/gif")) {
+
+                        $nombre = $file['file']['name'];
+                        $strpos = strpos($nombre, '.');
+                        $strlen = strlen($nombre);
+                        $posicion = $strlen - $strpos;
+                        $typeImage = substr($nombre, -$posicion);
+                        $typeImage = '.png';
+                        $oldImageName = stristr($nombre, $typeImage,$posicion);
+                        $newImageName = 'epayco'.$typeImage;
+
+                        $newPath = __DIR__."/lib";
+                        $gestor  = opendir($newPath);
+                        if($gestor){
+                            while (($image = readdir($gestor)) !== false){
+                                if($image != '.' && $image != '..'){
+                                    $strpos_image = strpos($image, '.');
+                                    $strlen_image = strlen($image);
+                                    $posicion_image = $strlen_image - $strpos_image;
+                                    $type_image = substr($image, - $posicion_image);
+                                    $name_image = substr($image,  0,$strpos_image);
+                                    if($name_image == "epayco"){
+                                        unlink($newPath."/".$image);
+                                    }
+                                }
+                            }
+                        }
+                        if (move_uploaded_file($file["file"]["tmp_name"], $newPath."/".$newImageName)) {
+                            $newPath =plugin_dir_url(__FILE__).'lib/epayco.png';
+                            echo $newPath;
+                        } else {
+                            echo 0;
+                        }
+                    } else {
+                        echo 0;
+                    }
+                } else {
+                    echo 0;
+                }
+                exit();
+            }
+
             /**
              * @param $order_id
              */
@@ -1326,7 +1375,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 if (!get_option('woocommerce_manage_stock') == 'yes' && !sizeof($order->get_items()) > 0) {
                     return;
                 }
-                
+
                 foreach ($order->get_items() as $item) {
                     // Get an instance of corresponding the WC_Product object
                     $product = $item->get_product();
