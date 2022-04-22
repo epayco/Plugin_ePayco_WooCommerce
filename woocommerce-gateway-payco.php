@@ -887,7 +887,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }else{
                     $validation = false;
                 }
-                if($authSignature == $x_signature && $validation){
+                if($validation){
                     switch ($x_cod_transaction_state) {
                         case 1: {
                             if($isTestMode=="true"){
