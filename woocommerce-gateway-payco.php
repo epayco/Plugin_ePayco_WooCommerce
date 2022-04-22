@@ -887,7 +887,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }else{
                     $validation = false;
                 }
-                if($validation){
+                if($authSignature == $x_signature && $validation){
                     switch ($x_cod_transaction_state) {
                         case 1: {
                             if($isTestMode=="true"){
@@ -1410,39 +1410,39 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 wp_enqueue_script('gateway-epayco', plugin_dir_url(__FILE__).'lib/epayco.js', array(), $this->version, true );
                 wp_enqueue_style('frontend-epayco',  plugin_dir_url(__FILE__).'lib/epayco.css', array(), $this->version, null);
             }
-        }
-
-
-        function is_product_in_cart( $prodids ){
-            $product_in_cart = false;
-            foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
-                $product = $cart_item['data'];
-                if ( in_array( $product->id, $prodids ) ) {
-                    $product_in_cart = true;
-                }
-
             }
-            return $product_in_cart;
-        }
 
 
-        /**
-         * @param $methods
-         * @return array
-         */
-        function woocommerce_epayco_add_gateway($methods)
-        {
-            $methods[] = 'WC_ePayco';
-            return $methods;
-        }
-        add_filter('woocommerce_payment_gateways', 'woocommerce_epayco_add_gateway');
+            function is_product_in_cart( $prodids ){
+                $product_in_cart = false;
+                foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+                    $product = $cart_item['data'];
+                    if ( in_array( $product->id, $prodids ) ) {
+                        $product_in_cart = true;
+                    }
 
-        function epayco_woocommerce_addon_settings_link( $links ) {
-            array_push( $links, '<a href="admin.php?page=wc-settings&tab=checkout&section=epayco">' . __( 'Configuración' ) . '</a>' );
-            return $links;
-        }
+                }
+                return $product_in_cart;
+            }
 
-        add_filter( "plugin_action_links_".plugin_basename( __FILE__ ),'epayco_woocommerce_addon_settings_link' );
+
+            /**
+             * @param $methods
+             * @return array
+             */
+            function woocommerce_epayco_add_gateway($methods)
+            {
+                $methods[] = 'WC_ePayco';
+                return $methods;
+            }
+            add_filter('woocommerce_payment_gateways', 'woocommerce_epayco_add_gateway');
+
+            function epayco_woocommerce_addon_settings_link( $links ) {
+                array_push( $links, '<a href="admin.php?page=wc-settings&tab=checkout&section=epayco">' . __( 'Configuración' ) . '</a>' );
+                return $links;
+            }
+
+            add_filter( "plugin_action_links_".plugin_basename( __FILE__ ),'epayco_woocommerce_addon_settings_link' );
     }
 
 
@@ -1716,6 +1716,68 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         </style>
 
         <?php
+    }
+
+    add_filter('woocommerce_product_data_tabs', 'epayco_product_settings_tabs' );
+    function epayco_product_settings_tabs( $tabs ){
+        $tabs['epayco'] = array(
+            'label'    => 'Receivers',
+            'target'   => 'epayco_product_data',
+            'class'    => array('show_if_simple'),
+            'priority' => 21,
+        );
+        return $tabs;
+
+    }
+
+    /*
+     * Tab content
+     */
+    add_action( 'woocommerce_product_data_panels', 'epayco_product_panels' );
+    function epayco_product_panels(){
+
+        echo '<div id="epayco_product_data" class="panel woocommerce_options_panel hidden">';
+
+        woocommerce_wp_text_input( array(
+            'id'                => 'epayco_plugin_version',
+            'value'             => get_post_meta( get_the_ID(), 'epayco_plugin_version', true ),
+            'label'             => 'Plugin version',
+            'description'       => 'Description when desc_tip param is not true'
+        ) );
+
+        woocommerce_wp_textarea_input( array(
+            'id'          => 'epayco_changelog',
+            'value'       => get_post_meta( get_the_ID(), 'epayco_changelog', true ),
+            'label'       => 'Changelog',
+            'desc_tip'    => true,
+            'description' => 'Prove the plugin changelog here',
+        ) );
+
+        woocommerce_wp_select( array(
+            'id'          => 'epayco_ext',
+            'value'       => get_post_meta( get_the_ID(), 'epayco_ext', true ),
+            'wrapper_class' => 'show_if_downloadable',
+            'label'       => 'File extension',
+            'options'     => array( '' => 'Please select', 'zip' => 'Zip', 'gzip' => 'Gzip'),
+        ) );
+
+        echo '</div>';
+
+    }
+    add_action( 'woocommerce_process_product_meta', 'epayco_save_fields', 10, 2 );
+    function epayco_save_fields( $id, $post ){
+        update_post_meta( $id, 'super_product', $_POST['super_product'] );
+        update_post_meta( $id, 'epayco_plugin_version', $_POST['epayco_plugin_version'] );
+        update_post_meta( $id, 'epayco_changelog', $_POST['epayco_changelog'] );
+        update_post_meta( $id, 'epayco_ext', $_POST['epayco_ext'] );
+    }
+    add_action('admin_head', 'epayco_css_icon');
+    function epayco_css_icon(){
+        echo '<style>
+        #woocommerce-product-data ul.wc-tabs li.epayco_options.epayco_tab a:before{
+            content: "\f307";
+        }
+        </style>';
     }
 
 }
