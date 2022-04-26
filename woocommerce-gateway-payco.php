@@ -648,19 +648,19 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $receiversData = [];
                 foreach ($order->get_items() as $product) {
                     $epayco_p_cust_id_client = get_post_meta( $product["product_id"], 'p_cust_id_client' );
-                    $receiversa['p_cust_id_client'] = $epayco_p_cust_id_client[0];
+                    $receiversa['id'] = $epayco_p_cust_id_client[0];
                     $epayco_super_product = get_post_meta( $product["product_id"], '_super_product' );
                     if($epayco_super_product[0] == "yes"){
-                        $receiversa['epayco_comition'] = $product['total'];
+                        $receiversa['fee'] = floatval($product['total']);
                     }else{
                         $epayco_epayco_comition = get_post_meta( $product["product_id"], 'epayco_comition' );
-                        $receiversa['epayco_comition'] = $epayco_epayco_comition[0];
+                        $receiversa['fee'] = floatval($epayco_epayco_comition[0]);
                     }
                     $clearData = str_replace('_', ' ', $this->string_sanitize($product['name']));
                     $descripcionParts[] = $clearData;
                     array_push($receiversData, $receiversa);
                 }
-                $receivers = json_encode($receiversData);
+                $receivers = $receiversData;
                 $descripcion = implode(' - ', $descripcionParts);
                 $currency = strtolower(get_woocommerce_currency());
                 $testMode = $this->epayco_testmode == "yes" ? "true" : "false";
@@ -716,55 +716,99 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         </div>
                         <p style="text-align: center;" class="epayco-title">
                            '.$msgEpaycoCheckout.'
-                        </p>                        
+                        </p>    
+                        <div hidden id="split">true</div>            
                         <center>
-
+                        <a id="btn_epayco" href="#">
+                            <img src="'.$epaycoButtonImage.'">
+                            </a>
                         <form id="appGateway">
                             <script
-                                src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js?version=1643645084821"
-                                class="epayco-button"
-                                data-epayco-key="%s"
-                                data-epayco-test="%s"
-                                data-epayco-name="%s"
-                                data-epayco-description="%s"
-                                data-epayco-invoice="%s"      
-                                data-epayco-currency="%s"                   
-                                data-epayco-amount="%s"
-                                data-epayco-tax="%s"
-                                data-epayco-tax-base="%s"
-                                data-epayco-country="%s"
-                                data-epayco-external="%s"                       
-                                data-epayco-response="%s"
-                                data-epayco-confirmation="%s"
-                                data-epayco-email-billing="%s"
-                                data-epayco-name-billing="%s"
-                                data-epayco-address-billing="%s"
-                                data-epayco-lang="%s"
-                                data-epayco-mobilephone-billing="%s"
-                                data-epayco-button="'.$epaycoButtonImage.'"
-                                data-epayco-autoclick="true"
-                                >
+                               src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js?version=1643645084821">
                             </script>
+                            <script>
+                            var handler = ePayco.checkout.configure({
+                                key: "%s",
+                                test: "%s"
+                            })
+                            var date = new Date().getTime();
+                            var data = {
+                                name: "%s",
+                                description: "%s",
+                                /*invoice: "",*/
+                                extra1:"%s",
+                                currency: "%s",
+                                amount: "%s",
+                                tax_base: "%s",
+                                tax: "%s",
+                                country: "%s",
+                                lang: "%s",
+                                external: "%s",
+                                confirmation: "%s",
+                                response: "%s",
+ 
+                                //Atributos cliente
+                                name_billing: "%s",
+                                address_billing: "%s",
+                                email_billing: "%s",
+                                mobilephone_billing: "%s",
+                            }
+                        
+                            let split = document.getElementById("split").textContent;
+                            if(split == "true"){
+                                var js_array ='.json_encode($receivers).';
+                                let split_receivers = [];
+                                for(var jsa of js_array){
+                                    split_receivers.push({
+                                        "id" :  jsa.id,
+                                        "total": jsa.fee,
+                                        "iva" : 0,
+                                        "base_iva": 0,
+                                        "fee" : 0
+                                    });
+                                }
+                                data.split_app_id= "%s", //Id de la cuenta principal
+                                data.split_merchant_id= "%s", //Id de la cuenta principal y a nombre de quien quedara la transacción
+                                data.split_type= "01", // tipo de dispersión 01 -> fija ---- 02 -> porcentual
+                                data.split_primary_receiver= "%s", // Id de la cuenta principal - parámetro para recibir valor de la dispersión destinado
+                                data.split_primary_receiver_fee= "0", // Parámetro no a utilizar pero que debe de ir en cero
+                                data.splitpayment= "true", // Indicación de funcionalidad split
+                                data.split_rule= "multiple", // Parámetro para configuración de Split_receivers - debe de ir por defecto en multiple
+                                data.split_receivers= split_receivers
+                            }
+    
+                            var openChekout = function () {
+                                handler.open(data)
+                            }
+                            var bntPagar = document.getElementById("btn_epayco");
+                            bntPagar.addEventListener("click", openChekout);
+    
+                            handler.onCloseModal = function () {};
+                            setTimeout(openChekout, 2000)  
+                        </script>
                         </form>
                         </center>
-                ',trim($this->epayco_publickey),
+                ',  trim($this->epayco_publickey),
                     $testMode,
                     $descripcion,
                     $descripcion,
                     $order->get_id(),
                     $currency,
                     $order->get_total(),
-                    $tax,
                     $base_tax,
+                    $tax,
                     $basedCountry,
+                    $this->epayco_lang,
                     $external,
-                    $redirect_url,
                     $confirm_url,
-                    $email_billing,
+                    $redirect_url,
                     $name_billing,
                     $address_billing,
-                    $this->epayco_lang,
-                    $phone_billing
+                    $email_billing,
+                    $phone_billing,
+                    $this->epayco_customerid,
+                    $this->epayco_customerid,
+                    $this->epayco_customerid
                 );
             }
 
@@ -1260,11 +1304,19 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             $this->restore_order_stock($order->get_id());
                         }
                     }else{
-                        $message = 'Firma no valida';
-                        $orderStatus = 'epayco-failed';
-                        if($x_cod_transaction_state!=1){
-                            $this->restore_order_stock($order->get_id());
+                        if(
+                            $current_state == "epayco-processing" ||
+                            $current_state == "epayco-completed" ||
+                            $current_state == "processing" ||
+                            $current_state == "completed"){
+                        }else{
+                            $message = 'Firma no valida';
+                            $orderStatus = 'epayco-failed';
+                            if($x_cod_transaction_state!=1){
+                                $this->restore_order_stock($order->get_id());
+                            }
                         }
+
                     }
                     $order->update_status($orderStatus);
                     $order->add_order_note($message);
