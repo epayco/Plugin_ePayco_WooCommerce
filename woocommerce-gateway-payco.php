@@ -645,10 +645,22 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 global $woocommerce;
                 $order = new WC_Order($order_id);
                 $descripcionParts = array();
+                $receiversData = [];
                 foreach ($order->get_items() as $product) {
+                    $epayco_p_cust_id_client = get_post_meta( $product["product_id"], 'p_cust_id_client' );
+                    $receiversa['p_cust_id_client'] = $epayco_p_cust_id_client[0];
+                    $epayco_super_product = get_post_meta( $product["product_id"], '_super_product' );
+                    if($epayco_super_product[0] == "yes"){
+                        $receiversa['epayco_comition'] = $product['total'];
+                    }else{
+                        $epayco_epayco_comition = get_post_meta( $product["product_id"], 'epayco_comition' );
+                        $receiversa['epayco_comition'] = $epayco_epayco_comition[0];
+                    }
                     $clearData = str_replace('_', ' ', $this->string_sanitize($product['name']));
                     $descripcionParts[] = $clearData;
+                    array_push($receiversData, $receiversa);
                 }
+                $receivers = json_encode($receiversData);
                 $descripcion = implode(' - ', $descripcionParts);
                 $currency = strtolower(get_woocommerce_currency());
                 $testMode = $this->epayco_testmode == "yes" ? "true" : "false";
