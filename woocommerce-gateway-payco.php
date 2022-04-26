@@ -1735,40 +1735,65 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
      */
     add_action( 'woocommerce_product_data_panels', 'epayco_product_panels' );
     function epayco_product_panels(){
-
+        global $post;
         echo '<div id="epayco_product_data" class="panel woocommerce_options_panel hidden">';
 
         woocommerce_wp_text_input( array(
-            'id'                => 'epayco_plugin_version',
-            'value'             => get_post_meta( get_the_ID(), 'epayco_plugin_version', true ),
-            'label'             => 'Plugin version',
-            'description'       => 'Description when desc_tip param is not true'
+            'id'                => 'p_cust_id_client',
+            'value'             => get_post_meta( get_the_ID(), 'p_cust_id_client', true ),
+            'label'             => 'Id customer',
+            'description'       => 'Id del usuario que va a recibir el pago'
+        ) );
+
+        woocommerce_wp_checkbox( array(
+            'id'      => '_super_product',
+            'value'   => get_post_meta( get_the_ID(), '_super_product', true ),
+            'label'   => 'Valor del producto',
+            'class'             => '_super_product',
+            'style'             => '',
+            'wrapper_class'     => '',
+            'desc_tip' => false,
+            'description' => 'la comisión se realiza sobre el mismo valor del producto',
         ) );
 
         woocommerce_wp_textarea_input( array(
-            'id'          => 'epayco_changelog',
-            'value'       => get_post_meta( get_the_ID(), 'epayco_changelog', true ),
-            'label'       => 'Changelog',
+            'id'          => 'epayco_comition',
+            'value'       => get_post_meta( get_the_ID(), 'epayco_comition', true ),
+            'label'       => 'Comisión',
             'desc_tip'    => true,
-            'description' => 'Prove the plugin changelog here',
+            'description' => 'Valor de la comisión que se paga al comercio',
+            'wrapper_class' => 'epayco_comition',
         ) );
 
-        woocommerce_wp_select( array(
-            'id'          => 'epayco_ext',
-            'value'       => get_post_meta( get_the_ID(), 'epayco_ext', true ),
-            'wrapper_class' => 'show_if_downloadable',
-            'label'       => 'File extension',
-            'options'     => array( '' => 'Please select', 'zip' => 'Zip', 'gzip' => 'Gzip'),
-        ) );
-
+        woocommerce_wp_select(array(
+            'id' => 'epayco_ext',
+            'value' => get_post_meta(get_the_ID(), 'epayco_ext', true),
+            'wrapper_class' => 'epayco_ext',
+            'label' => 'Tipo de dispersión',
+            'options' => array('01' => 'fija'),
+            'desc_tip'    => true,
+            'description' => 'hace referencia al tipo de fee que se enviará al comercio principal',
+        ));
         echo '</div>';
+        echo  '<script type="text/javascript">
+                 function update_wjecf_apply_silently_field(  ) { 
+                        if (!jQuery("#_super_product").prop("checked")) {
+						jQuery(".epayco_comition").show();
+                        } else {
+                            jQuery(".epayco_comition").hide();
+                        }
+                }
+                update_wjecf_apply_silently_field()
+                jQuery("#_super_product").click( update_wjecf_apply_silently_field );
+                </script>
+        ';
 
     }
     add_action( 'woocommerce_process_product_meta', 'epayco_save_fields', 10, 2 );
     function epayco_save_fields( $id, $post ){
-        update_post_meta( $id, 'super_product', $_POST['super_product'] );
-        update_post_meta( $id, 'epayco_plugin_version', $_POST['epayco_plugin_version'] );
-        update_post_meta( $id, 'epayco_changelog', $_POST['epayco_changelog'] );
+        update_post_meta( $id, '_super_product', $_POST['_super_product'] );
+        update_post_meta( $id, 'p_cust_id_client', $_POST['p_cust_id_client'] );
+        update_post_meta( $id, 'epayco_comition', $_POST['epayco_comition'] );
         update_post_meta( $id, 'epayco_ext', $_POST['epayco_ext'] );
     }
     add_action('admin_head', 'epayco_css_icon');
