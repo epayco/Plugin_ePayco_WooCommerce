@@ -658,13 +658,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     }
                     $clearData = str_replace('_', ' ', $this->string_sanitize($product['name']));
                     $descripcionParts[] = $clearData;
-                    array_push($receiversData, $receiversa);
+                    if($epayco_p_cust_id_client[0]) {
+                        array_push($receiversData, $receiversa);
+                    }
                 }
                 $receivers = $receiversData;
                 $split = 'false';
                 $receiversInfo = [];
                 if(count($receivers) < 2){
-                    $custId = isset($receivers[0]->id) ? $receivers[0]->id : null;
+                    $custId = isset($receivers[0]['id']) ? $receivers[0]['id'] : null;
                     if($custId){
                         $split = 'true';
                     }
