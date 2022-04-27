@@ -661,6 +661,29 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     array_push($receiversData, $receiversa);
                 }
                 $receivers = $receiversData;
+                $split = 'false';
+                $receiversInfo = [];
+                if(count($receivers) < 2){
+                    $custId = isset($receivers[0]->id) ? $receivers[0]->id : null;
+                    if($custId){
+                        $split = 'true';
+                    }
+                }else{
+                    foreach ($receivers as $key => $receiver) {
+                        foreach ( $receivers[$key] as $customer){
+                            if($customer === '')
+                            {
+                                unset($receivers[$key]);
+                            }
+                        }
+                    }
+                }
+                if(count($receivers) > 0){
+                    $split = 'true';
+                }
+                foreach ($receivers as  $receiver) {
+                    array_push($receiversInfo, $receiver);
+                }
                 $descripcion = implode(' - ', $descripcionParts);
                 $currency = strtolower(get_woocommerce_currency());
                 $testMode = $this->epayco_testmode == "yes" ? "true" : "false";
@@ -717,7 +740,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         <p style="text-align: center;" class="epayco-title">
                            '.$msgEpaycoCheckout.'
                         </p>    
-                        <div hidden id="split">true</div>            
+                        <div hidden id="split">'.$split.'</div>            
                         <center>
                         <a id="btn_epayco" href="#">
                             <img src="'.$epaycoButtonImage.'">
@@ -756,7 +779,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         
                             let split = document.getElementById("split").textContent;
                             if(split == "true"){
-                                var js_array ='.json_encode($receivers).';
+                                var js_array ='.json_encode($receiversInfo).';
                                 let split_receivers = [];
                                 for(var jsa of js_array){
                                     split_receivers.push({
@@ -778,7 +801,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             }
     
                             var openChekout = function () {
-                                handler.open(data)
+                              handler.open(data)
                             }
                             var bntPagar = document.getElementById("btn_epayco");
                             bntPagar.addEventListener("click", openChekout);
