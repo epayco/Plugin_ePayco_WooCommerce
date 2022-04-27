@@ -677,10 +677,11 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             }
                         }
                     }
+                    if(count($receivers) > 0){
+                        $split = 'true';
+                    }
                 }
-                if(count($receivers) > 0){
-                    $split = 'true';
-                }
+                
                 foreach ($receivers as  $receiver) {
                     array_push($receiversInfo, $receiver);
                 }
