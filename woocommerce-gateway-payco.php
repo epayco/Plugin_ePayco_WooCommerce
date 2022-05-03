@@ -6,11 +6,11 @@
  * @wordpress-plugin
  * Plugin Name:       ePayco Gateway WooCommerce
  * Description:       Plugin ePayco Gateway for WooCommerce.
- * Version:           6.0.0
+ * Version:           6.1.0
  * Author:            ePayco
  * Author URI:        http://epayco.co
- * License: GNU General Public License v3.0
- * License URI: http://www.gnu.org/licenses/gpl-3.0.html
+ * License:           GNU General Public License v3.0
+ * License URI:       http://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain:       epayco-woocommerce
  * Domain Path:       /languages
  */
@@ -743,7 +743,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         <p style="text-align: center;" class="epayco-title">
                            '.$msgEpaycoCheckout.'
                         </p>    
-                        <div hidden id="split">'.$split.'</div>            
+                        <div hidden id="split">'.$split.'</div>  
+                        <div hidden id="response">'.$redirect_url.'</div>          
                         <center>
                         <a id="btn_epayco" href="#">
                             <img src="'.$epaycoButtonImage.'">
@@ -802,14 +803,17 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 data.split_rule= "multiple", // Parámetro para configuración de Split_receivers - debe de ir por defecto en multiple
                                 data.split_receivers= split_receivers
                             }
-    
+                            
                             var openChekout = function () {
                               handler.open(data)
                             }
                             var bntPagar = document.getElementById("btn_epayco");
                             bntPagar.addEventListener("click", openChekout);
     
-                            handler.onCloseModal = function () {};
+                            let response = document.getElementById("response").textContent;
+                            handler.onCloseModal = function () {
+                                window.location.href = response;
+                            };
                             setTimeout(openChekout, 2000)  
                         </script>
                         </form>
