@@ -650,11 +650,20 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $epayco_p_cust_id_client = get_post_meta( $product["product_id"], 'p_cust_id_client' );
                     $receiversa['id'] = $epayco_p_cust_id_client[0];
                     $epayco_super_product = get_post_meta( $product["product_id"], '_super_product' );
-                    if($epayco_super_product[0] == "yes"){
-                        $receiversa['fee'] = floatval($product['total']);
+                    $epayco_epayco_comition = get_post_meta( $product["product_id"], 'epayco_comition' );
+                    
+                    if($epayco_super_product[0] != "yes"){
+                        $productTotalComision = floatval($epayco_epayco_comition[0])*$product["quantity"];
+                        $receiversa['total'] = floatval($product['total']) ;
+                        $fee = floatval($product['total'])-$productTotalComision;
+                        $receiversa['iva'] = 0;
+                        $receiversa['base_iva'] = 0;
+                        $receiversa['fee'] = $fee;
                     }else{
-                        $epayco_epayco_comition = get_post_meta( $product["product_id"], 'epayco_comition' );
-                        $receiversa['fee'] = floatval($epayco_epayco_comition[0]);
+                        $receiversa['total'] =  floatval($product['total']);
+                        $receiversa['iva'] = 0;
+                        $receiversa['base_iva'] = 0;
+                        $receiversa['fee'] = 0;
                     }
                     $clearData = str_replace('_', ' ', $this->string_sanitize($product['name']));
                     $descripcionParts[] = $clearData;
@@ -787,10 +796,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 for(var jsa of js_array){
                                     split_receivers.push({
                                         "id" :  jsa.id,
-                                        "total": jsa.fee,
-                                        "iva" : 0,
-                                        "base_iva": 0,
-                                        "fee" : 0
+                                        "total": jsa.total,
+                                        "iva" : jsa.iva,
+                                        "base_iva": jsa.base_iva,
+                                        "fee" : jsa.fee
                                     });
                                 }
                                 data.split_app_id= "%s", //Id de la cuenta principal
