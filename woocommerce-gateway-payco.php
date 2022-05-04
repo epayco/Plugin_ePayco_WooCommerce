@@ -6,11 +6,11 @@
  * @wordpress-plugin
  * Plugin Name:       ePayco Gateway WooCommerce
  * Description:       Plugin ePayco Gateway for WooCommerce.
- * Version:           6.0.0
+ * Version:           6.1.0
  * Author:            ePayco
  * Author URI:        http://epayco.co
- * License: GNU General Public License v3.0
- * License URI: http://www.gnu.org/licenses/gpl-3.0.html
+ * License:           GNU General Public License v3.0
+ * License URI:       http://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain:       epayco-woocommerce
  * Domain Path:       /languages
  */
@@ -650,11 +650,20 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $epayco_p_cust_id_client = get_post_meta( $product["product_id"], 'p_cust_id_client' );
                     $receiversa['id'] = $epayco_p_cust_id_client[0];
                     $epayco_super_product = get_post_meta( $product["product_id"], '_super_product' );
-                    if($epayco_super_product[0] == "yes"){
-                        $receiversa['fee'] = floatval($product['total']);
+                    $epayco_epayco_comition = get_post_meta( $product["product_id"], 'epayco_comition' );
+                    
+                    if($epayco_super_product[0] != "yes"){
+                        $productTotalComision = floatval($epayco_epayco_comition[0])*$product["quantity"];
+                        $receiversa['total'] = floatval($product['total']) ;
+                        $fee = floatval($product['total'])-$productTotalComision;
+                        $receiversa['iva'] = 0;
+                        $receiversa['base_iva'] = 0;
+                        $receiversa['fee'] = $fee;
                     }else{
-                        $epayco_epayco_comition = get_post_meta( $product["product_id"], 'epayco_comition' );
-                        $receiversa['fee'] = floatval($epayco_epayco_comition[0]);
+                        $receiversa['total'] =  floatval($product['total']);
+                        $receiversa['iva'] = 0;
+                        $receiversa['base_iva'] = 0;
+                        $receiversa['fee'] = 0;
                     }
                     $clearData = str_replace('_', ' ', $this->string_sanitize($product['name']));
                     $descripcionParts[] = $clearData;
@@ -743,14 +752,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         <p style="text-align: center;" class="epayco-title">
                            '.$msgEpaycoCheckout.'
                         </p>    
-                        <div hidden id="split">'.$split.'</div>            
+                        <div hidden id="split">'.$split.'</div>  
+                        <div hidden id="response">'.$redirect_url.'</div>          
                         <center>
                         <a id="btn_epayco" href="#">
                             <img src="'.$epaycoButtonImage.'">
                             </a>
                         <form id="appGateway">
                             <script
-                               src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js?version=1643645084821">
+                               src="https://checkout.epayco.co/checkout.js">
                             </script>
                             <script>
                             var handler = ePayco.checkout.configure({
@@ -761,8 +771,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             var data = {
                                 name: "%s",
                                 description: "%s",
-                                /*invoice: "",*/
-                                extra1:"%s",
+                                invoice: "%s",
                                 currency: "%s",
                                 amount: "%s",
                                 tax_base: "%s",
@@ -787,10 +796,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 for(var jsa of js_array){
                                     split_receivers.push({
                                         "id" :  jsa.id,
-                                        "total": jsa.fee,
-                                        "iva" : 0,
-                                        "base_iva": 0,
-                                        "fee" : 0
+                                        "total": jsa.total,
+                                        "iva" : jsa.iva,
+                                        "base_iva": jsa.base_iva,
+                                        "fee" : jsa.fee
                                     });
                                 }
                                 data.split_app_id= "%s", //Id de la cuenta principal
@@ -802,7 +811,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 data.split_rule= "multiple", // Parámetro para configuración de Split_receivers - debe de ir por defecto en multiple
                                 data.split_receivers= split_receivers
                             }
-    
+                            
                             var openChekout = function () {
                               handler.open(data)
                             }
@@ -921,7 +930,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         $ref_payco=$explode[1];
                     }
 
-                    $url = 'https://secure.epayco.io/validation/v1/reference/'.$ref_payco;
+                    $url = 'https://secure.epayco.co/validation/v1/reference/'.$ref_payco;
                     $response = wp_remote_get(  $url );
                     $body = wp_remote_retrieve_body( $response );
                     $jsonData = @json_decode($body, true);
