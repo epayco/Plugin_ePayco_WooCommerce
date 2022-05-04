@@ -1399,7 +1399,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             {
                 $username = sanitize_text_field($validationData['epayco_publickey']);
                 $password = sanitize_text_field($validationData['epayco_privatey']);
-                $response = wp_remote_post( 'https://apify.epayco.io/login', array(
+                $response = wp_remote_post( 'https://apify.epayco.co/login', array(
                     'headers' => array(
                         'Authorization' => 'Basic ' . base64_encode( $username . ':' . $password ),
                     ),
