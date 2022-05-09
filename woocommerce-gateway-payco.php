@@ -6,10 +6,11 @@
  * @wordpress-plugin
  * Plugin Name:       ePayco Gateway WooCommerce
  * Description:       Plugin ePayco Gateway for WooCommerce.
- * Version:           5.3.x
+ * Version:           6.1.0
  * Author:            ePayco
  * Author URI:        http://epayco.co
- *Lice
+ * License:           GNU General Public License v3.0
+ * License URI:       http://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain:       epayco-woocommerce
  * Domain Path:       /languages
  */
@@ -21,7 +22,6 @@ if (!defined('WPINC')) {
 
 
 require_once(dirname(__FILE__) . '/lib/EpaycoOrder.php');
-//require_once(dirname(__FILE__) . '/style.css');
 if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
     add_action('plugins_loaded', 'init_epayco_woocommerce', 0);
     function init_epayco_woocommerce()
@@ -35,7 +35,20 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             public function __construct()
             {
                 $this->id = 'epayco';
-                $this->icon = plugin_dir_url(__FILE__).'lib/logo.png';
+                $url_icon = plugin_dir_url(__FILE__)."lib";
+                $dir_ = __DIR__."/lib";
+                if(is_dir($dir_)) {
+                    $gestor = opendir($dir_);
+                    if($gestor){
+                        while (($image = readdir($gestor)) !== false){
+                            if($image != '.' && $image != '..'){
+                                if($image == "epayco.png"){
+                                    $this->icon = $url_icon."/".$image;;
+                                }
+                            }
+                        }
+                    }
+                }
                 $this->method_title = __('ePayco Checkout Gateway', 'epayco_woocommerce');
                 $this->method_description = __('Acepta tarjetas de credito, depositos y transferencias.', 'epayco_woocommerce');
                 $this->order_button_text = __('Pagar', 'epayco_woocommerce');
@@ -66,12 +79,16 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $this->response_data = $this->get_option('response_data');
                 add_filter('woocommerce_thankyou_order_received_text', array(&$this, 'order_received_message'), 10, 2 );
                 add_action('ePayco_init', array( $this, 'ePayco_successful_request'));
+                add_action('ePayco_init_validation', array( $this, 'ePayco_successful_validation'));
+                add_action('ePayco_change_logo', array( $this, 'ePayco_new_logo'));
                 add_action('woocommerce_receipt_' . $this->id, array(&$this, 'receipt_page'));
                 add_action( 'woocommerce_api_' . strtolower( get_class( $this ) ), array( $this, 'check_ePayco_response' ) );
+                add_action( 'woocommerce_api_' . strtolower( get_class( $this )."Validation" ), array( $this, 'validate_ePayco_request' ) );
+                add_action( 'woocommerce_api_' . strtolower( get_class( $this )."ChangeLogo" ), array( $this, 'change_logo' ) );
                 add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
                 add_action('wp_ajax_nopriv_returndata',array($this,'datareturnepayco_ajax'));
                 add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-               
+
                 if ($this->epayco_testmode == "yes") {
                     if (class_exists('WC_Logger')) {
                         $this->log = new WC_Logger();
@@ -95,6 +112,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
             public function admin_options()
             {
+                $validation_url=get_site_url() . "/";
+                $validation_url = add_query_arg( 'wc-api', get_class( $this )."Validation", $validation_url );
+                $logo_url=get_site_url() . "/";
+                $logo_url = add_query_arg( 'wc-api', get_class( $this )."ChangeLogo", $logo_url );
                 ?>
                 <style>
                     tbody{
@@ -127,12 +148,84 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         font-weight: bold;
                     }
 
+                    .modal {
+                        display: none;
+                        position: fixed;
+                        z-index: 1;
+                        padding-top: 100px;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        height: 100%;
+                        overflow: auto;
+                        background-color: rgb(0,0,0);
+                        background-color: rgba(0,0,0,0.4);
+                        justify-content: center;
+                        align-items: center;
+                    }
+
+                    /* Modal Content */
+                    .modal-content {
+                        background-color: #ffff;
+                        padding: 20px;
+                        border: 1px solid #888;
+                        position: absolute;
+                        border-radius: 8px;
+                        left: 50%;
+                        top: 35%;
+                        transform: translate(-50%, -50%);
+                    }
+
+                    .modal-content p {
+                        position: static;
+                        font-family: 'Open Sans';
+                        font-style: normal;
+                        font-weight: 400;
+                        font-size: 16px;
+                        line-height: 22px;
+                        text-align: center;
+                        color: #5C5B5C;
+                        margin: 8px 0px;
+                    }
+                    /* The Close Button */
+                    .close {
+                        color: #aaaaaa;
+                        float: right;
+                        font-size: 28px;
+                        font-weight: bold;
+                    }
+
+                    .close:hover,
+                    .close:focus {
+                        color: #000;
+                        text-decoration: none;
+                        cursor: pointer;
+                    }
+                    @media screen and (max-width: 425px) {
+                        .modal-content {
+                            width: 50% ;
+                        }
+                    }
+                    @media screen and (max-width: 425px) {
+                        .dropdown dt a{
+                            width: 250px !important;
+                        }
+                    }
                 </style>
                 <div class="container-fluid">
                     <div class="panel panel-default" style="">
                         <img  src="<?php echo plugin_dir_url(__FILE__).'lib/logo.png' ?>">
+                        <div id="path_upload"  hidden>
+                            <?php echo $logo_url ?>
+                        </div>
+                        <div id="path_images"  hidden>
+                            <?php echo plugin_dir_url(__FILE__).'lib/images' ?>
+                        </div>
+                        <div id="path_validate"  hidden>
+                            <?php echo $validation_url ?>
+                        </div>
                         <div class="panel-heading">
-                            <h3 class="panel-title"><i class="fa fa-pencil"></i>Configuración <?php _e('ePayco', 'epayco_woocommerce'); ?></h3>
+                            <h3 class="panel-title"><i class="fa fa-pencil"></i>Configuración <?php _e('ePayco', 'epayco-woocommerce'); ?></h3>
                         </div>
 
                         <div style ="color: #31708f; background-color: #d9edf7; border-color: #bce8f1;padding: 10px;border-radius: 5px;">
@@ -146,9 +239,225 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 <?php
                                 if ($this->is_valid_for_use()) :
                                     $this->generate_settings_html();
+                                    $logo=plugin_dir_url(__FILE__).'lib/images/logo_warning.png';
+
+                                    echo'
+                                    <script>
+                                        jQuery( document ).ready( function( $ ) {
+                                            $(".validar").on("click", function() {
+                                                var modal = document.getElementById("myModal");
+                                                var url_validate = $("#path_validate")[0].innerHTML.trim();
+                                                const epayco_publickey = $("input:text[name=woocommerce_epayco_epayco_publickey]").val().replace(/\s/g,"");
+                                                const epayco_privatey = $("input:text[name=woocommerce_epayco_epayco_privatekey]").val().replace(/\s/g,"");
+                                                if (epayco_publickey !== "" && 
+                                                    epayco_privatey !== "") {
+                                                        var formData = new FormData();
+                                                        formData.append("epayco_publickey",epayco_publickey.replace(/\s/g,""));
+                                                        formData.append("epayco_privatey",epayco_privatey.replace(/\s/g,""));
+                                                        $.ajax({
+                                                            url: url_validate,
+                                                            type: "post",
+                                                            data: formData,
+                                                            contentType: false,
+                                                            processData: false,
+                                                            success: function(response) {
+                                                                if (response == "success") {
+                                                                    alert("validacion exitosa!");
+                                                                } else {
+                                                                    modal.style.display = "block";
+                                                                }
+                                                            }
+                                                        });
+                                                }else{
+                                                    modal.style.display = "block";
+                                                }
+                                            });
+                                        });
+                                    </script>               
+                                        <tr valign="top">
+                                            <th scope="row" class="titledesc">
+                                                <label for="woocommerce_epayco_enabled">'. __( 'ePayco: validar llaves', 'epayco-woocommerce' ) .'</label>
+                                                <span hidden id="public_key">0</span>
+                                                <span hidden id="private_key">0</span>
+                                            </th>
+                                            <td class="forminp">
+                                                <form method="post" action="#">
+                                                    <label for="woocommerce_epayco_enabled">
+                                                    </label>
+                                                    <input type="button" class="button-primary woocommerce-save-button validar" value="Validar">
+                                                    <p class="description">
+                                                    validacion de llaves PUBLIC_KEY y PRIVATE_KEY
+                                                    </p>
+                                                </form>  
+                                                <br>
+                                                <!-- The Modal -->
+                                                <div id="myModal" class="modal">
+                                                  <!-- Modal content -->
+                                                  <div class="modal-content">
+                                                    <span class="close">&times;</span>
+                                                    <center>
+                                                      <img src="'.$logo.'">
+                                                    </center>
+                                                    <p><strong>Llaves de comercio inválidas</strong> </p>
+                                                    <p>Las llaves Public Key, Private Key insertadas<br>
+                                                     del comercio son inválidas.<br> 
+                                                     Consúltelas en el apartado de integraciones <br> 
+                                                     Llaves API en su Dashboard ePayco.</p>
+                                                  </div>
+                                                </div>
+
+                                                <script>
+                                                    var modal = document.getElementById("myModal");
+                                                    var span = document.getElementsByClassName("close")[0];
+                                                    span.onclick = function() {
+                                                        modal.style.display = "none";
+                                                    }
+                                                </script>
+                                            </td>
+                                        </tr> 
+
+                                        <tr valign="top">
+                                          <th scope="row" class="titledesc">
+                                             <label for="woocommerce_epayco_enabled">'. __( 'ePayco: cambiar logo', 'epayco-woocommerce' ) .'</label>
+                                          </th>
+                                            <td class="forminp">
+                                            <script>
+                                                jQuery( document ).ready( function( $ ) {
+                                                    $(".upload").on("click", function() {
+                                                        var url = $("#path_upload")[0].innerHTML.trim();
+                                                        send(url)
+                                                        return false;
+                                                    });
+                                                    async function  send(url){
+                                                        const imgName = document.getElementById("info").children[0].name;
+                                                        const img = $("#path_images")[0].innerHTML.trim()+"/"+imgName+".png";
+                                                        await fetch(img, {
+                                                            method: "GET"
+                                                        })
+                                                        .then(function(res)  {
+                                                            let data = res.blob()
+                                                            return data;
+                                                        })
+                                                        .then(blob => {
+                                                         const files =  new File([blob], "epayco.png", blob);
+                                                         var imageNames = imgName;
+                                                         var formData = new FormData();
+                                                            formData.append("file",files);
+                                                             $.ajax({
+                                                                 url: url,
+                                                                 type: "post",
+                                                                 data: formData,
+                                                                 contentType: false,
+                                                                 processData: false,
+                                                                 success: function(response) {
+                                                                     if (response != 0) {
+                                                                         $(".card-img-top").attr("src", response);
+                                                                          alert("el logo se subio de forma exitosa!");
+                                                                     } else {
+                                                                         alert("Formato de imagen incorrecto.");
+                                                                     }
+                                                                 }
+                                                             });
+                                                            return file;
+                                                        });
+                                                    }
+                                                });
+                                            </script>
+                                            <fieldset>
+                                                <legend class="screen-reader-text">
+                                                </legend>
+                                                <style>
+                                                .desc { color:#6b6b6b;}
+                                                .desc a {color:#0092dd;}
+                                                .dropdown dd, .dropdown dt, .dropdown ul { margin:0px; padding:0px; }
+                                                .dropdown dd { position:relative; }
+                                                .dropdown a, .dropdown a:visited { color:#2c3338; text-decoration:none; outline:none;}
+                                                .dropdown a:hover { color:#007cba;}
+                                                .dropdown dt a:hover { color:#007cba; border: 1px solid #07cba;}
+                                                .dropdown dt a {background:#ffffff url("http://www.jankoatwarpspeed.com/wp-content/uploads/examples/reinventing-drop-down/arrow.png") no-repeat scroll right center; display:block; padding-right:20px;
+                                                                border:1px solid #2c3338;width: 400px;}
+                                                .dropdown dt a span {cursor:pointer; display:block; padding:5px;}
+                                                .dropdown dd ul { background:#ffffff none repeat scroll 0 0; border:1px solid #d4ca9a; color:#C5C0B0; display:none;
+                                                                  left:0px; padding:5px 0px; position:absolute; top:2px; width:auto; min-width:170px; list-style:none;}
+                                                .dropdown span.value { display:none;}
+                                                .dropdown dd ul li a { padding:5px; display:block;}
+                                                .dropdown dd ul li a:hover { background-color:#d0c9af;}
+                                                
+                                                .dropdown img.flag { border:none; vertical-align:middle; margin-left:10px; }
+                                                .flagvisibility { display:none;}
+                                                </style>
+                                                    <dl id="sample" class="select  dropdown">
+                                                        <dt><a href="#"><span>Logos</span></a>
+                                                            <div><span id="info"></span></div>
+                                                        </dt>
+                                                        <dd>
+                                                            <ul>
+                                                                <li><a href="#"><img class="flag" src="https://multimedia.epayco.co/epayco-landing/btns/epayco-logo-fondo-oscuro-lite.png" alt="" name="epayco1" /></a></li>
+                                                                <li><a href="#"><img class="flag" src="https://multimedia.epayco.co/epayco-landing/btns/epayco-logo-fondo-claro-lite.png" alt="" name="epayco2" /></a></li>
+                                                                <li><a href="#"><img class="flag" src="https://multimedia.epayco.co/epayco-landing/btns/epayco-logos-medios-de-pago-pequeno-horizontal-fondo-oscuro-powered-by-epayco.png" alt="" name="epayco3" /></a></li>
+                                                                <li><a href="#"><img class="flag" src="https://multimedia.epayco.co/epayco-landing/btns/powered_01.png" alt="" name="epayco4" /></a></li>
+                                                                <li><a href="#"><img class="flag" src="https://multimedia.epayco.co/epayco-landing/btns/epayco-logos-medios-de-pago-pequeno-horizontal-con-fondo-oscuro.png" alt="" name="epayco5" /></a></li>
+                                                                <li><a href="#"><img class="flag" src="https://multimedia.epayco.co/epayco-landing/btns/epayco-logos-medios-de-pago-pequeno-horizontal-con-fondo-blanco.png" alt="" name="epayco6" /></a></li>
+                                                            </ul>
+                                                        </dd>
+                                                    </dl>
+                                                   
+                                                    <span id="result"></span>
+                                             
+                                                <script type="text/javascript">
+                                                jQuery( document ).ready( function( $ ) {
+                                                    $(".dropdown img.flag").addClass("flagvisibility");
+                                                    $(".dropdown dt a").click(function(event) {
+                                                        event.preventDefault();
+                                                        $(".dropdown dd ul").toggle();
+                                                    });         
+                                                    $(".dropdown dd ul li a").click(function(event) {
+                                                        event.preventDefault();
+                                                        var text = $(this).html();
+                                                        $(".dropdown dt div span").html(text);
+                                                        $(".dropdown dd ul").hide();      
+                                                    });    
+                                                    $(document).bind("click", function(e) {
+                                                        var $clicked = $(e.target);
+                                                        if (! $clicked.parents().hasClass("dropdown"))
+                                                            $(".dropdown dd ul").hide();
+                                                    });
+                                                    $(".dropdown img.flag").toggleClass("flagvisibility");
+                                                })
+                                                </script>
+                                                <form method="post" action="#" enctype="multipart/form-data">
+                                                    <label for="woocommerce_epayco_enabled">
+                                                      </label>
+                                                      <input type="button" class="button-primary woocommerce-save-button upload" value="Subir">
+                                                      
+                                                  </form>  
+                                                <br><br>'.
+                                                $path  = '';
+                                                $url_icon = plugin_dir_url(__FILE__)."lib";
+                                                $dir_ = __DIR__."/lib";
+                                                if(is_dir($dir_)) {
+                                                    try {
+                                                        $gestor = opendir($dir_);
+                                                        if($gestor){
+                                                            while (($image = readdir($gestor)) !== false){
+                                                                if($image != '.' && $image != '..'){
+                                                                    if($image == "epayco.png"){
+                                                                        $image_ = $url_icon."/".$image;
+                                                                        echo "<img class='card-img-top' src='$image_' width='400px'/><br>";
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }catch (Exception $e){
+                                                        __return_null();
+                                                    }
+                                                }'.
+                                            </fieldset>
+                                          </td>
+                                        </tr>';
                                 else :
                                     if ( is_admin() && ! defined( 'DOING_AJAX')) {
-                                        echo '<div class="error"><p><strong>' . __( 'ePayco: Requiere que la moneda sea USD O COP', 'epayco-woocommerce' ) . '</strong>: ' . sprintf(__('%s', 'woocommerce-mercadopago' ), '<a href="' . admin_url() . 'admin.php?page=wc-settings&tab=general#s2id_woocommerce_currency">' . __( 'Click aquí para configurar!', 'epayco_woocommerce') . '</a>' ) . '</p></div>';
+                                        echo '<div class="error"><p><strong>' . __( 'ePayco: cambio de logo', 'epayco-woocommerce' ) . '</strong>: ' . sprintf(__('%s', 'epayco-woocommerce' ), '<a href="' . admin_url() . 'admin.php?page=wc-settings&tab=general#s2id_woocommerce_currency">' . __( 'Click aquí para configurar!', 'epayco-woocommerce') . '</a>' ) . '</p></div>';
                                     }
                                 endif;
                                 ?>
@@ -158,6 +467,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 </div>
                 <?php
             }
+            
 
             public function init_form_fields()
             {
@@ -181,28 +491,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         'description' => __('Corresponde a la descripción que verá el usuaro durante el checkout', 'epayco_woocommerce'),
                         'default' => __('Checkout ePayco (Tarjetas de crédito,debito,efectivo)', 'epayco_woocommerce'),
                         //'desc_tip' => true,
-                    ),
-                    'epayco_customerid' => array(
-                        'title' => __('<span class="epayco-required">P_CUST_ID_CLIENTE</span>', 'epayco_woocommerce'),
-                        'type' => 'text',
-                        'description' => __('ID de cliente que lo identifica en ePayco. Lo puede encontrar en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
-                        'default' => '',
-                        //'desc_tip' => true,
-                        'placeholder' => '',
-                    ),
-                    'epayco_secretkey' => array(
-                        'title' => __('<span class="epayco-required">P_KEY</span>', 'epayco_woocommerce'),
-                        'type' => 'text',
-                        'description' => __('LLave para firmar la información enviada y recibida de ePayco. Lo puede encontrar en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
-                        'default' => '',
-                        'placeholder' => ''
-                    ),
-                    'epayco_publickey' => array(
-                        'title' => __('<span class="epayco-required">PUBLIC_KEY</span>', 'epayco_woocommerce'),
-                        'type' => 'text',
-                        'description' => __('LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
-                        'default' => '',
-                        'placeholder' => ''
                     ),
                     'epayco_testmode' => array(
                         'title' => __('Sitio en pruebas', 'epayco_woocommerce'),
@@ -274,9 +562,37 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         //'desc_tip' => true,
                         'placeholder' => '3000000',
                     ),
+                    'epayco_customerid' => array(
+                        'title' => __('<span class="epayco-required">P_CUST_ID_CLIENTE</span>', 'epayco_woocommerce'),
+                        'type' => 'text',
+                        'description' => __('ID de cliente que lo identifica en ePayco. Lo puede encontrar en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
+                        'default' => '',
+                        //'desc_tip' => true,
+                        'placeholder' => '',
+                    ),
+                    'epayco_secretkey' => array(
+                        'title' => __('<span class="epayco-required">P_KEY</span>', 'epayco_woocommerce'),
+                        'type' => 'text',
+                        'description' => __('LLave para firmar la información enviada y recibida de ePayco. Lo puede encontrar en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
+                        'default' => '',
+                        'placeholder' => ''
+                    ),
+                    'epayco_publickey' => array(
+                        'title' => __('<span class="epayco-required">PUBLIC_KEY</span>', 'epayco_woocommerce'),
+                        'type' => 'text',
+                        'description' => __('LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
+                        'default' => '',
+                        'placeholder' => ''
+                    ),
+                    'epayco_privatekey' => array(
+                        'title' => __('<span class="epayco-required">PRIVATE_KEY</span>', 'epayco_woocommerce'),
+                        'type' => 'text',
+                        'description' => __('LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
+                        'default' => '',
+                        'placeholder' => ''
+                    ),
                 );
             }
-
 
             /**
              * @param $order_id
@@ -285,23 +601,22 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             public function process_payment($order_id)
             {
                 $order = new WC_Order($order_id);
-                $order->reduce_order_stock();
+                $order_id_ = $order->get_id();
+                $order_key = $order->get_order_key();
                 if (version_compare( WOOCOMMERCE_VERSION, '2.1', '>=')) {
                     return array(
                         'result'    => 'success',
-                        'redirect'  => add_query_arg('order-pay', $order->id, add_query_arg('key', $order->order_key, get_permalink(woocommerce_get_page_id('pay' ))))
+                        'redirect'  => add_query_arg('order-pay',  $order_id_, add_query_arg('key', $order_key, wc_get_checkout_url()))
                     );
                 } else {
                     return array(
                         'result'    => 'success',
-                        'redirect'  => add_query_arg('order', $order->id, add_query_arg('key', $order->order_key, get_permalink(woocommerce_get_page_id('pay' ))))
+                        'redirect'  => add_query_arg('order',  $order_id_, add_query_arg('key', $order_key, wc_get_checkout_url()))
                     );
                 }
             }
 
-
             function get_pages($title = false, $indent = true) {
-
                 $wp_pages = get_pages('sort_column=menu_order');
                 $page_list = array();
                 if ($title) $page_list[] = $title;
@@ -316,26 +631,70 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             $has_parent = $next_page->post_parent;
                         }
                     }
-
                     // add to page list array array
                     $page_list[$page->ID] = $prefix . $page->post_title;
                 }
                 return $page_list;
             }
 
-
             /**
              * @param $order_id
              */
-
             public function receipt_page($order_id)
             {
                 global $woocommerce;
                 $order = new WC_Order($order_id);
                 $descripcionParts = array();
+                $receiversData = [];
                 foreach ($order->get_items() as $product) {
+                    $epayco_p_cust_id_client = get_post_meta( $product["product_id"], 'p_cust_id_client' );
+                    $receiversa['id'] = $epayco_p_cust_id_client[0];
+                    $epayco_super_product = get_post_meta( $product["product_id"], '_super_product' );
+                    $epayco_epayco_comition = get_post_meta( $product["product_id"], 'epayco_comition' );
+                    
+                    if($epayco_super_product[0] != "yes"){
+                        $productTotalComision = floatval($epayco_epayco_comition[0])*$product["quantity"];
+                        $receiversa['total'] = floatval($product['total']) ;
+                        $fee = floatval($product['total'])-$productTotalComision;
+                        $receiversa['iva'] = 0;
+                        $receiversa['base_iva'] = 0;
+                        $receiversa['fee'] = $fee;
+                    }else{
+                        $receiversa['total'] =  floatval($product['total']);
+                        $receiversa['iva'] = 0;
+                        $receiversa['base_iva'] = 0;
+                        $receiversa['fee'] = 0;
+                    }
                     $clearData = str_replace('_', ' ', $this->string_sanitize($product['name']));
                     $descripcionParts[] = $clearData;
+                    if($epayco_p_cust_id_client[0]) {
+                        array_push($receiversData, $receiversa);
+                    }
+                }
+                $receivers = $receiversData;
+                $split = 'false';
+                $receiversInfo = [];
+                if(count($receivers) < 2){
+                    $custId = isset($receivers[0]['id']) ? $receivers[0]['id'] : null;
+                    if($custId){
+                        $split = 'true';
+                    }
+                }else{
+                    foreach ($receivers as $key => $receiver) {
+                        foreach ( $receivers[$key] as $customer){
+                            if($customer === '')
+                            {
+                                unset($receivers[$key]);
+                            }
+                        }
+                    }
+                    if(count($receivers) > 0){
+                        $split = 'true';
+                    }
+                }
+                
+                foreach ($receivers as  $receiver) {
+                    array_push($receiversInfo, $receiver);
                 }
                 $descripcion = implode(' - ', $descripcionParts);
                 $currency = strtolower(get_woocommerce_currency());
@@ -346,23 +705,20 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $confirm_url=get_site_url() . "/";
                 $redirect_url = add_query_arg( 'wc-api', get_class( $this ), $redirect_url );
                 $redirect_url = add_query_arg( 'order_id', $order_id, $redirect_url );
-                
+
                 if ($this->get_option('epayco_url_confirmation' ) == 0) {
-                        $confirm_url = add_query_arg( 'wc-api', get_class( $this ), $confirm_url );
-                        $confirm_url = add_query_arg( 'order_id', $order_id, $confirm_url );
-                        $confirm_url = $redirect_url.'&confirmation=1';
-                    } else {
-                        
-                        $confirm_url = get_permalink($this->get_option('epayco_url_confirmation'));
+                    $confirm_url = add_query_arg( 'wc-api', get_class( $this ), $confirm_url );
+                    $confirm_url = add_query_arg( 'order_id', $order_id, $confirm_url );
+                    $confirm_url = $redirect_url.'&confirmation=1';
+                } else {
+                    $confirm_url = get_permalink($this->get_option('epayco_url_confirmation'));
                 }
-                
-               
-                
+
                 $name_billing=$order->get_billing_first_name().' '.$order->get_billing_last_name();
                 $address_billing=$order->get_billing_address_1();
                 $phone_billing=@$order->billing_phone;
                 $email_billing=@$order->billing_email;
-                $order = new WC_Order($order_id);
+
                 $tax=$order->get_total_tax();
                 $tax=round($tax,2);
                 if((int)$tax>0){
@@ -376,12 +732,12 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 if (!EpaycoOrder::ifExist($order_id)) {
                     //si no se restauro el stock restaurarlo inmediatamente
                     EpaycoOrder::create($order_id,1);
+                    $this->restore_order_stock($order->get_id(),"decrease");
                 }
-
 
                 if ($this->epayco_lang !== "es") {
                     $msgEpaycoCheckout = '<span class="animated-points">Loading payment methods</span>
-                               <br><small class="epayco-subtitle"> If they do not load automatically, click on the "Pay with ePayco" button</small>';
+                     <br><small class="epayco-subtitle"> If they do not load automatically, click on the "Pay with ePayco" button</small>';
                     $epaycoButtonImage = plugin_dir_url(__FILE__).'lib/Boton-color-Ingles.png';
                 }else{
                     $msgEpaycoCheckout = '<span class="animated-points">Cargando métodos de pago</span>
@@ -395,74 +751,112 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         </div>
                         <p style="text-align: center;" class="epayco-title">
                            '.$msgEpaycoCheckout.'
-                        </p>                        
+                        </p>    
+                        <div hidden id="split">'.$split.'</div>  
+                        <div hidden id="response">'.$redirect_url.'</div>          
                         <center>
-
+                        <a id="btn_epayco" href="#">
+                            <img src="'.$epaycoButtonImage.'">
+                            </a>
                         <form id="appGateway">
                             <script
-                                src="https://checkout.epayco.co/checkout.js"
-                                class="epayco-button"
-                                data-epayco-key="%s"
-                                data-epayco-test="%s"
-                                data-epayco-name="%s"
-                                data-epayco-description="%s"
-                                data-epayco-invoice="%s"      
-                                data-epayco-currency="%s"                   
-                                data-epayco-amount="%s"
-                                data-epayco-tax="%s"
-                                data-epayco-tax-base="%s"
-                                data-epayco-country="%s"
-                                data-epayco-external="%s"                       
-                                data-epayco-response="%s"
-                                data-epayco-confirmation="%s"
-                                data-epayco-email-billing="%s"
-                                data-epayco-name-billing="%s"
-                                data-epayco-address-billing="%s"
-                                data-epayco-lang="%s"
-                                data-epayco-mobilephone-billing="%s"
-                                data-epayco-button="'.$epaycoButtonImage.'"
-                                data-epayco-autoclick="true"
-                                >
+                               src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js?version=1643645084821">
                             </script>
-                            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
                             <script>
-                            $(document).keydown(function (event) {
-                                if (event.keyCode == 123) {
-                                    return false;
-                                } else if (event.ctrlKey && event.shiftKey && event.keyCode == 73) {        
-                                    return false;
+                            var handler = ePayco.checkout.configure({
+                                key: "%s",
+                                test: "%s"
+                            })
+                            var date = new Date().getTime();
+                            var data = {
+                                name: "%s",
+                                description: "%s",
+                                invoice: "%s",
+                                currency: "%s",
+                                amount: "%s",
+                                tax_base: "%s",
+                                tax: "%s",
+                                country: "%s",
+                                lang: "%s",
+                                external: "%s",
+                                confirmation: "%s",
+                                response: "%s",
+ 
+                                //Atributos cliente
+                                name_billing: "%s",
+                                address_billing: "%s",
+                                email_billing: "%s",
+                                mobilephone_billing: "%s",
+                            }
+                        
+                            let split = document.getElementById("split").textContent;
+                            if(split == "true"){
+                                var js_array ='.json_encode($receiversInfo).';
+                                let split_receivers = [];
+                                for(var jsa of js_array){
+                                    split_receivers.push({
+                                        "id" :  jsa.id,
+                                        "total": jsa.total,
+                                        "iva" : jsa.iva,
+                                        "base_iva": jsa.base_iva,
+                                        "fee" : jsa.fee
+                                    });
                                 }
+                                data.split_app_id= "%s", //Id de la cuenta principal
+                                data.split_merchant_id= "%s", //Id de la cuenta principal y a nombre de quien quedara la transacción
+                                data.split_type= "01", // tipo de dispersión 01 -> fija ---- 02 -> porcentual
+                                data.split_primary_receiver= "%s", // Id de la cuenta principal - parámetro para recibir valor de la dispersión destinado
+                                data.split_primary_receiver_fee= "0", // Parámetro no a utilizar pero que debe de ir en cero
+                                data.splitpayment= "true", // Indicación de funcionalidad split
+                                data.split_rule= "multiple", // Parámetro para configuración de Split_receivers - debe de ir por defecto en multiple
+                                data.split_receivers= split_receivers
+                            }
+                            
+                            var openChekout = function () {
+                              handler.open(data)
+                            }
+                            var bntPagar = document.getElementById("btn_epayco");
+                            bntPagar.addEventListener("click", openChekout);
+    
+                            let responseUrl = document.getElementById("response").textContent;
+                            handler.onCloseModal = function () {};
+                            handler.onCreated(function(response) {
+                            }).onResponse(function(response) {
+                            }).onClosed(function(response) {
+                                window.location.href = responseUrl
                             });
-                            </script>
+                            setTimeout(openChekout, 2000)  
+                        </script>
                         </form>
                         </center>
-                ',trim($this->epayco_publickey),
+                ',  trim($this->epayco_publickey),
                     $testMode,
                     $descripcion,
                     $descripcion,
                     $order->get_id(),
                     $currency,
                     $order->get_total(),
-                    $tax,
                     $base_tax,
+                    $tax,
                     $basedCountry,
+                    $this->epayco_lang,
                     $external,
-                    $redirect_url,
                     $confirm_url,
-                    $email_billing,
+                    $redirect_url,
                     $name_billing,
                     $address_billing,
-                    $this->epayco_lang,
-                    $phone_billing);
-
+                    $email_billing,
+                    $phone_billing,
+                    $this->epayco_customerid,
+                    $this->epayco_customerid,
+                    $this->epayco_customerid
+                );
             }
-
 
             public function datareturnepayco_ajax()
             {
                 die();
             }
-
 
             public function authSignature($x_ref_payco, $x_transaction_id, $x_amount, $x_currency_code){
                 $signature = hash('sha256',
@@ -473,7 +867,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     .$x_amount.'^'
                     .$x_currency_code
                 );
-
                 return $signature;
             }
 
@@ -487,6 +880,26 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }
             }
 
+            function validate_ePayco_request(){
+                @ob_clean();
+                if ( ! empty( $_REQUEST ) ) {
+                    header( 'HTTP/1.1 200 OK' );
+                    do_action( "ePayco_init_validation", $_REQUEST );
+                } else {
+                    wp_die( __("ePayco Request Failure", 'epayco-woocommerce') );
+                }
+            }
+
+            function change_logo(){
+                @ob_clean();
+                if ( ! empty( $_REQUEST ) ) {
+                    header( 'HTTP/1.1 200 OK' );
+                    do_action( "ePayco_change_logo", $_REQUEST );
+                } else {
+                    wp_die( __("ePayco Request Failure", 'epayco-woocommerce') );
+                }
+            }
+
 
             /**
              * @param $validationData
@@ -494,7 +907,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             function ePayco_successful_request($validationData)
             {
                 global $woocommerce;
-
                 $order_id_info = sanitize_text_field($_GET['order_id']);
                 $order_id_explode = explode('=',$order_id_info);
                 $order_id_rpl  = str_replace('?ref_payco','',$order_id_explode);
@@ -505,7 +917,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 if(empty($ref_payco)){
                     $ref_payco =$order_id_rpl[1];
                 }
-                
+
                 if ($isConfirmation){
                     $x_signature = sanitize_text_field($_REQUEST['x_signature']);
                     $x_cod_transaction_state = sanitize_text_field($_REQUEST['x_cod_transaction_state']);
@@ -516,16 +928,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $x_test_request = trim(sanitize_text_field($_REQUEST['x_test_request']));
                     $x_approval_code = trim(sanitize_text_field($_REQUEST['x_approval_code']));
                     $x_franchise = trim(sanitize_text_field($_REQUEST['x_franchise']));
-                }
-                else {
+                }else{
 
-                    if (!$ref_payco) 
+                    if (!$ref_payco)
                     {
                         $explode=explode('=',$order_id);
                         $ref_payco=$explode[1];
                     }
-                    
-                    $url = 'https://secure.epayco.co/validation/v1/reference/'.$ref_payco;
+
+                    $url = 'https://secure.epayco.io/validation/v1/reference/'.$ref_payco;
                     $response = wp_remote_get(  $url );
                     $body = wp_remote_retrieve_body( $response );
                     $jsonData = @json_decode($body, true);
@@ -545,7 +956,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 if ($order_id != "" && $x_ref_payco != "") {
                     $authSignature = $this->authSignature($x_ref_payco, $x_transaction_id, $x_amount, $x_currency_code);
                 }
-              
+
                 $message = '';
                 $messageClass = '';
                 $current_state = $order->get_status();
@@ -568,28 +979,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 $validation = false;
                             }
                         }
-                        
+
                     }
                 }else{
-                     $validation = false;
+                    $validation = false;
                 }
                 if($authSignature == $x_signature && $validation){
                     switch ($x_cod_transaction_state) {
                         case 1: {
-                            if($current_state == "epayco_failed" ||
-                            $current_state == "epayco_cancelled" ||
-                            $current_state == "failed" ||
-                            $current_state == "epayco-cancelled" ||
-                            $current_state == "epayco-failed"
-                        ){}else{
-                             //Busca si ya se descontó el stock
-                        if (!EpaycoOrder::ifStockDiscount($order_id)){
-                            
-                            //se descuenta el stock
-                            EpaycoOrder::updateStockDiscount($order_id,1);
-                                
-                        }
-                       if($isTestMode=="true"){
+                            if($isTestMode=="true"){
                                 $message = 'Pago exitoso Prueba';
                                 switch ($this->epayco_endorder_state ){
                                     case 'epayco-processing':{
@@ -609,11 +1007,64 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 $message = 'Pago exitoso';
                                 $orderStatus = $this->epayco_endorder_state;
                             }
-                            $order->payment_complete($x_ref_payco);
-                            $order->update_status($orderStatus);
-                            $order->add_order_note($message);
-                        }
-                        echo "1";
+
+                            if($current_state == "epayco_failed" ||
+                                $current_state == "epayco_cancelled" ||
+                                $current_state == "failed" ||
+                                $current_state == "epayco-cancelled" ||
+                                $current_state == "epayco-failed"
+                            ){
+                                if (!EpaycoOrder::ifStockDiscount($order_id)){
+                                    //se descuenta el stock
+                                    EpaycoOrder::updateStockDiscount($order_id,1);
+                                    if($current_state != $orderStatus){
+                                        if($isTestMode=="true"){
+                                            $this->restore_order_stock($order->get_id(),"decrease");
+                                        }else{
+                                            if($orderStatus == "epayco-processing" || $orderStatus == "epayco-completed"){
+                                                $this->restore_order_stock($order->get_id(),"decrease");
+                                            }
+                                        }
+
+                                        $order->payment_complete($x_ref_payco);
+                                        $order->update_status($orderStatus);
+                                        $order->add_order_note($message);
+                                    }
+                                }
+
+                            }else{
+                                //Busca si ya se descontó el stock
+                                if (!EpaycoOrder::ifStockDiscount($order_id)){
+                                    //se descuenta el stock
+                                    EpaycoOrder::updateStockDiscount($order_id,1);
+                                }
+                                if($current_state != $orderStatus){
+                                    if($isTestMode=="true" && $current_state == "epayco_on_hold"){
+                                        if($orderStatus == "processing"){
+                                            $this->restore_order_stock($order->get_id(),"decrease");
+                                        }
+                                        if($orderStatus == "completed"){
+                                            $this->restore_order_stock($order->get_id(),"decrease");
+                                        }
+                                    }
+                                    if($isTestMode != "true" && $current_state == "epayco-on-hold"){
+                                        if($orderStatus == "processing"){
+                                            $this->restore_order_stock($order->get_id());
+                                        }
+                                        if($orderStatus == "completed"){
+                                            $this->restore_order_stock($order->get_id());
+                                        }
+                                    }
+                                    if($current_state =="pending")
+                                    {
+                                        $this->restore_order_stock($order->get_id());
+                                    }
+                                    $order->payment_complete($x_ref_payco);
+                                    $order->update_status($orderStatus);
+                                    $order->add_order_note($message);
+                                }
+                            }
+                            echo "1";
                         } break;
                         case 2: {
                             if($isTestMode=="true"){
@@ -628,9 +1079,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     $order->update_status('epayco_cancelled');
                                     $order->add_order_note($message);
                                     if($current_state =="epayco-cancelled"||
-                                    $current_state == "epayco_cancelled" ){
-                                       }else{
-                                         $this->restore_order_stock($order->id);
+                                        $current_state == "epayco_cancelled" ){
+                                    }else{
+                                        $this->restore_order_stock($order->get_id());
                                     }
                                 }
                             }else{
@@ -647,14 +1098,25 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     $order->update_status('epayco-cancelled');
                                     $order->add_order_note($message);
                                     if($current_state !="epayco-cancelled"){
-                                        $this->restore_order_stock($order->id);
+                                        $this->restore_order_stock($order->get_id());
                                     }
                                 }
                             }
-                        echo "2";
+                            echo "2";
+                            if(!$isConfirmation){
+                                $woocommerce->cart->empty_cart();
+                                foreach ($order->get_items() as $item) {
+                                    // Get an instance of corresponding the WC_Product object
+                                    $product_id = $item->get_product()->id;
+                                    $qty = $item->get_quantity(); // Get the item quantity
+                                    WC()->cart->add_to_cart( $product_id ,(int)$qty);
+                                }
+                                wp_safe_redirect( wc_get_checkout_url() );
+                                exit();
+                            }
                         } break;
                         case 3: {
-                            
+
                             //Busca si ya se restauro el stock y si se configuro reducir el stock en transacciones pendientes
                             if (!EpaycoOrder::ifStockDiscount($order_id) && $this->get_option('epayco_reduce_stock_pending') != 'yes') {
                                 //actualizar el stock
@@ -671,6 +1133,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             if($x_franchise != "PSE"){
                                 $order->update_status($orderStatus);
                                 $order->add_order_note($message);
+                                if($current_state == "epayco_failed" ||
+                                    $current_state == "epayco_cancelled" ||
+                                    $current_state == "failed" ||
+                                    $current_state == "epayco-cancelled" ||
+                                    $current_state == "epayco-failed"
+                                ){
+                                    $this->restore_order_stock($order->get_id(),"decrease");  
+                                }
                             }
                         } break;
                         case 4: {
@@ -686,9 +1156,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     $order->update_status('epayco_failed');
                                     $order->add_order_note($message);
                                     if($current_state =="epayco-failed"||
-                                    $current_state == "epayco_failed" ){
-                                       }else{
-                                         $this->restore_order_stock($order->id);
+                                        $current_state == "epayco_failed" ){
+                                    }else{
+                                        $this->restore_order_stock($order->get_id());
                                     }
                                 }
                             }else{
@@ -705,18 +1175,29 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     $order->update_status('epayco-failed');
                                     $order->add_order_note($message);
                                     if($current_state !="epayco-failed"){
-                                        $this->restore_order_stock($order->id);
+                                        $this->restore_order_stock($order->get_id());
                                     }
                                 }
                             }
                             echo "4";
+                            if(!$isConfirmation){
+                                $woocommerce->cart->empty_cart();
+                                foreach ($order->get_items() as $item) {
+                                    // Get an instance of corresponding the WC_Product object
+                                    $product_id = $item->get_product()->id;
+                                    $qty = $item->get_quantity(); // Get the item quantity
+                                    WC()->cart->add_to_cart( $product_id ,(int)$qty);
+                                }
+                                wp_safe_redirect( wc_get_checkout_url() );
+                                exit();
+                            }
                         } break;
                         case 6: {
                             $message = 'Pago Reversada' .$x_ref_payco;
                             $messageClass = 'woocommerce-error';
                             $order->update_status('refunded');
                             $order->add_order_note('Pago Reversado');
-                            $this->restore_order_stock($order->id);
+                            $this->restore_order_stock($order->get_id());
                         } break;
                         case 10:{
                             if($isTestMode=="true"){
@@ -731,9 +1212,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     $order->update_status('epayco_cancelled');
                                     $order->add_order_note($message);
                                     if($current_state =="epayco-cancelled"||
-                                    $current_state == "epayco_cancelled" ){
-                                       }else{
-                                         $this->restore_order_stock($order->id);
+                                        $current_state == "epayco_cancelled" ){
+                                    }else{
+                                        $this->restore_order_stock($order->get_id());
                                     }
                                 }
                             }else{
@@ -750,11 +1231,22 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     $order->update_status('epayco-cancelled');
                                     $order->add_order_note($message);
                                     if($current_state !="epayco-cancelled"){
-                                        $this->restore_order_stock($order->id);
+                                        $this->restore_order_stock($order->get_id());
                                     }
                                 }
                             }
                             echo "10";
+                            if(!$isConfirmation){
+                                $woocommerce->cart->empty_cart();
+                                foreach ($order->get_items() as $item) {
+                                    // Get an instance of corresponding the WC_Product object
+                                    $product_id = $item->get_product()->id;
+                                    $qty = $item->get_quantity(); // Get the item quantity
+                                    WC()->cart->add_to_cart( $product_id ,(int)$qty);
+                                }
+                                wp_safe_redirect( wc_get_checkout_url() );
+                                exit();
+                            }
                         } break;
                         case 11:{
                             if($isTestMode=="true"){
@@ -769,9 +1261,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     $order->update_status('epayco_cancelled');
                                     $order->add_order_note($message);
                                     if($current_state =="epayco-cancelled"||
-                                    $current_state == "epayco_cancelled" ){
-                                       }else{
-                                         $this->restore_order_stock($order->id);
+                                        $current_state == "epayco_cancelled" ){
+                                    }else{
+                                        $this->restore_order_stock($order->get_id());
                                     }
                                 }
                             }else{
@@ -790,11 +1282,22 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     $order->update_status('epayco-cancelled');
                                     $order->add_order_note($message);
                                     if($current_state !="epayco-cancelled"){
-                                        $this->restore_order_stock($order->id);
+                                        $this->restore_order_stock($order->get_id());
                                     }
                                 }
                             }
                             echo "11";
+                            if(!$isConfirmation){
+                                $woocommerce->cart->empty_cart();
+                                foreach ($order->get_items() as $item) {
+                                    // Get an instance of corresponding the WC_Product object
+                                    $product_id = $item->get_product()->id;
+                                    $qty = $item->get_quantity(); // Get the item quantity
+                                    WC()->cart->add_to_cart( $product_id ,(int)$qty);
+                                }
+                                wp_safe_redirect( wc_get_checkout_url() );
+                                exit();
+                            }
                         } break;
                         default: {
                             if(
@@ -807,7 +1310,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 $messageClass = 'woocommerce-error';
                                 $order->update_status('epayco-failed');
                                 $order->add_order_note('Pago fallido o abandonado');
-                                $this->restore_order_stock($order->id);
+                                $this->restore_order_stock($order->get_id());
                             }
                         } break;
                     }
@@ -829,51 +1332,55 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 case 'epayco-completed':{
                                     $orderStatus ='epayco_completed';
                                 }break;
-                                    case 'processing':{
+                                case 'processing':{
                                     $orderStatus ='processing_test';
                                 }break;
-                                    case 'completed':{
+                                case 'completed':{
                                     $orderStatus ='completed_test';
                                 }break;
                             }
-                        } 
+                        }
                         if($isTestPluginMode == "no" && $x_cod_transaction_state == 1)
                         {
-                            $this->restore_order_stock($order->id);
-                        }
-                    }else{  
-                        $message = 'Firma no valida';
-                        $orderStatus = 'epayco-failed';
-                        if($x_cod_transaction_state!=1){
-                            $this->restore_order_stock($order->id);
-                        }
-                    }
-                        $order->update_status($orderStatus);
-                        $order->add_order_note($message);
-                        $messageClass = 'error';
-                        echo $message;
-                }
-                
-                 if (isset($_REQUEST['confirmation'])) {
-                        $redirect_url = get_permalink($this->get_option('epayco_url_confirmation'));
-                        if ($this->get_option('epayco_url_confirmation' ) == 0) {
-                            echo $current_state;
-                            die();
+                            $this->restore_order_stock($order->get_id());
                         }
                     }else{
-                        
-                        if ($this->get_option('epayco_url_response' ) == 0) {
-                            $redirect_url = $order->get_checkout_order_received_url();
-                        } else {
-                            $woocommerce->cart->empty_cart();
-                            $redirect_url = get_permalink($this->get_option('epayco_url_response'));
+                        if(
+                            $current_state == "epayco-processing" ||
+                            $current_state == "epayco-completed" ||
+                            $current_state == "processing" ||
+                            $current_state == "completed"){
+                        }else{
+                            $message = 'Firma no valida';
+                            $orderStatus = 'epayco-failed';
+                            if($x_cod_transaction_state!=1){
+                                $this->restore_order_stock($order->get_id());
+                            }
                         }
-                    }
 
-               
+                    }
+                    $order->update_status($orderStatus);
+                    $order->add_order_note($message);
+                    $messageClass = 'error';
+                    echo $message;
+                }
+
+                if (isset($_REQUEST['confirmation'])) {
+                    $redirect_url = get_permalink($this->get_option('epayco_url_confirmation'));
+                    if ($this->get_option('epayco_url_confirmation' ) == 0) {
+                        echo $current_state;
+                        die();
+                    }
+                }else{
+                    if ($this->get_option('epayco_url_response' ) == 0) {
+                        $redirect_url = $order->get_checkout_order_received_url();
+                    } else {
+                        $woocommerce->cart->empty_cart();
+                        $redirect_url = get_permalink($this->get_option('epayco_url_response'));
+                    }
+                }
 
                 $arguments=array();
-
                 foreach ($validationData as $key => $value) {
                     $arguments[$key]=$value;
                 }
@@ -891,6 +1398,77 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 die();
             }
 
+            /**
+             * @param $validationData
+             */
+            function ePayco_successful_validation($validationData)
+            {
+                $username = sanitize_text_field($validationData['epayco_publickey']);
+                $password = sanitize_text_field($validationData['epayco_privatey']);
+                $response = wp_remote_post( 'https://apify.epayco.io/login', array(
+                    'headers' => array(
+                        'Authorization' => 'Basic ' . base64_encode( $username . ':' . $password ),
+                    ),
+                ) );
+                $data = json_decode( wp_remote_retrieve_body( $response ) );
+                if($data->token){
+                    echo "success";
+                    exit();
+                }
+            }
+
+
+            function ePayco_new_logo()
+            {
+                $file = sanitize_text_field($_FILES);
+                if(empty($file)){
+                    $file = $_FILES;
+                }
+                if (is_array($file) && count($file) > 0) {
+                    if (($file["file"]["type"] == "image/pjpeg")
+                        || ($file["file"]["type"] == "image/jpeg")
+                        || ($file["file"]["type"] == "image/png")
+                        || ($file["file"]["type"] == "image/gif")) {
+
+                        $nombre = $file['file']['name'];
+                        $strpos = strpos($nombre, '.');
+                        $strlen = strlen($nombre);
+                        $posicion = $strlen - $strpos;
+                        $typeImage = substr($nombre, -$posicion);
+                        $typeImage = '.png';
+                        $oldImageName = stristr($nombre, $typeImage,$posicion);
+                        $newImageName = 'epayco'.$typeImage;
+
+                        $newPath = __DIR__."/lib";
+                        $gestor  = opendir($newPath);
+                        if($gestor){
+                            while (($image = readdir($gestor)) !== false){
+                                if($image != '.' && $image != '..'){
+                                    $strpos_image = strpos($image, '.');
+                                    $strlen_image = strlen($image);
+                                    $posicion_image = $strlen_image - $strpos_image;
+                                    $type_image = substr($image, - $posicion_image);
+                                    $name_image = substr($image,  0,$strpos_image);
+                                    if($name_image == "epayco"){
+                                        unlink($newPath."/".$image);
+                                    }
+                                }
+                            }
+                        }
+                        if (move_uploaded_file($file["file"]["tmp_name"], $newPath."/".$newImageName)) {
+                            $newPath =plugin_dir_url(__FILE__).'lib/epayco.png';
+                            echo $newPath;
+                        } else {
+                            echo 0;
+                        }
+                    } else {
+                        echo 0;
+                    }
+                } else {
+                    echo 0;
+                }
+                exit();
+            }
 
             /**
              * @param $order_id
@@ -902,7 +1480,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 if (!get_option('woocommerce_manage_stock') == 'yes' && !sizeof($order->get_items()) > 0) {
                     return;
                 }
-                
+
                 foreach ($order->get_items() as $item) {
                     // Get an instance of corresponding the WC_Product object
                     $product = $item->get_product();
@@ -937,39 +1515,39 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 wp_enqueue_script('gateway-epayco', plugin_dir_url(__FILE__).'lib/epayco.js', array(), $this->version, true );
                 wp_enqueue_style('frontend-epayco',  plugin_dir_url(__FILE__).'lib/epayco.css', array(), $this->version, null);
             }
-        }
-
-
-        function is_product_in_cart( $prodids ){
-            $product_in_cart = false;
-            foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
-                $product = $cart_item['data'];
-                if ( in_array( $product->id, $prodids ) ) {
-                    $product_in_cart = true;
-                }
-
             }
-            return $product_in_cart;
-        }
 
 
-        /**
-         * @param $methods
-         * @return array
-         */
-        function woocommerce_epayco_add_gateway($methods)
-        {
-            $methods[] = 'WC_ePayco';
-            return $methods;
-        }
-        add_filter('woocommerce_payment_gateways', 'woocommerce_epayco_add_gateway');
+            function is_product_in_cart( $prodids ){
+                $product_in_cart = false;
+                foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+                    $product = $cart_item['data'];
+                    if ( in_array( $product->id, $prodids ) ) {
+                        $product_in_cart = true;
+                    }
 
-        function epayco_woocommerce_addon_settings_link( $links ) {
-            array_push( $links, '<a href="admin.php?page=wc-settings&tab=checkout&section=epayco">' . __( 'Configuración' ) . '</a>' );
-            return $links;
-        }
+                }
+                return $product_in_cart;
+            }
 
-        add_filter( "plugin_action_links_".plugin_basename( __FILE__ ),'epayco_woocommerce_addon_settings_link' );
+
+            /**
+             * @param $methods
+             * @return array
+             */
+            function woocommerce_epayco_add_gateway($methods)
+            {
+                $methods[] = 'WC_ePayco';
+                return $methods;
+            }
+            add_filter('woocommerce_payment_gateways', 'woocommerce_epayco_add_gateway');
+
+            function epayco_woocommerce_addon_settings_link( $links ) {
+                array_push( $links, '<a href="admin.php?page=wc-settings&tab=checkout&section=epayco">' . __( 'Configuración' ) . '</a>' );
+                return $links;
+            }
+
+            add_filter( "plugin_action_links_".plugin_basename( __FILE__ ),'epayco_woocommerce_addon_settings_link' );
     }
 
 
@@ -1211,38 +1789,125 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         }
         ?>
 
-<style>
-                .order-status.status-<?php echo sanitize_title( $order_status_failed); ?> {
-                    background: #eba3a3;
-                    color: #761919;
-                }
-                .order-status.status-<?php echo sanitize_title( $order_status_on_hold); ?> {
-                    background: #f8dda7;
-                    color: #94660c;
-                }
-                .order-status.status-<?php echo sanitize_title( $order_status_processing ); ?> {
-                    background: #c8d7e1;
-                    color: #2e4453;
-                }
-                .order-status.status-<?php echo sanitize_title( $order_status_processing_ ); ?> {
-                    background: #c8d7e1;
-                    color: #2e4453;
-                }
-                .order-status.status-<?php echo sanitize_title( $order_status_completed ); ?> {
-                    background: #d7f8a7;
-                    color: #0c942b;
-                }
-                .order-status.status-<?php echo sanitize_title( $order_status_completed_ ); ?> {
-                    background: #d7f8a7;
-                    color: #0c942b;
-                }
-                .order-status.status-<?php echo sanitize_title( $order_status_cancelled); ?> {
-                    background: #eba3a3;
-                    color: #761919;
-                }
-            </style>
+        <style>
+            .order-status.status-<?php echo sanitize_title( $order_status_failed); ?> {
+                background: #eba3a3;
+                color: #761919;
+            }
+            .order-status.status-<?php echo sanitize_title( $order_status_on_hold); ?> {
+                background: #f8dda7;
+                color: #94660c;
+            }
+            .order-status.status-<?php echo sanitize_title( $order_status_processing ); ?> {
+                background: #c8d7e1;
+                color: #2e4453;
+            }
+            .order-status.status-<?php echo sanitize_title( $order_status_processing_ ); ?> {
+                background: #c8d7e1;
+                color: #2e4453;
+            }
+            .order-status.status-<?php echo sanitize_title( $order_status_completed ); ?> {
+                background: #d7f8a7;
+                color: #0c942b;
+            }
+            .order-status.status-<?php echo sanitize_title( $order_status_completed_ ); ?> {
+                background: #d7f8a7;
+                color: #0c942b;
+            }
+            .order-status.status-<?php echo sanitize_title( $order_status_cancelled); ?> {
+                background: #eba3a3;
+                color: #761919;
+            }
+        </style>
 
         <?php
+    }
+
+    add_filter('woocommerce_product_data_tabs', 'epayco_product_settings_tabs' );
+    function epayco_product_settings_tabs( $tabs ){
+        $tabs['epayco'] = array(
+            'label'    => 'Receivers',
+            'target'   => 'epayco_product_data',
+            'class'    => array('show_if_simple'),
+            'priority' => 21,
+        );
+        return $tabs;
+
+    }
+
+    /*
+     * Tab content
+     */
+    add_action( 'woocommerce_product_data_panels', 'epayco_product_panels' );
+    function epayco_product_panels(){
+        global $post;
+        echo '<div id="epayco_product_data" class="panel woocommerce_options_panel hidden">';
+
+        woocommerce_wp_text_input( array(
+            'id'                => 'p_cust_id_client',
+            'value'             => get_post_meta( get_the_ID(), 'p_cust_id_client', true ),
+            'label'             => 'Id customer',
+            'description'       => 'Id del usuario que va a recibir el pago'
+        ) );
+
+        woocommerce_wp_checkbox( array(
+            'id'      => '_super_product',
+            'value'   => get_post_meta( get_the_ID(), '_super_product', true ),
+            'label'   => 'Valor del producto',
+            'class'             => '_super_product',
+            'style'             => '',
+            'wrapper_class'     => '',
+            'desc_tip' => false,
+            'description' => 'la comisión se realiza sobre el mismo valor del producto',
+        ) );
+
+        woocommerce_wp_textarea_input( array(
+            'id'          => 'epayco_comition',
+            'value'       => get_post_meta( get_the_ID(), 'epayco_comition', true ),
+            'label'       => 'Comisión',
+            'desc_tip'    => true,
+            'description' => 'Valor de la comisión que se paga al comercio',
+            'wrapper_class' => 'epayco_comition',
+        ) );
+
+        woocommerce_wp_select(array(
+            'id' => 'epayco_ext',
+            'value' => get_post_meta(get_the_ID(), 'epayco_ext', true),
+            'wrapper_class' => 'epayco_ext',
+            'label' => 'Tipo de dispersión',
+            'options' => array('01' => 'fija'),
+            'desc_tip'    => true,
+            'description' => 'hace referencia al tipo de fee que se enviará al comercio principal',
+        ));
+        echo '</div>';
+        echo  '<script type="text/javascript">
+                 function update_wjecf_apply_silently_field(  ) { 
+                        if (!jQuery("#_super_product").prop("checked")) {
+						jQuery(".epayco_comition").show();
+                        } else {
+                            jQuery(".epayco_comition").hide();
+                        }
+                }
+                update_wjecf_apply_silently_field()
+                jQuery("#_super_product").click( update_wjecf_apply_silently_field );
+                </script>
+        ';
+
+    }
+    add_action( 'woocommerce_process_product_meta', 'epayco_save_fields', 10, 2 );
+    function epayco_save_fields( $id, $post ){
+        update_post_meta( $id, '_super_product', $_POST['_super_product'] );
+        update_post_meta( $id, 'p_cust_id_client', $_POST['p_cust_id_client'] );
+        update_post_meta( $id, 'epayco_comition', $_POST['epayco_comition'] );
+        update_post_meta( $id, 'epayco_ext', $_POST['epayco_ext'] );
+    }
+    add_action('admin_head', 'epayco_css_icon');
+    function epayco_css_icon(){
+        echo '<style>
+        #woocommerce-product-data ul.wc-tabs li.epayco_options.epayco_tab a:before{
+            content: "\f307";
+        }
+        </style>';
     }
 
 }
