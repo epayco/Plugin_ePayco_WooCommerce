@@ -659,7 +659,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $receiversa['id'] = $epayco_p_cust_id_client[0];
                     $epayco_super_product = get_post_meta( $product["product_id"], '_super_product' );
                     $epayco_epayco_comition = get_post_meta( $product["product_id"], 'epayco_comition' );
-
                     if($epayco_super_product[0] != "yes"){
                         $productTotalComision = floatval($epayco_epayco_comition[0])*$product["quantity"];
                         $receiversa['total'] = floatval($product['total']) ;
@@ -827,6 +826,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             var bntPagar = document.getElementById("btn_epayco");
                             bntPagar.addEventListener("click", openChekout);
     
+                            let responseUrl = document.getElementById("response").textContent;
                             handler.onCloseModal = function () {};
                             var isForceRedirect='.$force_redirect.';
                             if(isForceRedirect == true){
@@ -837,6 +837,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     window.location.href = responseUrl
                                 });
                             }
+
                             setTimeout(openChekout, 2000)  
                         </script>
                         </form>
