@@ -818,7 +818,13 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             var bntPagar = document.getElementById("btn_epayco");
                             bntPagar.addEventListener("click", openChekout);
     
+                            let responseUrl = document.getElementById("response").textContent;
                             handler.onCloseModal = function () {};
+                            handler.onCreated(function(response) {
+                            }).onResponse(function(response) {
+                            }).onClosed(function(response) {
+                                window.location.href = responseUrl
+                            });
                             setTimeout(openChekout, 2000)  
                         </script>
                         </form>
