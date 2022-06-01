@@ -5,23 +5,26 @@
 ** Se recomienda emplear la última versión disponible. **
 
 ## Versiones
-* [epayco plugin WooCommerce v6.0.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V6.0.0).
-* [epayco plugin WooCommerce v5.5.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.5.0).
-* [epayco plugin WooCommerce v5.4.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.4.0).
-* [epayco plugin WooCommerce v5.3.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.3.0).
-* [epayco plugin WooCommerce v5.2.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v5.2.0).
-* [ePayco plugin WooCommerce v5.2.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.2.x).
-* [ePayco plugin WooCommerce v5.1.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.1.X).
-* [ePayco plugin WooCommerce v5.0.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.0.X).
-* [ePayco plugin WooCommerce v4.9.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.9.x).
-* [ePayco plugin WooCommerce v4.8.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.8.X).
-* [ePayco plugin WooCommerce v4.7.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V.4.7).
-* [ePayco plugin WooCommerce v4.6.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.6.x).
-* [ePayco plugin WooCommerce v4.5.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.5.x).
-* [ePayco plugin WooCommerce v4.4.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.4.x).
-* [ePayco plugin WooCommerce v4.3.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.3.x).
-* [ePayco plugin WooCommerce v4.2.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.2.x).
-* [ePayco plugin WooCommerce v4.0.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.0.x).
+
+| Versión | URL de repositorio | Versión compatible con Woocommerce | ¿Incluye soporte de ePayco? |
+| :---:   | :---:     | :---:    | :---:    |
+| 6.0.0   | [epayco plugin WooCommerce v6.0.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V6.0.0)     | 6.0.0 o superior   | check    |
+| 5.5.0   | [epayco plugin WooCommerce v5.5.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.5.0)     | 5.0.0 o superior   | check    |
+| 5.4.0   | [epayco plugin WooCommerce v5.4.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.4.0)     | 5.0.0 o superior   | check    |
+| 5.3.0   | [epayco plugin WooCommerce v5.3.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.3.0)     | 5.0.0 o superior   | check    |
+| 5.2.0   | [epayco plugin WooCommerce v5.2.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v5.2.0)     | 5.0.0 o superior   | check    |
+| 5.1.x   | [ePayco plugin WooCommerce v5.1.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.1.X)     | 5.0.0 o superior   | check    |
+| 4.9.x   | [ePayco plugin WooCommerce v4.9.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.9.x)     |  4.5.0 o superior  | check    |
+| 4.8.X   | [ePayco plugin WooCommerce v4.8.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.8.X)     | 4.5.0 o superior   | check    |
+| 4.7.x   | [ePayco plugin WooCommerce v4.7.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V.4.7)     | 4.5.0 o superior    | check    |
+| 4.6.x   | [ePayco plugin WooCommerce v4.6.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.6.x)     | 4.5.0 o superior   | check    |
+| 4.5.x   | [ePayco plugin WooCommerce v4.5.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.5.x)     | 4.0.0 o superior   | check    |
+| 4.4.x   | [ePayco plugin WooCommerce v4.4.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.4.x)     | 4.0.0 o superior   | check    |
+| 4.3.x   | [ePayco plugin WooCommerce v4.3.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.3.x)     | 4.0.0 o superior   | check    |
+| 4.2.x   | [ePayco plugin WooCommerce v4.2.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.2.x)     | 4.0.0 o superior   | check    |
+| 4.0.x   | [ePayco plugin WooCommerce v4.0.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.0.x).    | 4.0.0 o superior   | 4.0.0 o superior    |
+| git status   | git status     | git status    | git status    |
+
 * [ePayco plugin WooCommerce v3.9.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v3.9.x).
 * [ePayco plugin WooCommerce v3.8.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/3.8.x).
 * [ePayco plugin WooCommerce v3.7.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/3.7.0).
