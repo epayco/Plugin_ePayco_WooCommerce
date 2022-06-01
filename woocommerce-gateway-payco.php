@@ -1580,11 +1580,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     }
 
 
-    //Actualización de versión
-    global $epayco_db_version;
-    $epayco_db_version = '1.0';
-    //Verificar si la version de la base de datos esta actualizada
-
     function epayco_update_db_check()
     {
             EpaycoOrder::setup();   
