@@ -135,10 +135,6 @@ class EpaycoOrder{
 
         dbDelta($sql);
 
-        global $epayco_db_version;
-
-        add_option('epayco_db_version', $epayco_db_version);
-
     }
 
     /**
