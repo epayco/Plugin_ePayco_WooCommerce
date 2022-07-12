@@ -706,8 +706,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }
                 $descripcion = implode(' - ', $descripcionParts);
                 $currency = strtolower(get_woocommerce_currency());
-                //$testMode = $this->epayco_testmode == "yes" ? "true" : "false";
-                $testMode = "true";
+                $testMode = $this->epayco_testmode == "yes" ? "true" : "false";
                 $basedCountry = WC()->countries->get_base_country();
                 $external=$this->epayco_type_checkout;
                 $redirect_url =get_site_url() . "/";
@@ -754,7 +753,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     <br><small class="epayco-subtitle"> Si no se cargan automáticamente, de clic en el botón "Pagar con ePayco</small>';
                     $epaycoButtonImage =  plugin_dir_url(__FILE__).'lib/Boton-color-espanol.png';
                 }
-                die();
 
                 echo sprintf('
                         <div class="loader-container">
@@ -782,7 +780,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             var data = {
                                 name: "%s",
                                 description: "%s",
-                                extra1: "%s",
+                                invoice: "%s",
                                 currency: "%s",
                                 amount: "%s",
                                 tax_base: "%s",
