@@ -101,9 +101,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             }
 
             function order_received_message( $text, $order ) {
-                if(!empty(sanitize_text_field($_GET['msg']))){
-                    return $text .' '.sanitize_text_field($_GET['msg']);
-                }
+
                 return $text;
             }
 
@@ -659,17 +657,17 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $epayco_p_cust_id_client = get_post_meta( $product["product_id"], 'p_cust_id_client' );
                     if ( count($epayco_p_cust_id_client) ) {
                         $receiversa['id'] = $epayco_p_cust_id_client[0];
-                        $epayco_super_product = get_post_meta( $product["product_id"], '_super_product' );
-                        $epayco_epayco_comition = get_post_meta( $product["product_id"], 'epayco_comition' );
-                        if($epayco_super_product[0] != "yes"){
-                            $productTotalComision = floatval($epayco_epayco_comition[0])*$product["quantity"];
-                            $receiversa['total'] = floatval($product['total']) ;
-                            $fee = floatval($product['total'])-$productTotalComision;
+                        $epayco_super_product = get_post_meta($product["product_id"], '_super_product');
+                        $epayco_epayco_comition = get_post_meta($product["product_id"], 'epayco_comition');
+                        if ($epayco_super_product[0] != "yes") {
+                            $productTotalComision = floatval($epayco_epayco_comition[0]) * $product["quantity"];
+                            $receiversa['total'] = floatval($product['total']);
+                            $fee = floatval($product['total']) - $productTotalComision;
                             $receiversa['iva'] = 0;
                             $receiversa['base_iva'] = 0;
                             $receiversa['fee'] = $fee;
-                        }else{
-                            $receiversa['total'] =  floatval($product['total']);
+                        } else {
+                            $receiversa['total'] = floatval($product['total']);
                             $receiversa['iva'] = 0;
                             $receiversa['base_iva'] = 0;
                             $receiversa['fee'] = 0;
@@ -680,6 +678,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     }
                     $clearData = str_replace('_', ' ', $this->string_sanitize($product['name']));
                     $descripcionParts[] = $clearData;
+
                 }
                 $receivers = $receiversData;
                 $split = 'false';
@@ -771,7 +770,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             </a>
                         <form id="appGateway">
                             <script
-                               src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js?version=1643645084821">
+                               src="https://checkout.epayco.co/checkout.js">
                             </script>
                             <script>
                             var handler = ePayco.checkout.configure({
@@ -782,7 +781,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             var data = {
                                 name: "%s",
                                 description: "%s",
-                                invoice: "%s",
+                                extra1: "%s",
                                 currency: "%s",
                                 amount: "%s",
                                 tax_base: "%s",
@@ -824,7 +823,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             }
                             
                             var openChekout = function () {
-                              handler.open(data)
+                              handler.open(data);
                             }
                             var bntPagar = document.getElementById("btn_epayco");
                             bntPagar.addEventListener("click", openChekout);
@@ -928,11 +927,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $order_id_rpl  = str_replace('?ref_payco','',$order_id_explode);
                 $order_id = $order_id_rpl[0];
                 $order = new WC_Order($order_id);
-                $ref_payco = sanitize_text_field($_GET['ref_payco']);
                 $isConfirmation = sanitize_text_field($_GET['confirmation']) == 1;
-                if(empty($ref_payco)){
-                    $ref_payco =$order_id_rpl[1];
-                }
 
                 if ($isConfirmation){
                     $x_signature = sanitize_text_field($_REQUEST['x_signature']);
@@ -945,14 +940,17 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $x_approval_code = trim(sanitize_text_field($_REQUEST['x_approval_code']));
                     $x_franchise = trim(sanitize_text_field($_REQUEST['x_franchise']));
                 }else{
-
+                    $ref_payco = sanitize_text_field($_REQUEST['ref_payco']);
+                    if(empty($ref_payco)){
+                        $ref_payco =$order_id_rpl[1];
+                    }
                     if (!$ref_payco)
                     {
                         $explode=explode('=',$order_id);
                         $ref_payco=$explode[1];
                     }
 
-                    $url = 'https://secure.epayco.io/validation/v1/reference/'.$ref_payco;
+                    $url = 'https://secure.epayco.co/validation/v1/reference/'.$ref_payco;
                     $response = wp_remote_get(  $url );
                     $body = wp_remote_retrieve_body( $response );
                     $jsonData = @json_decode($body, true);
@@ -1401,6 +1399,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                 if (isset($_REQUEST['confirmation'])) {
                     echo $x_cod_transaction_state;
+                    die();
                 }else{
                     if ($this->get_option('epayco_url_response' ) == 0) {
                         $redirect_url = $order->get_checkout_order_received_url();
