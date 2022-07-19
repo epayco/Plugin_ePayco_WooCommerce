@@ -35,7 +35,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             public function __construct()
             {
                 $this->id = 'epayco';
-                $this->version = '6.2.0';
+                $this->version = '6.4.0';
                 $url_icon = plugin_dir_url(__FILE__)."lib";
                 $dir_ = __DIR__."/lib";
                 if(is_dir($dir_)) {
@@ -1399,7 +1399,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                 if (isset($_REQUEST['confirmation'])) {
                     echo $x_cod_transaction_state;
-                    die();
+                    exit();
                 }else{
                     if ($this->get_option('epayco_url_response' ) == 0) {
                         $redirect_url = $order->get_checkout_order_received_url();
@@ -1424,7 +1424,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }
 
                 wp_redirect($redirect_url);
-                die();
             }
 
             /**
