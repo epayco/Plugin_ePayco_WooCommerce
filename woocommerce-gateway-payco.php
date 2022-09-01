@@ -950,6 +950,29 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         $ref_payco=$explode[1];
                     }
 
+                    if(!$ref_payco){
+                        if($this->epayco_testmode == "yes"){
+                            $order->update_status('epayco_cancelled');
+                            $order->add_order_note('Pago rechazado');
+                            $this->restore_order_stock($order->get_id());
+
+                        }else{
+                            $order->update_status('epayco-cancelled');
+                            $order->add_order_note('Pago rechazado');
+                            $this->restore_order_stock($order->get_id());
+
+                        }
+                        $woocommerce->cart->empty_cart();
+                        foreach ($order->get_items() as $item) {
+                            // Get an instance of corresponding the WC_Product object
+                            $product_id = $item->get_product()->id;
+                            $qty = $item->get_quantity(); // Get the item quantity
+                            WC()->cart->add_to_cart( $product_id ,(int)$qty);
+                        }
+                        wp_safe_redirect( wc_get_checkout_url() );
+                        exit();
+                    }
+
                     $url = 'https://secure.epayco.io/validation/v1/reference/'.$ref_payco;
                     $response = wp_remote_get(  $url );
                     $body = wp_remote_retrieve_body( $response );
