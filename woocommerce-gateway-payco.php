@@ -950,13 +950,37 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         $ref_payco=$explode[1];
                     }
 
-                    $url = 'https://secure.epayco.co/validation/v1/reference/'.$ref_payco;
+                    if(!$ref_payco){
+                        if($this->epayco_testmode == "yes"){
+                            $order->update_status('epayco_cancelled');
+                            $order->add_order_note('Pago rechazado');
+                            $this->restore_order_stock($order->get_id());
+
+                        }else{
+                            $order->update_status('epayco-cancelled');
+                            $order->add_order_note('Pago rechazado');
+                            $this->restore_order_stock($order->get_id());
+
+                        }
+                        $woocommerce->cart->empty_cart();
+                        foreach ($order->get_items() as $item) {
+                            // Get an instance of corresponding the WC_Product object
+                            $product_id = $item->get_product()->id;
+                            $qty = $item->get_quantity(); // Get the item quantity
+                            WC()->cart->add_to_cart( $product_id ,(int)$qty);
+                        }
+                        wp_safe_redirect( wc_get_checkout_url() );
+                        exit();
+                    }
+
+                    $url = 'https://secure.epayco.io/validation/v1/reference/'.$ref_payco;
                     $response = wp_remote_get(  $url );
                     $body = wp_remote_retrieve_body( $response );
                     $jsonData = @json_decode($body, true);
                     $validationData = $jsonData['data'];
                     $x_signature = trim($validationData['x_signature']);
-                    $x_cod_transaction_state = (int)trim($validationData['x_cod_transaction_state']);
+                    $x_cod_transaction_state = (int)trim($validationData['x_cod_transaction_state']) ? 
+                        (int)trim($validationData['x_cod_transaction_state']) : (int)trim($validationData['x_cod_response']);
                     $x_ref_payco = trim($validationData['x_ref_payco']);
                     $x_transaction_id = trim($validationData['x_transaction_id']);
                     $x_amount = trim($validationData['x_amount']);
@@ -1157,6 +1181,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     $this->restore_order_stock($order->get_id(),"decrease");
                                 }
                             }
+                        echo "3";
                         } break;
                         case 4: {
                             if($isTestMode=="true"){
@@ -1213,6 +1238,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             $order->update_status('refunded');
                             $order->add_order_note('Pago Reversado');
                             $this->restore_order_stock($order->get_id());
+                            echo "6";
                         } break;
                         case 10:{
                             if($isTestMode=="true"){
@@ -1329,6 +1355,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 $order->add_order_note('Pago fallido o abandonado');
                                 $this->restore_order_stock($order->get_id());
                             }
+                            echo "default";
                         } break;
                     }
 
@@ -1379,7 +1406,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         }else{
                             $message = 'Firma no valida';
                             $orderStatus = 'epayco-failed';
-                            if($x_cod_transaction_state!=1){
+                            if($x_cod_transaction_state!=1 && !empty($x_cod_transaction_state)){
                                 if($current_state == "epayco_failed" ||
                                 $current_state == "epayco_cancelled" ||
                                 $current_state == "failed" ||
@@ -1387,14 +1414,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 $current_state == "epayco-failed"
                             ){}else{
                                 $this->restore_order_stock($order->get_id());
+                                $order->update_status($orderStatus);
+                                $order->add_order_note($message);
+                                $messageClass = 'error';
                                 }
                             }
+                            echo $x_cod_transaction_state." firma no valida: ".$validation;
                         }
-
                     }
-                    $order->update_status($orderStatus);
-                    $order->add_order_note($message);
-                    $messageClass = 'error';
                 }
 
                 if (isset($_REQUEST['confirmation'])) {
@@ -1433,7 +1460,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             {
                 $username = sanitize_text_field($validationData['epayco_publickey']);
                 $password = sanitize_text_field($validationData['epayco_privatey']);
-                $response = wp_remote_post( 'https://apify.epayco.co/login', array(
+                $response = wp_remote_post( 'https://apify.epayco.io/login', array(
                     'headers' => array(
                         'Authorization' => 'Basic ' . base64_encode( $username . ':' . $password ),
                     ),
