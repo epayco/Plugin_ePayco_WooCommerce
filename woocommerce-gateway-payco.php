@@ -35,7 +35,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             public function __construct()
             {
                 $this->id = 'epayco';
-                $this->version = '6.4.0';
+                $this->version = '6.5.0';
+
                 $url_icon = plugin_dir_url(__FILE__)."lib";
                 $dir_ = __DIR__."/lib";
                 if(is_dir($dir_)) {

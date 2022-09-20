@@ -39,6 +39,7 @@
 * [ePayco plugin WooCommerce v2.6](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/2.6).
 * [ePayco plugin WooCommerce v2.5](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v2.5.x).
 
+
 ## Tabla de contenido
 
 * [Requisitos](#requisitos)
