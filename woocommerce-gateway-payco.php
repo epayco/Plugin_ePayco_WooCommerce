@@ -6,7 +6,11 @@
  * @wordpress-plugin
  * Plugin Name:       ePayco Gateway WooCommerce
  * Description:       Plugin ePayco Gateway for WooCommerce.
+<<<<<<< HEAD
  * Version:           6.6.0
+=======
+ * Version:           6.5.0
+>>>>>>> master
  * Author:            ePayco
  * Author URI:        http://epayco.co
  * License:           GNU General Public License v3.0
@@ -35,7 +39,11 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             public function __construct()
             {
                 $this->id = 'epayco';
+<<<<<<< HEAD
                 $this->version = '6.6.0';
+=======
+                $this->version = '6.5.0';
+>>>>>>> master
 
                 $url_icon = plugin_dir_url(__FILE__)."lib";
                 $dir_ = __DIR__."/lib";
