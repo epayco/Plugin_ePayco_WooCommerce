@@ -790,7 +790,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             var data = {
                                 name: "%s",
                                 description: "%s",
-                                extra1: "%s",
+                                invoice: "%s",
                                 currency: "%s",
                                 amount: "%s",
                                 tax_base: "%s",
