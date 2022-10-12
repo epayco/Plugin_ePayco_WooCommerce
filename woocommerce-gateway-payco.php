@@ -36,7 +36,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             {
                 $this->id = 'epayco';
                 $this->version = '6.7.0';
-
+                
                 $url_icon = plugin_dir_url(__FILE__)."lib";
                 $dir_ = __DIR__."/lib";
                 if(is_dir($dir_)) {
@@ -665,25 +665,68 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 foreach ($order->get_items() as $product) {
                     $epayco_p_cust_id_client = get_post_meta( $product["product_id"], 'p_cust_id_client' );
                     if ( count($epayco_p_cust_id_client) ) {
-                        $receiversa['id'] = $epayco_p_cust_id_client[0];
-                        $epayco_super_product = get_post_meta($product["product_id"], '_super_product');
-                        $epayco_epayco_comition = get_post_meta($product["product_id"], 'epayco_comition');
-                        if ($epayco_super_product[0] != "yes") {
-                            $productTotalComision = floatval($epayco_epayco_comition[0]) * $product["quantity"];
-                            $receiversa['total'] = floatval($product['total']);
-                            $fee = floatval($product['total']) - $productTotalComision;
-                            $receiversa['iva'] = 0;
-                            $receiversa['base_iva'] = 0;
-                            $receiversa['fee'] = $fee;
-                        } else {
-                            $receiversa['total'] = floatval($product['total']);
-                            $receiversa['iva'] = 0;
-                            $receiversa['base_iva'] = 0;
-                            $receiversa['fee'] = 0;
+                        $epayco_tipe_split= get_post_meta( $product["product_id"], 'epayco_ext' )[0];
+                        if($epayco_tipe_split == '01'){
+                            if($epayco_p_cust_id_client[0] != ""){
+                                $receiversa['id'] = $epayco_p_cust_id_client[0];
+                                $epayco_super_product = get_post_meta($product["product_id"], '_super_product');
+                                $epayco_epayco_comition = get_post_meta($product["product_id"], 'epayco_comition');
+                                if ($epayco_super_product[0] != "yes") {
+                                    $productTotalComision = floatval($epayco_epayco_comition[0]) * $product["quantity"];
+                                    $receiversa['total'] = floatval($product['total']);
+                                    $fee = floatval($product['total']) - $productTotalComision;
+                                    $receiversa['iva'] = 0;
+                                    $receiversa['base_iva'] = 0;
+                                    $receiversa['fee'] = $fee;
+                                } else {
+                                    $receiversa['total'] = floatval($product['total']);
+                                    $receiversa['iva'] = 0;
+                                    $receiversa['base_iva'] = 0;
+                                    $receiversa['fee'] = 0;
+                                }
+                                if($epayco_p_cust_id_client[0]) {
+                                    array_push($receiversData, $receiversa);
+                                }
+                            }else{
+                                $receiversa['id'] = $this->epayco_customerid;
+                                $receiversa['total'] = floatval($product['total']);
+                                $receiversa['iva'] = 0;
+                                $receiversa['base_iva'] = 0;
+                                $receiversa['fee'] = 0;
+                                array_push($receiversData, $receiversa);
+                            }
+                        }else{
+                            if($epayco_p_cust_id_client[0] != ""){
+                                $receiversa['id'] = $epayco_p_cust_id_client[0];
+                                $epayco_super_product = get_post_meta($product["product_id"], '_super_product');
+                                $epayco_epayco_comition = get_post_meta($product["product_id"], 'epayco_comition');
+
+                                if ($epayco_super_product[0] != "yes") {
+                                    $productTotalComision = ((floatval($epayco_epayco_comition[0])  * floatval($product['total']))/100);
+                                    $receiversa['total'] = floatval($product['total']);
+                                    $fee = floatval($product['total']) - $productTotalComision;
+                                    $receiversa['iva'] = 0;
+                                    $receiversa['base_iva'] = 0;
+                                    $receiversa['fee'] = $fee;
+                                } else {
+                                    $receiversa['total'] = floatval($product['total']);
+                                    $receiversa['iva'] = 0;
+                                    $receiversa['base_iva'] = 0;
+                                    $receiversa['fee'] = 0;
+                                }
+                                if($epayco_p_cust_id_client[0]) {
+                                    array_push($receiversData, $receiversa);
+                                }
+                            }else{
+                                $receiversa['id'] = $this->epayco_customerid;
+                                $receiversa['total'] = floatval($product['total']);
+                                $receiversa['iva'] = 0;
+                                $receiversa['base_iva'] = 0;
+                                $receiversa['fee'] = 0;
+                                array_push($receiversData, $receiversa);
+                            }
                         }
-                        if($epayco_p_cust_id_client[0]) {
-                            array_push($receiversData, $receiversa);
-                        }
+
                     }
                     $clearData = str_replace('_', ' ', $this->string_sanitize($product['name']));
                     $descripcionParts[] = $clearData;
@@ -847,7 +890,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     window.location.href = responseUrl
                                 });
                             }
-
+                            
                             setTimeout(openChekout, 2000)  
                         </script>
                         </form>
@@ -1941,7 +1984,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             'value' => get_post_meta(get_the_ID(), 'epayco_ext', true),
             'wrapper_class' => 'epayco_ext',
             'label' => 'Tipo de dispersión',
-            'options' => array('01' => 'fija'),
+            'options' => array('01' => 'fija','02' => 'porcentaje'),
             'desc_tip'    => true,
             'description' => 'hace referencia al tipo de fee que se enviará al comercio principal',
         ));
