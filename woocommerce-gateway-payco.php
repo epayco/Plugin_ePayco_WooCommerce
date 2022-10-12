@@ -757,10 +757,12 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 foreach ($receivers as  $receiver) {
                     array_push($receiversInfo, $receiver);
                 }
-                if(count($receiversInfo) == 1){
+                if(count($receiversInfo) > 0){
                     foreach ($receiversInfo as  $receiver) {
                         if($receiver["id"] == $this->epayco_customerid){
                             $split = 'false';
+                        }else{
+                            $split = 'true';
                         }
                     }
 
