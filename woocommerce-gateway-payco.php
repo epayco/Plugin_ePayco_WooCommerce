@@ -36,7 +36,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             {
                 $this->id = 'epayco';
                 $this->version = '6.7.0';
-                
+
                 $url_icon = plugin_dir_url(__FILE__)."lib";
                 $dir_ = __DIR__."/lib";
                 if(is_dir($dir_)) {
@@ -757,6 +757,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 foreach ($receivers as  $receiver) {
                     array_push($receiversInfo, $receiver);
                 }
+                if(count($receiversInfo) == 1){
+                    foreach ($receiversInfo as  $receiver) {
+                        if($receiver["id"] == $this->epayco_customerid){
+                            $split = 'false';
+                        }
+                    }
+
+                }
+
                 $descripcion = implode(' - ', $descripcionParts);
                 $currency = strtolower(get_woocommerce_currency());
                 $testMode = $this->epayco_testmode == "yes" ? "true" : "false";
@@ -890,8 +899,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     window.location.href = responseUrl
                                 });
                             }
-                            
-                            setTimeout(openChekout, 2000)  
+
+                               setTimeout(openChekout, 2000)  
                         </script>
                         </form>
                         </center>
