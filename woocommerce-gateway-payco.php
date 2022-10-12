@@ -1015,14 +1015,23 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                         }
                         $woocommerce->cart->empty_cart();
-                        foreach ($order->get_items() as $item) {
-                            // Get an instance of corresponding the WC_Product object
-                            $product_id = $item->get_product()->id;
-                            $qty = $item->get_quantity(); // Get the item quantity
-                            WC()->cart->add_to_cart( $product_id ,(int)$qty);
+                        if($clear_cart){
+                            foreach ($order->get_items() as $item) {
+                                // Get an instance of corresponding the WC_Product object
+                                $product_id = $item->get_product()->id;
+                                $qty = $item->get_quantity(); // Get the item quantity
+                                WC()->cart->add_to_cart( $product_id ,(int)$qty);
+                            }
+                            wp_safe_redirect( wc_get_checkout_url() );
+                            exit();
+                        }else{
+                             if ($this->get_option('epayco_url_response' ) == 0) {
+                                $redirect_url = $order->get_checkout_order_received_url();
+                            } else {
+                             
+                                $redirect_url = get_permalink($this->get_option('epayco_url_response'));
+                            }
                         }
-                        wp_safe_redirect( wc_get_checkout_url() );
-                        exit();
                     }
 
                     $url = 'https://secure.epayco.io/validation/v1/reference/'.$ref_payco;
