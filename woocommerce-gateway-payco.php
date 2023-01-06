@@ -942,7 +942,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             }
                             
                             var openChekout = function () {
-                                handler.open(data);
+                             handler.open(data);
                             }
                             
                             var checkoutOpen = function () {
