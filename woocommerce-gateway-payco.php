@@ -6,7 +6,7 @@
  * @wordpress-plugin
  * Plugin Name:       ePayco Gateway WooCommerce
  * Description:       Plugin ePayco Gateway for WooCommerce.
- * Version:           6.7.0
+ * Version:           6.7.1
  * Author:            ePayco
  * Author URI:        http://epayco.co
  * License:           GNU General Public License v3.0
@@ -35,7 +35,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             public function __construct()
             {
                 $this->id = 'epayco';
-                $this->version = '6.7.0';
+                $this->version = '6.7.1';
                 $url_icon = plugin_dir_url(__FILE__)."lib";
                 $dir_ = __DIR__."/lib";
                 if(is_dir($dir_)) {
@@ -883,12 +883,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 data.split_receivers= split_receivers
                             }
                             
-                            var openChekout = function () {
-                              handler.open(data);
-                            }
-                            var bntPagar = document.getElementById("btn_epayco");
-                            bntPagar.addEventListener("click", openChekout);
-    
                             let responseUrl = document.getElementById("response").textContent;
                             handler.onCloseModal = function () {};
                             var isForceRedirect='.$force_redirect.';
@@ -900,8 +894,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     window.location.href = responseUrl
                                 });
                             }
-
-                               setTimeout(openChekout, 2000)  
                         </script>
                         </form>
                         </center>
@@ -1080,7 +1072,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         $validation = true;
                     }
                     if("no" == $isTestPluginMode ){
-                        if($x_approval_code_value > 0 && $x_cod_transaction_state == 1){
+                        if($x_approval_code != "000000" && $x_cod_transaction_state == 1){
                             $validation = true;
                         }else{
                             if($x_cod_transaction_state != 1){
@@ -1652,6 +1644,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             {
                 wp_enqueue_script('gateway-epayco', plugin_dir_url(__FILE__).'lib/epayco.js', array(), $this->version, true );
                 wp_enqueue_style('frontend-epayco',  plugin_dir_url(__FILE__).'lib/epayco.css', array(), $this->version, null);
+                wp_enqueue_script('epayco',  'https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js', array(), $this->version, null);
             }
         }
 
