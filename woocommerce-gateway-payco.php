@@ -940,17 +940,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 data.split_rule= "multiple", // Parámetro para configuración de Split_receivers - debe de ir por defecto en multiple
                                 data.split_receivers= split_receivers
                             }
-                            
-                            var openChekout = function () {
-                             handler.open(data);
-                            }
-                            
-                            var checkoutOpen = function () {
-                                handler.open(data);
-                            }
-                            
-                            var bntPagar = document.getElementById("btn_epayco");
-                            bntPagar.addEventListener("click", checkoutOpen);
     
                             let responseUrl = document.getElementById("response").textContent;
                             handler.onCloseModal = function () {};
@@ -963,7 +952,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     window.location.href = responseUrl
                                 });
                             }
-                               setTimeout(openChekout, 2000)  
+                               
                         </script>
                         </form>
                         </center>
