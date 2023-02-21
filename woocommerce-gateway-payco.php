@@ -889,6 +889,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             <img src="'.$epaycoButtonImage.'">
                             </a>
                         <form id="appGateway">
+
                             <script>
                             var handler = ePayco.checkout.configure({
                                 key: "%s",
@@ -937,7 +938,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 data.split_rule= "multiple", // Parámetro para configuración de Split_receivers - debe de ir por defecto en multiple
                                 data.split_receivers= split_receivers
                             }
-                                                      
     
                             let responseUrl = document.getElementById("response").textContent;
                             handler.onCloseModal = function () {};
@@ -950,7 +950,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     window.location.href = responseUrl
                                 });
                             }
-                         
                                
                         </script>
                         </form>
