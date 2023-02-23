@@ -990,6 +990,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     window.location.href = responseUrl
                                 });
                             }
+
                         </script>
                         </form>
                         </center>
@@ -1169,7 +1170,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         $validation = true;
                     }
                     if("no" == $isTestPluginMode ){
-                        if($x_approval_code_value > 0 && $x_cod_transaction_state == 1){
+                        if( $x_cod_transaction_state == 1){
                             $validation = true;
                         }else{
                             if($x_cod_transaction_state != 1){
