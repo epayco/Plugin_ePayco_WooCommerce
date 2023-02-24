@@ -3061,7 +3061,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     add_filter('woocommerce_cart_item_name','add_usr_custom_session',1,3);
     function add_usr_custom_session($product_name, $values, $cart_item_key ) {
 
-        $return_string = $product_name . "<br /> Ricardo" ;// . "<br />" . print_r($values['_custom_options']);
+        $return_string = $product_name . "<br />" ;// . "<br />" . print_r($values['_custom_options']);
         return $return_string;
 
     }
@@ -3069,8 +3069,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     add_action( 'woocommerce_before_calculate_totals', 'update_custom_price', 1, 1 );
     function update_custom_price( $cart_object ) {
         foreach ( $cart_object->cart_contents as $cart_item_key => $value ) {        
-            $value['data']->set_price(18);
-            $value['data']->set_sale_price(15);
+           
         }
     }
 
