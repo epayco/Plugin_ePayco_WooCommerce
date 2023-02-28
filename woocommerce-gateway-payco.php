@@ -716,7 +716,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
              */
             public function process_payment($order_id)
             {
-                $order = new WC_Order($order_id); 
+                $order = new WC_Order($order_id);    
                 $order_id_ = $order->get_id();
                 $order_key = $order->get_order_key();
                 if (version_compare( WOOCOMMERCE_VERSION, '2.1', '>=')) {
@@ -784,7 +784,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }
                 foreach ($order->get_items() as $product) {
                     $epayco_p_cust_id_client = get_post_meta( $product["product_id"], 'p_cust_id_client' );
-                    if ( count($epayco_p_cust_id_client) ) {
+                    if ( !empty($epayco_p_cust_id_client[0]) ) {
                         $isProductoWhitSplit = true;
                         $totalSplitAmount=$totalSplitAmount+floatval($product['total']);
                         $epayco_tipe_split= get_post_meta( $product["product_id"], 'epayco_ext' )[0];
@@ -850,37 +850,72 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         }
 
                     }else{
-                        if(floatval($shipping_data_total) > 0){
-                            $receiver['id'] = $this->epayco_customerid;
-                            $receiver['total'] = floatval($product['total'])+floatval($shipping_data_total)+$tax;
-                            $receiver['iva'] = $tax;
-                            $receiver['base_iva'] = floatval($product['total'])+floatval($shipping_data_total);
-                            $receiver['fee'] = 0;
-                            array_push($receiversData, $receiver);
-                        }
+                        $shipingTotal = floatval($product['total'])+$tax;
+                        $shipingBase  = floatval($product['total']);
+                        $shipingTax = $tax;
+
+                        $receiver['id'] = $this->epayco_customerid;
+                        $receiver['total'] = $shipingTotal;
+                        $receiver['iva'] = $shipingTax;
+                        $receiver['base_iva'] = $shipingBase;
+                        $receiver['fee'] = 0;
+                        array_push($receiversData, $receiver);
                     }
                     $clearData = str_replace('_', ' ', $this->string_sanitize($product['name']));
                     $descripcionParts[] = $clearData;
 
-                }
-                $isSplitProducto = false;
-                if(floatval($totalSplitAmount != $base_tax)){
+                } 
+                $isSplitProducto = false;       
+                if(floatval($totalSplitAmount) != floatval($base_tax)){
                     foreach ($receiversData as  $receiverinfo) {
                         if($receiverinfo["id"] == $this->epayco_customerid){
                             $isSplitProducto = true;
                         }
                     }
-                    if(!$isSplitProducto){
-                        $receiver['id'] = $this->epayco_customerid;
-                        $receiver['total'] = floatval($shipping_data_total)+$tax;
-                        $receiver['iva'] = $tax;
-                        $receiver['base_iva'] = floatval($shipping_data_total);
-                        $receiver['fee'] = 0;
-                        array_push($receiversData, $receiver);
+                        $receivers= [];
+                        $receiversWithProduct= [];
+                        $receiverTotal = 0;
+                        $receiverTax = 0;
+                        $receiverBase = 0;
+
+                        foreach ($receiversData as  $k => $dato) {
+                                if($dato["id"] == $this->epayco_customerid){
+                                    $receiverTotal+=$dato["total"];
+                                    $receiverTax+=$dato["iva"];
+                                    $receiverBase+=$dato["base_iva"];
+                                    $receiver['id'] = $this->epayco_customerid;
+                                    $receiver['total'] = $receiverTotal;
+                                    $receiver['iva'] = $receiverTax;
+                                    $receiver['base_iva'] = $receiverBase;
+                                    $receiver['fee'] = 0;
+                                }
+                        }
+                        array_push($receivers, $receiver);
+                        foreach ($receiversData as  $k => $dato) {
+                            if($dato["id"] != $this->epayco_customerid){
+                                $receiver['id'] = $dato["id"];
+                                $receiver['total'] = $dato["total"];
+                                $receiver['iva'] = $dato["iva"];
+                                $receiver['base_iva'] = $dato["base_iva"];
+                                $receiver['fee'] = 0;
+                                array_push($receiversWithProduct, $receiver);
+                            }
                     }
-                    
+                        $receiversData = [];
+                        $receiver_= [];
+                        foreach ($receivers as  $k => $dato) {
+                            if($dato["id"] == $this->epayco_customerid){
+                                $receiver_['id'] = $this->epayco_customerid;
+                                $receiver_['total'] = $dato["total"]+floatval($shipping_data_total);
+                                $receiver_['iva'] = $dato["iva"];
+                                $receiver_['base_iva'] = $dato["base_iva"]+floatval($shipping_data_total);
+                                $receiver_['fee'] = 0;
+                            }
+                        }
+                        array_push($receiversData, $receiver_);
+    
                 }
-                $receivers = $receiversData;
+                $receivers = array_merge($receiversWithProduct, $receiversData);
                 $split = 'false';
                 $receiversInfo = [];
                 if(count($receivers) < 2){
@@ -914,7 +949,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         }
                     }
 
-                }
+                }              
 
                 $descripcion = implode(' - ', $descripcionParts);
                 $currency = strtolower(get_woocommerce_currency());
@@ -938,8 +973,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $address_billing=$order->get_billing_address_1();
                 $phone_billing=@$order->billing_phone;
                 $email_billing=@$order->billing_email;
-     
-                
+
+                       
                 //Busca si ya se restauro el stock
                 if (!EpaycoOrder::ifExist($order_id)) {
                     //si no se restauro el stock restaurarlo inmediatamente
@@ -1037,7 +1072,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     window.location.href = responseUrl
                                 });
                             }
-
+                               
                         </script>
                         </form>
                         </center>
@@ -1217,7 +1252,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         $validation = true;
                     }
                     if("no" == $isTestPluginMode ){
-                        if( $x_cod_transaction_state == 1){
+                        if($x_cod_transaction_state == 1){
                             $validation = true;
                         }else{
                             if($x_cod_transaction_state != 1){
@@ -3116,7 +3151,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     add_action( 'woocommerce_before_calculate_totals', 'update_custom_price', 1, 1 );
     function update_custom_price( $cart_object ) {
         foreach ( $cart_object->cart_contents as $cart_item_key => $value ) {        
-           
+
         }
     }
 
@@ -3124,8 +3159,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     add_action( 'woocommerce_cart_calculate_fees','custom_tax_surcharge_for_swiss', 10, 1 );
     function custom_tax_surcharge_for_swiss( $cart ) {
         if ( is_admin() && ! defined('DOING_AJAX') ) return;
-    
-        //var_dump(get_option('epayco_publickey') );
+
         if(isset($_COOKIE['epayco_ico'])){
             $percent = intval($_COOKIE['epayco_ico']);
             if($percent>0){
