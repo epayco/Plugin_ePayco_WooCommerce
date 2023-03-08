@@ -68,27 +68,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $this->epayco_publickey = $this->get_option('epayco_publickey');
                 $this->monto_maximo = $this->get_option('monto_maximo');
                 $this->max_monto = $this->get_option('monto_maximo');
-                $this->epayco_ico = $this->get_option('epayco_ico') ? $this->get_option('epayco_ico') : 0;
-                
-                if(isset ($this->epayco_ico) ){
-                    $cookie_name = 'epayco_ico';
-                    if(!isset($_COOKIE['epayco_ico']) ) {
-                        if($this->epayco_ico != 0){
-                            if($_COOKIE['epayco_ico'] != $this->epayco_ico){
-                                $cookie_value = $this->epayco_ico;
-                                setcookie($cookie_name, $cookie_value, time() + (600 * 600), "/");
-                            }
-                        }else{
-                            setcookie($cookie_name, 0, time() + (600 * 600), "/");
-                        }
-                        
-                    }else{
-                        if($_COOKIE['epayco_ico'] != $this->epayco_ico){
-                            $cookie_value = $this->epayco_ico;
-                            setcookie($cookie_name, $cookie_value, time() + (600 * 600), "/");
-                        }  
-                    }
-                }
                 $this->description = $this->get_option('description');
                 $this->epayco_testmode = $this->get_option('epayco_testmode');
                 if ($this->get_option('epayco_reduce_stock_pending') !== null ) {
@@ -641,14 +620,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         //'desc_tip' => true,
                         'placeholder' => '3000000',
                     ),
-                    'epayco_ico' => array(
-                        'title' => __('ICO', 'epayco_woocommerce'),
-                        'type' => 'text',
-                        'description' => __('ingresa el porcentaje ICO que se aplicara a la orden', 'epayco_woocommerce'),
-                        'default' => '0',
-                        //'desc_tip' => true,
-                        'placeholder' => '0',
-                    ),
                     'epayco_customerid' => array(
                         'title' => __('<span class="epayco-required">P_CUST_ID_CLIENTE</span>', 'epayco_woocommerce'),
                         'type' => 'text',
@@ -782,6 +753,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 if($ico>0){
                     $base_tax=$order->get_total()-$tax-$ico;
                 }
+                $post_metas = get_post_meta(get_the_ID());
                 foreach ($order->get_items() as $product) {
                     $epayco_p_cust_id_client = get_post_meta( $product["product_id"], 'p_cust_id_client' );
                     if ( !empty($epayco_p_cust_id_client[0]) ) {
@@ -864,7 +836,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $clearData = str_replace('_', ' ', $this->string_sanitize($product['name']));
                     $descripcionParts[] = $clearData;
 
-                }          
+                }
                 $isSplitProducto = false;           
                 if(floatval($totalSplitAmount) != floatval($base_tax)){
                     foreach ($receiversData as  $receiverinfo) {
@@ -3065,6 +3037,18 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
     }
 
+    add_filter('woocommerce_product_data_tabs', 'epayco_tax_settings_tabs' );
+    function epayco_tax_settings_tabs( $tabs ){
+        $tabs['epayco_tax'] = array(
+            'label'    => 'ICO',
+            'target'   => 'epayco_tax_data',
+            'class'    => array('show_if_simple'),
+            'priority' => 21,
+        );
+        return $tabs;
+
+    }
+
     /*
      * Tab content
      */
@@ -3124,12 +3108,30 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         ';
 
     }
+
+
+    add_action( 'woocommerce_product_data_panels', 'epayco_tax_panels' );
+    function epayco_tax_panels(){
+        global $post;
+        echo '<div id="epayco_tax_data" class="panel woocommerce_options_panel hidden">';
+
+        woocommerce_wp_text_input( array(
+            'id'                => 'tax_epayco',
+            'value'             => get_post_meta( get_the_ID(), 'tax_epayco', true ),
+            'label'             => 'ico',
+            'description'       => 'porcentaje del impuesto'
+        ) );
+
+    }
+
+
     add_action( 'woocommerce_process_product_meta', 'epayco_save_fields', 10, 2 );
     function epayco_save_fields( $id, $post ){
         update_post_meta( $id, '_super_product', sanitize_text_field($_POST['_super_product']) );
         update_post_meta( $id, 'p_cust_id_client',sanitize_text_field($_POST['p_cust_id_client']) );
         update_post_meta( $id, 'epayco_comition', sanitize_text_field($_POST['epayco_comition']) );
         update_post_meta( $id, 'epayco_ext', sanitize_text_field($_POST['epayco_ext']) );
+        update_post_meta( $id, 'tax_epayco', sanitize_text_field($_POST['tax_epayco']) );
     }
     add_action('admin_head', 'epayco_css_icon');
     function epayco_css_icon(){
@@ -3187,15 +3189,21 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     add_action( 'woocommerce_cart_calculate_fees','custom_tax_surcharge_for_swiss', 10, 1 );
     function custom_tax_surcharge_for_swiss( $cart ) {
         if ( is_admin() && ! defined('DOING_AJAX') ) return;
-
-        if(isset($_COOKIE['epayco_ico'])){
-            $percent = intval($_COOKIE['epayco_ico']);
-            if($percent>0){
-                # $taxes = array_sum( $cart->taxes ); // <=== This is not used in your function
-                $surcharge = ( $cart->cart_contents_total + $cart->shipping_total ) * $percent / 100;
-                // Add the fee (tax third argument disabled: false)
-                $cart->add_fee( __( 'ICO', 'woocommerce')." ($percent%)", $surcharge, false );
-            }   
+        global $woocommerce, $post;
+        $ico_value=0;
+        foreach (WC()->session->get('cart') as $key => $value) {
+            $product_id = $woocommerce->cart->get_cart_contents()[$key]['product_id'];
+            $line_subtotal = $woocommerce->cart->get_cart_contents()[$key]['line_subtotal'];
+            $line_subtotal_tax = $woocommerce->cart->get_cart_contents()[$key]['line_subtotal_tax'];
+            $line_total = $woocommerce->cart->get_cart_contents()[$key]['line_total'];
+            $product_name = $woocommerce->cart->get_cart_contents()[$key]['data']->get_name();
+            $ico = get_post_meta( $product_id, 'tax_epayco' ) ?  intval(get_post_meta( $product_id, 'tax_epayco' )[0]) : 0 ;
+            $ico_value = $ico_value + ( $line_subtotal  ) * $ico / 100;
+        }
+        
+        if($ico_value>0){
+            // Add the fee (tax third argument disabled: false)
+            $cart->add_fee( __( 'ICO', 'woocommerce')."", $ico_value, false );
         }
 
     }
