@@ -768,7 +768,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 if ($epayco_super_product[0] != "yes") {
                                     $productTotalComision = floatval($epayco_epayco_comition[0]) * $product["quantity"];
                                     $receiversa['total'] = floatval($product['total']);
-                                    $fee = floatval($product['total']) - $productTotalComision;
+                                    $fee = $productTotalComision;
                                     $receiversa['iva'] = 0;
                                     $receiversa['base_iva'] = 0;
                                     $receiversa['fee'] = $fee;
@@ -798,7 +798,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 if ($epayco_super_product[0] != "yes") {
                                     $productTotalComision = ((floatval($epayco_epayco_comition[0])  * floatval($product['total']))/100);
                                     $receiversa['total'] = floatval($product['total']);
-                                    $fee = floatval($product['total']) - $productTotalComision;
+                                    $fee = $productTotalComision;
                                     $receiversa['iva'] = 0;
                                     $receiversa['base_iva'] = 0;
                                     $receiversa['fee'] = $fee;
@@ -1069,7 +1069,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $order->get_id(),
                     $currency,
                     $order->get_total(),
-                    $base_tax,
+                    $order->get_subtotal(),
                     $tax,
                     $ico,
                     $basedCountry,
