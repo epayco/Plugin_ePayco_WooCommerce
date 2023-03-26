@@ -84,6 +84,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $this->response_data = $this->get_option('response_data');
                 $this->force_redirect = $this->get_option('force_redirect');
                 $this->clear_cart = $this->get_option('clear_cart');
+                $this->epayco_split_payment = $this->get_option('epayco_split_payment');
+                $this->epayco_split_payment_type = $this->get_option('epayco_split_payment_type');
                 $this->custom_order_numbers_enabled = $this->get_option( 'alg_wc_custom_order_numbers_enabled');
                 $this->alg_wc_custom_order_numbers_prefix = $this->get_option( 'alg_wc_custom_order_numbers_prefix');
                 add_filter('woocommerce_thankyou_order_received_text', array(&$this, 'order_received_message'), 10, 2 );
@@ -663,6 +665,20 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         'description' => __('Habilite si desea que el carrito de compras quede vacio cuando la transaccion quede en estado no aprobado', 'epayco_woocommerce'),
                         'default' => 'no',
                     ),
+                    'epayco_split_payment' => array(
+                        'title' => __('Habilitar splitpayment', 'epayco_woocommerce'),
+                        'type' => 'checkbox',
+                        'label' => __('Habilitar splitpayment', 'epayco_woocommerce'),
+                        'description' => __('Habilitar splitpayment', 'epayco_woocommerce'),
+                        'default' => 'no',
+                    ),
+                    'epayco_split_payment_type' => array(
+                        'title' => __('Tipo de splitpayment', 'epayco_woocommerce'),
+                        'type' => 'select',
+                        'css' =>'line-height: inherit',
+                        'description' => __('Seleccione el tipo de splitpayment', 'epayco_woocommerce'),
+                        'options' => array('01' => 'fija','02' => 'porcentaje'),
+                    ),
                     'alg_wc_custom_order_numbers_enabled' => array(
                         'title'    => __( 'WooCommerce Custom Order Numbers', 'epayco_woocommerce' ),
                         'desc'     => '<strong>' . __( 'Enable plugin', 'epayco_woocommerce' ) . '</strong>',
@@ -754,12 +770,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $base_tax=$order->get_total()-$tax-$ico;
                 }
                 $post_metas = get_post_meta(get_the_ID());
+                $isSplit = $this->split_payment == "yes";
                 foreach ($order->get_items() as $product) {
                     $epayco_p_cust_id_client = get_post_meta( $product["product_id"], 'p_cust_id_client' );
-                    if ( !empty($epayco_p_cust_id_client[0]) ) {
+                    if ( !empty($epayco_p_cust_id_client[0]) && $isSplit ) {
                         $isProductoWhitSplit = true;
                         $totalSplitAmount=$totalSplitAmount+floatval($product['total']);
-                        $epayco_tipe_split= get_post_meta( $product["product_id"], 'epayco_ext' )[0];
+                        //$epayco_tipe_split= get_post_meta( $product["product_id"], 'epayco_ext' )[0];
+                        $epayco_tipe_split= $this->epayco_split_payment_type;
                         if($epayco_tipe_split == '01'){
                             if($epayco_p_cust_id_client[0] != ""){
                                 $receiversa['id'] = $epayco_p_cust_id_client[0];
@@ -3084,7 +3102,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             'wrapper_class' => 'epayco_comition',
         ) );
 
-        woocommerce_wp_select(array(
+        /*woocommerce_wp_select(array(
             'id' => 'epayco_ext',
             'value' => get_post_meta(get_the_ID(), 'epayco_ext', true),
             'wrapper_class' => 'epayco_ext',
@@ -3092,7 +3110,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             'options' => array('01' => 'fija','02' => 'porcentaje'),
             'desc_tip'    => true,
             'description' => 'hace referencia al tipo de fee que se enviará al comercio principal',
-        ));
+        ));*/
         echo '</div>';
         echo  '<script type="text/javascript">
                  function update_wjecf_apply_silently_field(  ) { 
@@ -3130,7 +3148,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         update_post_meta( $id, '_super_product', sanitize_text_field($_POST['_super_product']) );
         update_post_meta( $id, 'p_cust_id_client',sanitize_text_field($_POST['p_cust_id_client']) );
         update_post_meta( $id, 'epayco_comition', sanitize_text_field($_POST['epayco_comition']) );
-        update_post_meta( $id, 'epayco_ext', sanitize_text_field($_POST['epayco_ext']) );
+        //update_post_meta( $id, 'epayco_ext', sanitize_text_field($_POST['epayco_ext']) );
         update_post_meta( $id, 'tax_epayco', sanitize_text_field($_POST['tax_epayco']) );
     }
     add_action('admin_head', 'epayco_css_icon');
