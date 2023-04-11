@@ -756,10 +756,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $ico=0;
                 foreach($order->get_items('tax') as $item_id => $item ) {
                     if( strtolower( $item->get_label() ) == 'iva' ){
-                        $iva = round($item->get_tax_total(),2);
+                        $iva += round($item->get_tax_total(),2);
                     }
                     if( strtolower( $item->get_label() ) == 'ico'){
-                        $ico = round($item->get_tax_total(),2);
+                        $ico += round($item->get_tax_total(),2);
                     }
                 }
                 if($ico ==0 && $iva==0){
