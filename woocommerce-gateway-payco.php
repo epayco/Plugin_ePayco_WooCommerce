@@ -1028,6 +1028,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             <script
                                src="https://checkout.epayco.co/checkout.js">
                             </script>
+
                             <script>
                             var handler = ePayco.checkout.configure({
                                 key: "%s",
@@ -1076,7 +1077,11 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 data.splitpayment= "true", // Indicación de funcionalidad split
                                 data.split_rule= "multiple", // Parámetro para configuración de Split_receivers - debe de ir por defecto en multiple
                                 data.split_receivers= split_receivers
+
                             }*/
+
+                            }
+
     
                             let responseUrl = document.getElementById("response").textContent;
                             handler.onCloseModal = function () {};
