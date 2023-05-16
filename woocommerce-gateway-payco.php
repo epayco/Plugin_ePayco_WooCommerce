@@ -6,7 +6,7 @@
  * @wordpress-plugin
  * Plugin Name:       ePayco Gateway WooCommerce
  * Description:       Plugin ePayco Gateway for WooCommerce.
- * Version:           6.7.2
+ * Version:           6.7.3
  * Author:            ePayco
  * Author URI:        http://epayco.co
  * License:           GNU General Public License v3.0
@@ -38,7 +38,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             public function __construct()
             {
                 $this->id = 'epayco';
-                $this->version = '6.7.0';
+                $this->version = '6.7.3';
                 $url_icon = plugin_dir_url(__FILE__)."lib";
                 $dir_ = __DIR__."/lib";
                 if(is_dir($dir_)) {
@@ -780,8 +780,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 foreach ($order->get_items() as $product) {
                     $clearData = str_replace('_', ' ', $this->string_sanitize($product['name']));
                     $descripcionParts[] = $clearData;
-                }
 
+                }
+                $isSplitProducto = false;
+                $split = 'false';
                 $descripcion = implode(' - ', $descripcionParts);
                 $currency = strtolower(get_woocommerce_currency());
                 $testMode = $this->epayco_testmode == "yes" ? "true" : "false";
@@ -842,6 +844,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             <script
                                src="https://checkout.epayco.co/checkout.js">
                             </script>
+
                             <script>
                             var handler = ePayco.checkout.configure({
                                 key: "%s",
@@ -868,7 +871,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 email_billing: "%s",
                                 mobilephone_billing: "%s",
                             }
-                            
     
                             let responseUrl = document.getElementById("response").textContent;
                             handler.onCloseModal = function () {};
@@ -2845,7 +2847,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         <?php
     }
 
-    add_filter('woocommerce_product_data_tabs', 'epayco_product_settings_tabs' );
+    //add_filter('woocommerce_product_data_tabs', 'epayco_product_settings_tabs' );
     function epayco_product_settings_tabs( $tabs ){
         $tabs['epayco'] = array(
             'label'    => 'Receivers',
@@ -2872,7 +2874,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     /*
      * Tab content
      */
-    add_action( 'woocommerce_product_data_panels', 'epayco_product_panels' );
+    //add_action( 'woocommerce_product_data_panels', 'epayco_product_panels' );
     function epayco_product_panels(){
         global $post;
         echo '<div id="epayco_product_data" class="panel woocommerce_options_panel hidden">';
@@ -2900,7 +2902,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             'value'       => get_post_meta( get_the_ID(), 'epayco_comition', true ),
             'label'       => 'Comisión',
             'desc_tip'    => true,
-            'description' => 'Valor de la comisión que se paga al comercio',
+            'description' => 'Tenga en cuenta que el tipo de dispersión a realizar corresponde con el definido en la configuración general del plugin.',
             'wrapper_class' => 'epayco_comition',
         ) );
 
@@ -2945,7 +2947,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     }*/
 
 
-    add_action( 'woocommerce_process_product_meta', 'epayco_save_fields', 10, 2 );
+    //add_action( 'woocommerce_process_product_meta', 'epayco_save_fields', 10, 2 );
     function epayco_save_fields( $id, $post ){
         update_post_meta( $id, '_super_product', sanitize_text_field($_POST['_super_product']) );
         update_post_meta( $id, 'p_cust_id_client',sanitize_text_field($_POST['p_cust_id_client']) );
@@ -2953,7 +2955,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         //update_post_meta( $id, 'epayco_ext', sanitize_text_field($_POST['epayco_ext']) );
         update_post_meta( $id, 'tax_epayco', sanitize_text_field($_POST['tax_epayco']) );
     }
-    add_action('admin_head', 'epayco_css_icon');
+    //add_action('admin_head', 'epayco_css_icon');
     function epayco_css_icon(){
         echo '<style>
         #woocommerce-product-data ul.wc-tabs li.epayco_options.epayco_tab a:before{
