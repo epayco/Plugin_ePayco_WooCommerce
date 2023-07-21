@@ -1511,6 +1511,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     } else {
                         $woocommerce->cart->empty_cart();
                         $redirect_url = get_permalink($this->get_option('epayco_url_response'));
+                        $redirect_url = add_query_arg(['ref_payco'=>$ref_payco] , $redirect_url);
                     }
                 }
 
