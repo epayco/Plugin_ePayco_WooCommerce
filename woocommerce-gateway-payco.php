@@ -839,6 +839,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             <script
                                src="https://checkout.epayco.co/checkout.js">
                             </script>
+
                             <script>
                             var handler = ePayco.checkout.configure({
                                 key: "%s",
@@ -1648,7 +1649,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             {
                 wp_enqueue_script('gateway-epayco', plugin_dir_url(__FILE__).'lib/epayco.js', array(), $this->version, true );
                 wp_enqueue_style('frontend-epayco',  plugin_dir_url(__FILE__).'lib/epayco.css', array(), $this->version, null);
-                wp_enqueue_script('epayco',  'https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js', array(), $this->version, null);
+                wp_enqueue_script('epayco',  'https://checkout.epayco.co/checkout.js', array(), $this->version, null);
             }
 
 
@@ -2911,6 +2912,23 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         ';
 
     }
+
+
+    /*add_action( 'woocommerce_product_data_panels', 'epayco_tax_panels' );
+    function epayco_tax_panels(){
+        global $post;
+        echo '<div id="epayco_tax_data" class="panel woocommerce_options_panel hidden">';
+
+        woocommerce_wp_text_input( array(
+            'id'                => 'tax_epayco',
+            'value'             => get_post_meta( get_the_ID(), 'tax_epayco', true ),
+            'label'             => 'ico',
+            'description'       => 'porcentaje del impuesto'
+        ) );
+
+    }*/
+
+
     //add_action( 'woocommerce_process_product_meta', 'epayco_save_fields', 10, 2 );
     function epayco_save_fields( $id, $post ){
         update_post_meta( $id, '_super_product', sanitize_text_field($_POST['_super_product']) );
