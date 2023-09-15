@@ -839,6 +839,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             <script
                                src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js">
                             </script>
+
                             <script>
                             var handler = ePayco.checkout.configure({
                                 key: "%s",
@@ -895,7 +896,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $order->get_id(),
                     $currency,
                     $order->get_total(),
-                    $order->get_subtotal(),
+                    $base_tax,
                     $iva,
                     $ico,
                     $basedCountry,
@@ -1721,26 +1722,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         <?php
                     }
                 }
-                if ( 'yes' !== get_option( 'alg_custom_order_numbers_no_meta_admin_notice', '' ) ) {
-                    if ( 'yes' === get_option( 'alg_custom_order_number_old_orders_to_update_meta_key', '' ) ) {
-                        if ( '' === get_option( 'alg_custom_order_numbers_update_meta_key_in_database', '' ) ) {
-                            ?>
-                            <div class=''>
-                                <div class="con-lite-message notice notice-info" style="position: relative;">
-                                    <p style="margin: 10px 0 10px 10px; font-size: medium;">
-                                        <?php
-                                        echo esc_html_e( 'In order to make the previous orders searchable on Orders page where meta key of the custom order number is not present, we need to update the database. Please click the "Update Now" button to do this. The database update process will run in the background.', 'epayco_woocommerce' );
-                                        ?>
-                                    </p>
-                                    <p class="submit" style="margin: -10px 0 10px 10px;">
-                                        <a class="button-primary button button-large" id="con-lite-update" href="edit.php?post_type=shop_order&action=alg_custom_order_numbers_update_old_con_with_meta_key"><?php esc_html_e( 'Update Now', 'epayco_woocommerce' ); ?></a>
-                                    </p>
-                                </div>
-                            </div>
-                            <?php
-                        }
-                    }
-                }
+                
             }
 
             /**
@@ -2911,6 +2893,23 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         ';
 
     }
+
+
+    /*add_action( 'woocommerce_product_data_panels', 'epayco_tax_panels' );
+    function epayco_tax_panels(){
+        global $post;
+        echo '<div id="epayco_tax_data" class="panel woocommerce_options_panel hidden">';
+
+        woocommerce_wp_text_input( array(
+            'id'                => 'tax_epayco',
+            'value'             => get_post_meta( get_the_ID(), 'tax_epayco', true ),
+            'label'             => 'ico',
+            'description'       => 'porcentaje del impuesto'
+        ) );
+
+    }*/
+
+
     //add_action( 'woocommerce_process_product_meta', 'epayco_save_fields', 10, 2 );
     function epayco_save_fields( $id, $post ){
         update_post_meta( $id, '_super_product', sanitize_text_field($_POST['_super_product']) );
