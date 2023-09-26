@@ -839,7 +839,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             <script
                                src="https://checkout.epayco.co/checkout.js">
                             </script>
-
                             <script>
                             var handler = ePayco.checkout.configure({
                                 key: "%s",
@@ -860,19 +859,16 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 external: "%s",
                                 confirmation: "%s",
                                 response: "%s",
-                                //Atributos cliente
                                 name_billing: "%s",
                                 address_billing: "%s",
                                 email_billing: "%s",
                                 mobilephone_billing: "%s",
-                            }
-                                                 
+                            }                 
                             var openChekout = function () {
                               handler.open(data);
                             }
                             var bntPagar = document.getElementById("btn_epayco");
                             bntPagar.addEventListener("click", openChekout);
-    
                             let responseUrl = document.getElementById("response").textContent;
                             handler.onCloseModal = function () {};
                             var isForceRedirect='.$force_redirect.';
@@ -884,7 +880,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     window.location.href = responseUrl
                                 });
                             }
-
                                setTimeout(openChekout, 2000)  
                         </script>
                         </form>
@@ -1722,26 +1717,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         <?php
                     }
                 }
-                if ( 'yes' !== get_option( 'alg_custom_order_numbers_no_meta_admin_notice', '' ) ) {
-                    if ( 'yes' === get_option( 'alg_custom_order_number_old_orders_to_update_meta_key', '' ) ) {
-                        if ( '' === get_option( 'alg_custom_order_numbers_update_meta_key_in_database', '' ) ) {
-                            ?>
-                            <div class=''>
-                                <div class="con-lite-message notice notice-info" style="position: relative;">
-                                    <p style="margin: 10px 0 10px 10px; font-size: medium;">
-                                        <?php
-                                        echo esc_html_e( 'In order to make the previous orders searchable on Orders page where meta key of the custom order number is not present, we need to update the database. Please click the "Update Now" button to do this. The database update process will run in the background.', 'epayco_woocommerce' );
-                                        ?>
-                                    </p>
-                                    <p class="submit" style="margin: -10px 0 10px 10px;">
-                                        <a class="button-primary button button-large" id="con-lite-update" href="edit.php?post_type=shop_order&action=alg_custom_order_numbers_update_old_con_with_meta_key"><?php esc_html_e( 'Update Now', 'epayco_woocommerce' ); ?></a>
-                                    </p>
-                                </div>
-                            </div>
-                            <?php
-                        }
-                    }
-                }
+                
             }
 
             /**
