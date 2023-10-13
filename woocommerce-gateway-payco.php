@@ -839,7 +839,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             <script
                                src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js">
                             </script>
-
                             <script>
                             var handler = ePayco.checkout.configure({
                                 key: "%s",
@@ -860,19 +859,16 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 external: "%s",
                                 confirmation: "%s",
                                 response: "%s",
-                                //Atributos cliente
                                 name_billing: "%s",
                                 address_billing: "%s",
                                 email_billing: "%s",
                                 mobilephone_billing: "%s",
-                            }
-                                                 
+                            }                 
                             var openChekout = function () {
                               handler.open(data);
                             }
                             var bntPagar = document.getElementById("btn_epayco");
                             bntPagar.addEventListener("click", openChekout);
-    
                             let responseUrl = document.getElementById("response").textContent;
                             handler.onCloseModal = function () {};
                             var isForceRedirect='.$force_redirect.';
@@ -884,7 +880,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     window.location.href = responseUrl
                                 });
                             }
-
                                setTimeout(openChekout, 2000)  
                         </script>
                         </form>
@@ -1241,13 +1236,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 EpaycoOrder::updateStockDiscount($order_id,1);
                             }
 
-                            if($isTestMode=="true"){
-                                $message = 'Pago pendiente de aprobación Prueba';
-                                $orderStatus = "epayco_on_hold";
-                            }else{
-                                $message = 'Pago pendiente de aprobación';
-                                $orderStatus = "epayco-on-hold";
-                            }
+                            $orderStatus = "on-hold";
                             if($x_franchise != "PSE"){
                                 $order->update_status($orderStatus);
                                 $order->add_order_note($message);
