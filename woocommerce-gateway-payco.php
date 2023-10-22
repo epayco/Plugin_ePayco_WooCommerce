@@ -1235,7 +1235,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 //actualizar el stock
                                 EpaycoOrder::updateStockDiscount($order_id,1);
                             }
-
+			    $message = 'Pago pendiente de aprobación';
                             $orderStatus = "on-hold";
                             if($x_franchise != "PSE"){
                                 $order->update_status($orderStatus);
