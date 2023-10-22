@@ -848,7 +848,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             var data = {
                                 name: "%s",
                                 description: "%s",
-                                extra1: "%s",
+                                invoice: "%s",
                                 currency: "%s",
                                 amount: "%s",
                                 tax_base: "%s",
@@ -1236,13 +1236,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 EpaycoOrder::updateStockDiscount($order_id,1);
                             }
 
-                            if($isTestMode=="true"){
-                                $message = 'Pago pendiente de aprobación Prueba';
-                                $orderStatus = "epayco_on_hold";
-                            }else{
-                                $message = 'Pago pendiente de aprobación';
-                                $orderStatus = "epayco-on-hold";
-                            }
+                            $orderStatus = "on-hold";
                             if($x_franchise != "PSE"){
                                 $order->update_status($orderStatus);
                                 $order->add_order_note($message);
