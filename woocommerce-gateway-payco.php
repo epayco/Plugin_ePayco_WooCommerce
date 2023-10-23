@@ -270,7 +270,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 </style>
                 <div class="container-fluid">
                     <div class="panel panel-default" style="">
-                        <img  src="<?php echo plugin_dir_url(__FILE__).'lib/logo.png' ?>">
+                        <img  src="<?php echo plugin_dir_url(__FILE__).'lib/logo.svg' ?>">
                         <div id="path_upload"  hidden>
                         <?php esc_html_e( $logo_url, 'text_domain' ); ?>
                         </div>
@@ -285,9 +285,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         </div>
 
                         <div style ="color: #31708f; background-color: #d9edf7; border-color: #bce8f1;padding: 10px;border-radius: 5px;">
-                            <b>Este modulo le permite aceptar pagos seguros por la plataforma de pagos ePayco</b>
-                            <br>Si el cliente decide pagar por ePayco, el estado del pedido cambiara a ePayco Esperando Pago
-                            <br>Cuando el pago sea Aceptado o Rechazado ePayco envia una configuracion a la tienda para cambiar el estado del pedido.
+                            Este módulo le permite aceptar pagos seguros por la plataforma de pagos ePayco.
+                            Si el cliente decide pagar por ePayco, el estado del pedido cambiará a <b> Esperando Pago</b>.
+                            <br>Cuando el pago sea Aceptado o Rechazado ePayco envía una confirmación a la tienda para cambiar el estado del pedido.
                         </div>
 
                         <div class="panel-body" style="padding: 15px 0;background: #fff;margin-top: 15px;border-radius: 5px;border: 1px solid #dcdcdc;border-top: 1px solid #dcdcdc;">
@@ -332,7 +332,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     </script>               
                                         <tr valign="top">
                                             <th scope="row" class="titledesc">
-                                                <label for="woocommerce_epayco_enabled">'. __( 'ePayco: validar llaves', 'epayco-woocommerce' ) .'</label>
+                                                <label for="woocommerce_epayco_enabled">'. __( 'ePayco: Validar llaves', 'epayco-woocommerce' ) .'</label>
                                                 <span hidden id="public_key">0</span>
                                                 <span hidden id="private_key">0</span>
                                             </th>
@@ -342,7 +342,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                                     </label>
                                                     <input type="button" class="button-primary woocommerce-save-button validar" value="Validar">
                                                     <p class="description">
-                                                    validacion de llaves PUBLIC_KEY y PRIVATE_KEY
+                                                    Validación de llaves PUBLIC_KEY y PRIVATE_KEY
                                                     </p>
                                                 </form>  
                                                 <br>
@@ -374,7 +374,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
 
                                         <tr valign="top">
                                           <th scope="row" class="titledesc">
-                                             <label for="woocommerce_epayco_enabled">'. __( 'ePayco: cambiar logo', 'epayco-woocommerce' ) .'</label>
+                                             <label for="woocommerce_epayco_enabled">'. __( 'ePayco: Cambiar logo', 'epayco-woocommerce' ) .'</label>
                                           </th>
                                             <td class="forminp">
                                             <script>
@@ -537,15 +537,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     'epayco_title' => array(
                         'title' => __('<span class="epayco-required">Título</span>', 'epayco_woocommerce'),
                         'type' => 'text',
-                        'description' => __('Corresponde al titulo que el usuario ve durante el checkout.', 'epayco_woocommerce'),
+                        'description' => __('Corresponde al título que el usuario ve durante el Checkout.', 'epayco_woocommerce'),
                         'default' => __('Checkout ePayco (Tarjetas de crédito,debito,efectivo)', 'epayco_woocommerce'),
                         //'desc_tip' => true,
                     ),
                     'description' => array(
                         'title' => __('<span class="epayco-required">Descripción</span>', 'epayco_woocommerce'),
                         'type' => 'textarea',
-                        'description' => __('Corresponde a la descripción que verá el usuaro durante el checkout', 'epayco_woocommerce'),
-                        'default' => __('Checkout ePayco (Tarjetas de crédito,debito,efectivo)', 'epayco_woocommerce'),
+                        'description' => __('Corresponde a la descripción que verá el usuario durante el Checkout', 'epayco_woocommerce'),
+                        'default' => __('Checkout ePayco (Tarjetas de crédito,débito,efectivo)', 'epayco_woocommerce'),
                         //'desc_tip' => true,
                     ),
                     'epayco_testmode' => array(
@@ -560,8 +560,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         'type' => 'select',
                         'css' =>'line-height: inherit',
                         'label' => __('Seleccione un tipo de Checkout:', 'epayco_woocommerce'),
-                        'description' => __('(Onpage Checkout, el usuario al pagar permanece en el sitio) ó (Standart Checkout, el usario al pagar es redireccionado a la pasarela de ePayco)', 'epayco_woocommerce'),
-                        'options' => array('false'=>"Onpage Checkout","true"=>"Standart Checkout"),
+                        'description' => __('(Onpage Checkout, el usuario al pagar permanece en el sitio) ó (Standard Checkout, el usario al pagar es redireccionado a la pasarela de ePayco)', 'epayco_woocommerce'),
+                        'options' => array('false'=>"Onpage Checkout","true"=>"Standard Checkout"),
                     ),
                     'epayco_endorder_state' => array(
                         'title' => __('Estado Final del Pedido', 'epayco_woocommerce'),
@@ -579,7 +579,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         'title' => __('Estado Cancelado del Pedido', 'epayco_woocommerce'),
                         'type' => 'select',
                         'css' =>'line-height: inherit',
-                        'description' => __('Seleccione el estado del pedido que se aplicará cuando la transacción es cancelar o rechazada', 'epayco_woocommerce'),
+                        'description' => __('Seleccione el estado del pedido que se aplicará cuando la transacción es Cancelada o Rechazada', 'epayco_woocommerce'),
                         'options' => array(
                             'epayco-cancelled'=>"ePayco Pago Cancelado",
                             "epayco-failed"=>"ePayco Pago Fallido",
@@ -618,14 +618,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     'response_data' => array(
                         'title' => __('Habilitar envió de atributos a través de la URL de respuesta', 'epayco_woocommerce'),
                         'type' => 'checkbox',
-                        'label' => __('Habilitar el modo redireccion con data', 'epayco_woocommerce'),
+                        'label' => __('Habilitar el modo redirección con data', 'epayco_woocommerce'),
                         'description' => __('Al habilitar esta opción puede exponer información sensible de sus clientes, el uso de esta opción es bajo su responsabilidad, conozca esta información en el siguiente  <a href="https://docs.epayco.co/payments/checkout#scroll-response-p" target="_blank">link.</a>', 'epayco_woocommerce'),
                         'default' => 'no',
                     ),
                     'monto_maximo' => array(
-                        'title' => __('monto maximo', 'epayco_woocommerce'),
+                        'title' => __('Monto máximo', 'epayco_woocommerce'),
                         'type' => 'text',
-                        'description' => __('ingresa el monto maximo permitido ha pagar por el método de pago', 'epayco_woocommerce'),
+                        'description' => __('Ingresa el monto máximo permitido a pagar por el método de pago', 'epayco_woocommerce'),
                         'default' => '3000000',
                         //'desc_tip' => true,
                         'placeholder' => '3000000',
@@ -633,7 +633,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     'epayco_customerid' => array(
                         'title' => __('<span class="epayco-required">P_CUST_ID_CLIENTE</span>', 'epayco_woocommerce'),
                         'type' => 'text',
-                        'description' => __('ID de cliente que lo identifica en ePayco. Lo puede encontrar en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
+                        'description' => __('ID de cliente que lo identifica en ePayco. Lo puede encontrar en su panel de clientes en la opción configuración', 'epayco_woocommerce'),
                         'default' => '',
                         //'desc_tip' => true,
                         'placeholder' => '',
@@ -641,29 +641,29 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     'epayco_secretkey' => array(
                         'title' => __('<span class="epayco-required">P_KEY</span>', 'epayco_woocommerce'),
                         'type' => 'text',
-                        'description' => __('LLave para firmar la información enviada y recibida de ePayco. Lo puede encontrar en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
+                        'description' => __('LLave para firmar la información enviada y recibida de ePayco. Lo puede encontrar en su panel de clientes en la opción configuración', 'epayco_woocommerce'),
                         'default' => '',
                         'placeholder' => ''
                     ),
                     'epayco_publickey' => array(
                         'title' => __('<span class="epayco-required">PUBLIC_KEY</span>', 'epayco_woocommerce'),
                         'type' => 'text',
-                        'description' => __('LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
+                        'description' => __('LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración', 'epayco_woocommerce'),
                         'default' => '',
                         'placeholder' => ''
                     ),
                     'epayco_privatekey' => array(
                         'title' => __('<span class="epayco-required">PRIVATE_KEY</span>', 'epayco_woocommerce'),
                         'type' => 'text',
-                        'description' => __('LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración.', 'epayco_woocommerce'),
+                        'description' => __('LLave para autenticar y consumir los servicios de ePayco. Proporcionado en su panel de clientes en la opción configuración', 'epayco_woocommerce'),
                         'default' => '',
                         'placeholder' => ''
                     ),
                     'force_redirect' => array(
-                        'title' => __('Habilitar redirección al cierre del checkout', 'epayco_woocommerce'),
+                        'title' => __('Habilitar redirección al cierre del Checkout', 'epayco_woocommerce'),
                         'type' => 'checkbox',
                         'label' => __('Habilitar redirección de pagador a URL de respuesta en caso de que cierre el Checkout', 'epayco_woocommerce'),
-                        'description' => __('Habilite si desea que el usuario pagador al cancelar la transacción o cerrar el checkout sea redirigido a la URL de respuesta configurada.', 'epayco_woocommerce'),
+                        'description' => __('Habilite si desea que el usuario pagador al Cancelar la transacción o cerrar el Checkout sea redirigido a la URL de respuesta configurada', 'epayco_woocommerce'),
                         'default' => 'no',
                     ),
                     'clear_cart' => array(
@@ -674,16 +674,16 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         'default' => 'no',
                     ),
                     'alg_wc_custom_order_numbers_enabled' => array(
-                        'title'    => __( 'WooCommerce Custom Order Numbers', 'epayco_woocommerce' ),
+                        'title'    => __( 'Número de orden personalizada para WooCommerce', 'epayco_woocommerce' ),
                         'desc'     => '<strong>' . __( 'Enable plugin', 'epayco_woocommerce' ) . '</strong>',
-                        'desc_tip' => __( 'Custom Order Numbers for WooCommerce.', 'epayco_woocommerce' ),
+                        'desc_tip' => __( 'Número de orden', 'epayco_woocommerce' ),
                         'id'       => 'alg_wc_custom_order_numbers_enabled',
                         'default'  => 'yes',
                         'type'     => 'checkbox',
                     ),
                     'alg_wc_custom_order_numbers_prefix' => array(
-                        'title'    => __( 'Order number custom prefix', 'epayco_woocommerce' ),
-                        'desc_tip' => __( 'Prefix before order number (optional). This will change the prefixes for all existing orders.', 'epayco_woocommerce' ),
+                        'title'    => __( 'Prefijo personalizado para el número del pedido', 'epayco_woocommerce' ),
+                        'desc_tip' => __( 'Prefijo personalizado para el número del pedido (opcional). Esto cambiará el prefijo de las órdenes existentes', 'epayco_woocommerce' ),
                         'id'       => 'alg_wc_custom_order_numbers_prefix',
                         'default'  => '',
                         'type'     => 'text',
@@ -1235,14 +1235,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 //actualizar el stock
                                 EpaycoOrder::updateStockDiscount($order_id,1);
                             }
-
-                            if($isTestMode=="true"){
-                                $message = 'Pago pendiente de aprobación Prueba';
-                                $orderStatus = "epayco_on_hold";
-                            }else{
-                                $message = 'Pago pendiente de aprobación';
-                                $orderStatus = "epayco-on-hold";
-                            }
+			    $message = 'Pago pendiente de aprobación';
+                            $orderStatus = "on-hold";
                             if($x_franchise != "PSE"){
                                 $order->update_status($orderStatus);
                                 $order->add_order_note($message);
