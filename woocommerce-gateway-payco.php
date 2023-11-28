@@ -872,7 +872,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             const apiKey = "%s";
                             const privateKey = "%s";
                             var openChekout = function () {
-                            debugger
                                   if(localStorage.getItem("invoicePayment") == null){
                                    localStorage.setItem("invoicePayment", data.invoice);
                                      makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
@@ -882,15 +881,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                            localStorage.setItem("invoicePayment", data.invoice);
                                              makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
                                        }else{
-                                           if(localStorage.getItem("sessionPayment") == null){
-                                                makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
-                                           }else{
-                                               const handlerNew = ePayco.checkout.configure({
-                                                   sessionId: localStorage.getItem("sessionPayment"),
-                                                   external: data.external == "true" ? true: false,
-                                               });
-                                               handlerNew.openNew()
-                                           }
+                                            makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
                                        }
                                    }
                             }
