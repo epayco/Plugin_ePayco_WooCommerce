@@ -6,7 +6,7 @@
  * @wordpress-plugin
  * Plugin Name:       ePayco Gateway WooCommerce
  * Description:       Plugin ePayco Gateway for WooCommerce.
- * Version:           6.7.4
+ * Version:           6.7.6
  * Author:            ePayco
  * Author URI:        http://epayco.co
  * License:           GNU General Public License v3.0
@@ -38,7 +38,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             public function __construct()
             {
                 $this->id = 'epayco';
-                $this->version = '6.7.4';
+                $this->version = '6.7.6';
                 $url_icon = plugin_dir_url(__FILE__)."lib";
                 $dir_ = __DIR__."/lib";
                 if(is_dir($dir_)) {
@@ -66,6 +66,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $this->epayco_customerid = $this->get_option('epayco_customerid');
                 $this->epayco_secretkey = $this->get_option('epayco_secretkey');
                 $this->epayco_publickey = $this->get_option('epayco_publickey');
+                $this->epayco_privatekey = $this->get_option('epayco_privatekey');
                 $this->monto_maximo = $this->get_option('monto_maximo');
                 $this->max_monto = $this->get_option('monto_maximo');
                 $this->description = $this->get_option('description');
@@ -788,6 +789,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 $confirm_url=get_site_url() . "/";
                 $redirect_url = add_query_arg( 'wc-api', get_class( $this ), $redirect_url );
                 $redirect_url = add_query_arg( 'order_id', $order_id, $redirect_url );
+                $myIp=$this->getCustomerIp();
 
                 if ($this->get_option('epayco_url_confirmation' ) == 0) {
                     $confirm_url = add_query_arg( 'wc-api', get_class( $this ), $confirm_url );
@@ -837,7 +839,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                             </a>
                         <form id="appGateway">
                             <script
-                               src="https://checkout.epayco.co/checkout.js">
+                               src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js">
                             </script>
                             <script>
                             var handler = ePayco.checkout.configure({
@@ -850,10 +852,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 description: "%s",
                                 invoice: "%s",
                                 currency: "%s",
-                                amount: "%s",
-                                tax_base: "%s",
-                                tax: "%s",
-                                taxIco: "%s",
+                                amount: "%s".toString(),
+                                tax_base: "%s".toString(),
+                                tax: "%s".toString(),
+                                taxIco: "%s".toString(),
                                 country: "%s",
                                 lang: "%s",
                                 external: "%s",
@@ -863,24 +865,67 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 address_billing: "%s",
                                 email_billing: "%s",
                                 mobilephone_billing: "%s",
-                            }                 
+                                autoclick: "true",
+                                ip: "%s",
+                                test: "%s".toString()
+                            }
+                            const apiKey = "%s";
+                            const privateKey = "%s";
                             var openChekout = function () {
-                              handler.open(data);
+                            debugger
+                                  if(localStorage.getItem("invoicePayment") == null){
+                                   localStorage.setItem("invoicePayment", data.invoice);
+                                     makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
+                                   }else{
+                                       if(localStorage.getItem("invoicePayment") != data.invoice){
+                                           localStorage.removeItem("invoicePayment");
+                                           localStorage.setItem("invoicePayment", data.invoice);
+                                             makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
+                                       }else{
+                                           if(localStorage.getItem("sessionPayment") == null){
+                                                makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
+                                           }else{
+                                               const handlerNew = ePayco.checkout.configure({
+                                                   sessionId: localStorage.getItem("sessionPayment"),
+                                                   external: data.external == "true" ? true: false,
+                                               });
+                                               handlerNew.openNew()
+                                           }
+                                       }
+                                   }
+                            }
+                            var makePayment = function (privatekey, apikey, info, external) {
+                                const headers = { "Content-Type": "application/json" } ;
+                                headers["privatekey"] = privatekey;
+                                headers["apikey"] = apikey;
+                                var payment =   function (){
+                                    return  fetch("https://cms.epayco.io/checkout/payment/session", {
+                                        method: "POST",
+                                        body: JSON.stringify(info),
+                                        headers
+                                    })
+                                        .then(res =>  res.json())
+                                        .catch(err => err);
+                                }
+                                payment()
+                                    .then(session => {
+                                        if(session.data.sessionId != undefined){
+                                            localStorage.removeItem("sessionPayment");
+                                            localStorage.setItem("sessionPayment", session.data.sessionId);
+                                            const handlerNew = window.ePayco.checkout.configure({
+                                                sessionId: session.data.sessionId,
+                                                external: external,
+                                            });
+                                            handlerNew.openNew()
+                                        }
+                                    })
+                                    .catch(error => {
+                                        error.message;
+                                    });
                             }
                             var bntPagar = document.getElementById("btn_epayco");
                             bntPagar.addEventListener("click", openChekout);
-                            let responseUrl = document.getElementById("response").textContent;
-                            handler.onCloseModal = function () {};
-                            var isForceRedirect='.$force_redirect.';
-                            if(isForceRedirect == true){
-                                let responseUrl = document.getElementById("response").textContent;
-                                handler.onCreated(function(response) {
-                                }).onResponse(function(response) {
-                                }).onClosed(function(response) {
-                                    window.location.href = responseUrl
-                                });
-                            }
-                               setTimeout(openChekout, 2000)  
+                            openChekout()
                         </script>
                         </form>
                         </center>
@@ -902,7 +947,11 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     $name_billing,
                     $address_billing,
                     $email_billing,
-                    $phone_billing
+                    $phone_billing,
+                    $myIp,
+                    $testMode,
+                    trim($this->epayco_publickey),
+                    trim($this->epayco_privatekey)
                 );
             }
 
@@ -1021,7 +1070,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                         }
                     }
 
-                    $url = 'https://secure.epayco.co/validation/v1/reference/'.$ref_payco;
+                    $url = 'https://secure.epayco.io/validation/v1/reference/'.$ref_payco;
                     $response = wp_remote_get(  $url );
                     $body = wp_remote_retrieve_body( $response );
                     $jsonData = @json_decode($body, true);
@@ -1529,7 +1578,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             {
                 $username = sanitize_text_field($validationData['epayco_publickey']);
                 $password = sanitize_text_field($validationData['epayco_privatey']);
-                $response = wp_remote_post( 'https://apify.epayco.co/login', array(
+                $response = wp_remote_post( 'https://apify.epayco.io/login', array(
                     'headers' => array(
                         'Authorization' => 'Basic ' . base64_encode( $username . ':' . $password ),
                     ),
@@ -1613,6 +1662,27 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                 }
 
             }
+            
+            public function getCustomerIp(){
+                $ipaddress = '';
+                if (isset($_SERVER['HTTP_CLIENT_IP']))
+                    $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+                else if(isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+                    $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+                else if(isset($_SERVER['HTTP_X_FORWARDED']))
+                    $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+                else if(isset($_SERVER['HTTP_X_CLUSTER_CLIENT_IP']))
+                    $ipaddress = $_SERVER['HTTP_X_CLUSTER_CLIENT_IP'];
+                else if(isset($_SERVER['HTTP_FORWARDED_FOR']))
+                    $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+                else if(isset($_SERVER['HTTP_FORWARDED']))
+                    $ipaddress = $_SERVER['HTTP_FORWARDED'];
+                else if(isset($_SERVER['REMOTE_ADDR']))
+                    $ipaddress = $_SERVER['REMOTE_ADDR'];
+                else
+                    $ipaddress = 'UNKNOWN';
+                return $ipaddress;
+            }
 
 
             public function string_sanitize($string, $force_lowercase = true, $anal = false) {
@@ -1638,7 +1708,7 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
             {
                 wp_enqueue_script('gateway-epayco', plugin_dir_url(__FILE__).'lib/epayco.js', array(), $this->version, true );
                 wp_enqueue_style('frontend-epayco',  plugin_dir_url(__FILE__).'lib/epayco.css', array(), $this->version, null);
-                wp_enqueue_script('epayco',  'https://checkout.epayco.co/checkout.js', array(), $this->version, null);
+                wp_enqueue_script('epayco',  'https://checkout.epayco.io/checkout.js', array(), $this->version, null);
             }
 
 
@@ -1747,8 +1817,8 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                     if ( function_exists( 'as_next_scheduled_action' ) ) { // Indicates that the AS library is present.
                         as_schedule_recurring_action( time(), 300, 'alg_custom_order_numbers_update_meta_key_in_old_con' );
                     }
-                    wp_safe_redirect( admin_url( 'edit.php?post_type=shop_order' ) );
-                    exit;
+                    //wp_safe_redirect( admin_url( 'edit.php?post_type=shop_order' ) );
+                    //exit;
                 }
             }
 
