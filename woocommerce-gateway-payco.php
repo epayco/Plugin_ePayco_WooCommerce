@@ -1178,25 +1178,10 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     $current_state == "completed"
                                 ){}
                                 else{
-                                    if($isTestMode=="true" && $current_state == "epayco_on_hold"){
-                                        if($orderStatus == "processing"){
-                                            $this->restore_order_stock($order->get_id(),"decrease");
-                                        }
-                                        if($orderStatus == "completed"){
-                                            $this->restore_order_stock($order->get_id(),"decrease");
-                                        }
-                                    }
-                                    if($isTestMode != "true" && $current_state == "epayco-on-hold"){
-                                        if($orderStatus == "processing"){
-                                            $this->restore_order_stock($order->get_id());
-                                        }
-                                        if($orderStatus == "completed"){
-                                            $this->restore_order_stock($order->get_id());
-                                        }
-                                    }
+
                                     if($current_state =="pending")
                                     {
-                                        $this->restore_order_stock($order->get_id());
+                                       $this->restore_order_stock($order->get_id());
                                     }
                                     $order->payment_complete($x_ref_payco);
                                     $order->update_status($orderStatus);
@@ -1275,9 +1260,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 //actualizar el stock
                                 EpaycoOrder::updateStockDiscount($order_id,1);
                             }
-			    $message = 'Pago pendiente de aprobación';
+			                $message = 'Pago pendiente de aprobación';
                             $orderStatus = "on-hold";
-                            if($x_franchise != "PSE"){
+                            if($x_franchise != "PSE" && $current_state != $orderStatus){
                                 $order->update_status($orderStatus);
                                 $order->add_order_note($message);
                                 if($current_state == "epayco_failed" ||
@@ -1287,7 +1272,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                     $current_state == "epayco-failed"
                                 ){
                                     $this->restore_order_stock($order->get_id(),"decrease");
-                                }
+                                }else{
+                                    $this->restore_order_stock($order->get_id());
+                                }          
                             }
                         echo "3";
                         } break;
