@@ -866,54 +866,15 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
                                 email_billing: "%s",
                                 mobilephone_billing: "%s",
                                 autoclick: "true",
-                                ip: "%s",
-                                test: "%s".toString()
+                                //ip: "%s",
+                                //test: "%s".toString()
                             }
                             const apiKey = "%s";
                             const privateKey = "%s";
                             var openChekout = function () {
-                                  if(localStorage.getItem("invoicePayment") == null){
-                                   localStorage.setItem("invoicePayment", data.invoice);
-                                     makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
-                                   }else{
-                                       if(localStorage.getItem("invoicePayment") != data.invoice){
-                                           localStorage.removeItem("invoicePayment");
-                                           localStorage.setItem("invoicePayment", data.invoice);
-                                             makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
-                                       }else{
-                                            makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
-                                       }
-                                   }
+                                handler.open(data);
                             }
-                            var makePayment = function (privatekey, apikey, info, external) {
-                                const headers = { "Content-Type": "application/json" } ;
-                                headers["privatekey"] = privatekey;
-                                headers["apikey"] = apikey;
-                                var payment =   function (){
-                                    return  fetch("https://cms.epayco.io/checkout/payment/session", {
-                                        method: "POST",
-                                        body: JSON.stringify(info),
-                                        headers
-                                    })
-                                        .then(res =>  res.json())
-                                        .catch(err => err);
-                                }
-                                payment()
-                                    .then(session => {
-                                        if(session.data.sessionId != undefined){
-                                            localStorage.removeItem("sessionPayment");
-                                            localStorage.setItem("sessionPayment", session.data.sessionId);
-                                            const handlerNew = window.ePayco.checkout.configure({
-                                                sessionId: session.data.sessionId,
-                                                external: external,
-                                            });
-                                            handlerNew.openNew()
-                                        }
-                                    })
-                                    .catch(error => {
-                                        error.message;
-                                    });
-                            }
+                            
                             var bntPagar = document.getElementById("btn_epayco");
                             bntPagar.addEventListener("click", openChekout);
                             openChekout()
