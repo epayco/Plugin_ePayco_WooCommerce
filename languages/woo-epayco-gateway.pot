@@ -1,0 +1,79 @@
+# Copyright (C) 2023 José Conti
+# This file is distributed under the GNU General Public License v3.0.
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce Epayco Gateway 7.0.0\n"
+"Report-Msgid-Bugs-To: https://woocommerce.com/my-account/create-a-ticket/\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2023-12-18T16:57:41+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.6.0\n"
+"language-team: LANGUAGE <EMAIL@ADDRESS>\n"
+"X-Domain: woo-epayco-gateway\n"
+
+#. Plugin Name of the plugin
+msgid "WooCommerce Epayco Gateway"
+msgstr ""
+
+
+#. Description of the plugin
+msgid "Plugin ePayco Gateway for WooCommerce"
+msgstr ""
+
+#. Author of the plugin
+msgid "ePayco"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "http://epayco.co/"
+msgstr ""
+
+#: classes/class-wc-gateway-epayco.php:25
+msgid "ePayco Checkout Gateway"
+msgstr ""
+
+#: classes/class-wc-gateway-epayco.php:26
+msgid "Acepta tarjetas de credito, depositos y transferencias."
+msgstr ""
+
+#: classes/class-wc-gateway-epayco.php:27
+msgid "Pagar"
+msgstr ""
+
+#: classes/class-wc-gateway-epayco.php:117
+msgid "Configuración Epayco"
+msgstr ""
+
+#: classes/class-wc-gateway-epayco.php:121
+msgid "Este módulo le permite aceptar pagos seguros por la plataforma de pagos ePayco.Si el cliente decide pagar por ePayco, el estado del pedido cambiará a "
+msgstr ""
+
+#: classes/class-wc-gateway-epayco.php:122
+msgid " Esperando Pago"
+msgstr ""
+
+#: classes/class-wc-gateway-epayco.php:123
+msgid "Cuando el pago sea Aceptado o Rechazado ePayco envía una confirmación a la tienda para cambiar el estado del pedido."
+msgstr ""
+
+#: classes/class-wc-gateway-epayco.php:151
+msgid "Gateway Disabled"
+msgstr ""
+
+#: classes/class-wc-gateway-epayco.php:155
+msgid "Servired/Epayco only support "
+msgstr ""
+
+#: classes/class-wc-gateway-epayco.php:497
+msgid "Loading payment methods"
+msgstr ""
+
+#: classes/class-wc-gateway-epayco.php:498
+msgid 'If they do not load automatically, click on the "Pay with ePayco" button'
+msgstr ""
+
+
