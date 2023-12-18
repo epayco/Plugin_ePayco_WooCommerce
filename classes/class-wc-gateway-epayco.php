@@ -20,7 +20,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 			$logo_url   = $this->get_option( 'logo' );
 			$this->icon = apply_filters( 'woocommerce_' . $this->id . '_icon', $logo_url );
 		} else {
-			$this->icon = apply_filters( 'woocommerce_' . $this->id . '_icon', EPAYCO_PLUGIN_URL . 'assets/images/logo.png' );
+			$this->icon = apply_filters( 'woocommerce_' . $this->id . '_icon', EPAYCO_PLUGIN_URL . 'assets/images/epayco1.png' );
 		}
         $this->method_title         = __( 'ePayco Checkout Gateway', 'woo-epayco-gateway' );
         $this->method_description   = __( 'Acepta tarjetas de credito, depositos y transferencias.', 'woo-epayco-gateway' );
@@ -42,7 +42,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
         $this->epayco_publickey = $this->get_option('epayco_publickey');
         $this->epayco_privatekey = $this->get_option('epayco_privatekey');
         $this->monto_maximo = $this->get_option('monto_maximo');
-        $this->max_monto = $this->get_option('monto_maximo');
+        //$this->max_monto = $this->get_option('monto_maximo');
         $this->description      = $this->get_option( 'description' );
         $this->epayco_testmode = $this->get_option('epayco_testmode');
         if ($this->get_option('epayco_reduce_stock_pending') !== null ) {
@@ -60,11 +60,13 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 
 		// Actions
 		add_action( 'valid-' . $this->id . '-standard-ipn-request', array( $this, 'successful_request' ) );
+        add_action('ePayco_init_validation', array( $this, 'ePayco_successful_validation'));
 		add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 
 		// Payment listener/API hook
 		add_action( 'woocommerce_api_wc_gateway_' . $this->id, array( $this, 'check_ipn_response' ) );
+        add_action( 'woocommerce_api_' . strtolower( get_class( $this )."Validation" ), array( $this, 'validate_ePayco_request' ) );
 
 		if ( ! $this->is_valid_for_use() ) {
 			$this->enabled = false;
@@ -123,30 +125,61 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                 <br><?php esc_html_e( 'Cuando el pago sea Aceptado o Rechazado ePayco envía una confirmación a la tienda para cambiar el estado del pedido.', 'woo-epayco-gateway' ); ?>
             </div>
 
-            <div class="panel-body" style="padding: 15px 0;background: #fff;margin-top: 15px;border-radius: 5px;border: 1px solid #dcdcdc;border-top: 1px solid #dcdcdc;">
-                <table class="form-table epayco-table">
-                </table>
-            </div>
+        <?php if ( $this->is_valid_for_use() ) : ?>
+            <table class="form-table epayco-table">
+                <?php
+                // Generate the HTML For the settings form.
+                $this->generate_settings_html();
+                ?>
+                <tr valign="top">
+                    <th scope="row" class="titledesc">
+                        <label for="woocommerce_epayco_enabled"><?php esc_html_e( 'Validar llaves', 'woo-epayco-gateway' ); ?></label>
+                        <span hidden id="public_key">0</span>
+                        <span hidden id="private_key">0</span>
+                        <td class="forminp">
+                            <form method="post" action="#">
+                                <label for="woocommerce_epayco_enabled">
+                                </label>
+                                <input type="button" class="button-primary woocommerce-save-button validar" value="Validar">
+                                <p class="description">
+                                    Validación de llaves PUBLIC_KEY y PRIVATE_KEY
+                                </p>
+                            </form>
+                            <br>
+                            <!-- The Modal -->
+                            <div id="myModal" class="modal">
+                                <!-- Modal content -->
+                                <div class="modal-content">
+                                    <span class="close">&times;</span>
+                                    <center>
+                                        <img src="'.$logo.'">
+                                    </center>
+                                    <p><strong>Llaves de comercio inválidas</strong> </p>
+                                    <p>Las llaves Public Key, Private Key insertadas<br>
+                                        del comercio son inválidas.<br>
+                                        Consúltelas en el apartado de integraciones <br>
+                                        Llaves API en su Dashboard ePayco.</p>
+                                </div>
+                            </div>
+
+                        </td>
+                    </th>
+                </tr>
+            </table><!--/.form-table-->
+        <?php
+        else :
+            $currencies          = array('USD','COP');
+            $formated_currencies = '';
+
+            foreach ( $currencies as $currency ) {
+                $formated_currencies .= $currency . ', ';
+            }
+            ?>
 
         </div>
 
 
-		<?php if ( $this->is_valid_for_use() ) : ?>
-			<table class="form-table">
-				<?php
-				// Generate the HTML For the settings form.
-				$this->generate_settings_html();
-				?>
-			</table><!--/.form-table-->
-			<?php
-				else :
-			$currencies          = array('USD','COP');
-			$formated_currencies = '';
 
-			foreach ( $currencies as $currency ) {
-				$formated_currencies .= $currency . ', ';
-			}
-			?>
 	<div class="inline error">
         <p><strong><?php esc_html_e( 'Gateway Disabled', 'woo-epayco-gateway' );
 	?>
@@ -188,6 +221,38 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 				'description' => __( 'Corresponde a la descripción que verá el usuario durante el Checkout', 'woo-epayco-gateway' ),
 				'default'     => __( 'Checkout ePayco (Tarjetas de crédito,débito,efectivo)', 'woo-epayco-gateway' ),
 			),
+            'epayco_customerid' => array(
+                'title'       => __( '<span class="epayco-required">P_CUST_ID_CLIENTE</span>', 'woo-epayco-gateway' ),
+                'type'        => 'text',
+                'description' => __( 'ID de cliente que lo identifica en ePayco. Lo puede encontrar en su panel de clientes en la opción configuración', 'woo-epayco-gateway' ),
+                'default' => '',
+                //'desc_tip' => true,
+                'placeholder' => '',
+            ),
+            'epayco_secretkey' => array(
+                'title'       => __( '<span class="epayco-required">P_KEY</span>', 'woo-epayco-gateway' ),
+                'type'        => 'text',
+                'description' => __( 'LLave para firmar la información enviada y recibida de ePayco. Lo puede encontrar en su panel de clientes en la opción configuración', 'woo-epayco-gateway' ),
+                'default' => '',
+                //'desc_tip' => true,
+                'placeholder' => '',
+            ),
+            'epayco_publickey' => array(
+                'title'       => __( '<span class="epayco-required">PUBLIC_KEY</span>', 'woo-epayco-gateway' ),
+                'type'        => 'text',
+                'description' => __( 'LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración', 'woo-epayco-gateway' ),
+                'default' => '',
+                //'desc_tip' => true,
+                'placeholder' => '',
+            ),
+            'epayco_privatekey' => array(
+                'title'       => __( '<span class="epayco-required">PRIVATE_KEY</span>', 'woo-epayco-gateway' ),
+                'type'        => 'text',
+                'description' => __( 'LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración', 'woo-epayco-gateway' ),
+                'default' => '',
+                //'desc_tip' => true,
+                'placeholder' => '',
+            ),
 			'epayco_testmode' => array(
 				'title'       => __( 'Sitio en pruebas', 'woo-epayco-gateway' ),
 				'type'        => 'checkbox',
@@ -263,46 +328,14 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 				'description' => __( 'Al habilitar esta opción puede exponer información sensible de sus clientes, el uso de esta opción es bajo su responsabilidad, conozca esta información en el siguiente  <a href="https://docs.epayco.co/payments/checkout#scroll-response-p" target="_blank">link.</a>', 'woo-epayco-gateway' ),
                 'default'     => 'no',
 			),
-			'monto_maximo' => array(
+			/*'monto_maximo' => array(
 				'title'       => __( 'Monto máximo', 'woo-epayco-gateway' ),
 				'type'        => 'text',
 				'description' => __( 'Ingresa el monto máximo permitido a pagar por el método de pago', 'woo-epayco-gateway' ),
                 'default' => '3000000',
                 //'desc_tip' => true,
                 'placeholder' => '3000000',
-			),
-            'epayco_customerid' => array(
-                'title'       => __( '<span class="epayco-required">P_CUST_ID_CLIENTE</span>', 'woo-epayco-gateway' ),
-                'type'        => 'text',
-                'description' => __( 'ID de cliente que lo identifica en ePayco. Lo puede encontrar en su panel de clientes en la opción configuración', 'woo-epayco-gateway' ),
-                'default' => '',
-                //'desc_tip' => true,
-                'placeholder' => '',
-            ),
-            'epayco_secretkey' => array(
-                'title'       => __( '<span class="epayco-required">P_KEY</span>', 'woo-epayco-gateway' ),
-                'type'        => 'text',
-                'description' => __( 'LLave para firmar la información enviada y recibida de ePayco. Lo puede encontrar en su panel de clientes en la opción configuración', 'woo-epayco-gateway' ),
-                'default' => '',
-                //'desc_tip' => true,
-                'placeholder' => '',
-            ),
-            'epayco_publickey' => array(
-                'title'       => __( '<span class="epayco-required">PUBLIC_KEY</span>', 'woo-epayco-gateway' ),
-                'type'        => 'text',
-                'description' => __( 'LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración', 'woo-epayco-gateway' ),
-                'default' => '',
-                //'desc_tip' => true,
-                'placeholder' => '',
-            ),
-            'epayco_privatekey' => array(
-                'title'       => __( '<span class="epayco-required">PRIVATE_KEY</span>', 'woo-epayco-gateway' ),
-                'type'        => 'text',
-                'description' => __( 'LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración', 'woo-epayco-gateway' ),
-                'default' => '',
-                //'desc_tip' => true,
-                'placeholder' => '',
-            )
+			),*/
 		);
 		$epayco_langs   = array(
             '1'	  => 'Español',
@@ -461,7 +494,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             handler.open(data);
         }
 	    openChekout()
-	    console.log(data)
 		jQuery("#btn_epayco").click(function(){
 		  openChekout()
 		});
@@ -528,6 +560,16 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 			wp_die( 'Do not access this page directly (ePayco)' );
 		}
 	}
+
+    function validate_ePayco_request(){
+        @ob_clean();
+        if ( ! empty( $_REQUEST ) ) {
+            header( 'HTTP/1.1 200 OK' );
+            do_action( "ePayco_init_validation", $_REQUEST );
+        } else {
+            wp_die( 'Do not access this page directly (ePayco)' );
+        }
+    }
 
 	/**
 	 * Successful Payment!
@@ -1088,6 +1130,24 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             .$x_currency_code
         );
         return $signature;
+    }
+    /**
+     * @param $validationData
+     */
+    function ePayco_successful_validation($validationData)
+    {
+        $username = sanitize_text_field($validationData['epayco_publickey']);
+        $password = sanitize_text_field($validationData['epayco_privatey']);
+        $response = wp_remote_post( 'https://apify.epayco.io/login', array(
+            'headers' => array(
+                'Authorization' => 'Basic ' . base64_encode( $username . ':' . $password ),
+            ),
+        ) );
+        $data = json_decode( wp_remote_retrieve_body( $response ) );
+        if($data->token){
+            echo "success";
+            exit();
+        }
     }
 
      function string_sanitize($string, $force_lowercase = true, $anal = false) {

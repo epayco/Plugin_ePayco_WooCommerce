@@ -42,6 +42,22 @@ add_action( 'before_woocommerce_init',
 );
 
 /**
+ * epayco hook
+ *
+ * @param string $hook page hook.
+ */
+function epayco_styles_css( $hook ) {
+
+    if ( 'woocommerce_page_wc-settings' == $hook ) {
+        wp_register_style( 'aboutEpayco', EPAYCO_PLUGIN_URL . 'assets/css/epayco-css.css', array(), '1.2.0' );
+        wp_enqueue_style( 'aboutEpayco' );
+        wp_register_script('aboutEpaycoJquery',  EPAYCO_PLUGIN_URL . 'assets/js/frontend/admin.js', array('jquery'), '7.0.0', null);
+        wp_enqueue_script('aboutEpaycoJquery');
+    }
+}
+add_action( 'admin_enqueue_scripts', 'epayco_styles_css' );
+
+/**
  * Epayco init.
  */
 function woocommerce_gateway_epayco_init() {
@@ -355,3 +371,5 @@ function styling_admin_order_list() {
     <?php
 }
 add_action('admin_head', 'styling_admin_order_list' );
+
+//"http://localhost:81/wordpress/?wc-api=WC_Gateway_EpaycoValidation"

@@ -57,7 +57,7 @@ final class WC_Gateway_Epayco_Support extends AbstractPaymentMethodType {
 		);
 
 		if ( function_exists( 'wp_set_script_translations' ) ) {
-			//wp_set_script_translations( 'wc-epayco-payments-blocks', 'woo-epayco-gateway', plugin_abspath_epayco() . 'languages/' );
+			wp_set_script_translations( 'wc-epayco-payments-blocks', 'woo-epayco-gateway', plugin_abspath_epayco() . 'languages/' );
 		}
 
 		return array( 'wc-epayco-payments-blocks' );

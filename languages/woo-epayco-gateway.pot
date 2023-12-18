@@ -44,35 +44,39 @@ msgstr ""
 msgid "Pagar"
 msgstr ""
 
-#: classes/class-wc-gateway-epayco.php:117
+#: classes/class-wc-gateway-epayco.php:119
 msgid "Configuración Epayco"
 msgstr ""
 
-#: classes/class-wc-gateway-epayco.php:121
+#: classes/class-wc-gateway-epayco.php:123
 msgid "Este módulo le permite aceptar pagos seguros por la plataforma de pagos ePayco.Si el cliente decide pagar por ePayco, el estado del pedido cambiará a "
 msgstr ""
 
-#: classes/class-wc-gateway-epayco.php:122
+#: classes/class-wc-gateway-epayco.php:124
 msgid " Esperando Pago"
 msgstr ""
 
-#: classes/class-wc-gateway-epayco.php:123
+#: classes/class-wc-gateway-epayco.php:125
 msgid "Cuando el pago sea Aceptado o Rechazado ePayco envía una confirmación a la tienda para cambiar el estado del pedido."
 msgstr ""
 
-#: classes/class-wc-gateway-epayco.php:151
+#: classes/class-wc-gateway-epayco.php:136
+msgid "Validar llaves"
+msgstr ""
+
+#: classes/class-wc-gateway-epayco.php:184
 msgid "Gateway Disabled"
 msgstr ""
 
-#: classes/class-wc-gateway-epayco.php:155
+#: classes/class-wc-gateway-epayco.php:188
 msgid "Servired/Epayco only support "
 msgstr ""
 
-#: classes/class-wc-gateway-epayco.php:497
+#: classes/class-wc-gateway-epayco.php:530
 msgid "Loading payment methods"
 msgstr ""
 
-#: classes/class-wc-gateway-epayco.php:498
+#: classes/class-wc-gateway-epayco.php:531
 msgid 'If they do not load automatically, click on the "Pay with ePayco" button'
 msgstr ""
 
