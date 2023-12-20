@@ -468,7 +468,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             $testMode,
             $descripcion,
             $descripcion,
-            $order->get_id()."test ".$order->get_id(),
+            $order->get_id(),
             $currency,
             $order->get_total(),
             $base_tax,
