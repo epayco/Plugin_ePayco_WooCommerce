@@ -457,8 +457,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                         email_billing: "%s",
                         mobilephone_billing: "%s",
                         autoclick: "true",
-                        //ip: "%s",
-                        //test: "%s".toString()
+                        ip: "%s",
+                        test: "%s".toString()
                     }
                     const apiKey = "%s";
                     const privateKey = "%s";
@@ -491,8 +491,48 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
         );
         wp_enqueue_script('epayco',  'https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js', array(), $this->version, null);
 		wc_enqueue_js('
-         var openChekout = function () {
-            handler.open(data);
+        var openChekout = function () {
+            if(localStorage.getItem("invoicePayment") == null){
+                localStorage.setItem("invoicePayment", data.invoice);
+                makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
+            }else{
+                if(localStorage.getItem("invoicePayment") != data.invoice){
+                    localStorage.removeItem("invoicePayment");
+                    localStorage.setItem("invoicePayment", data.invoice);
+                    makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
+                }else{
+                    makePayment(privateKey,apiKey,data, data.external == "true"?true:false)
+                }
+            }
+        }
+        var makePayment = function (privatekey, apikey, info, external) {
+            const headers = { "Content-Type": "application/json" } ;
+            headers["privatekey"] = privatekey;
+            headers["apikey"] = apikey;
+            var payment =   function (){
+                return  fetch("https://cms.epayco.io/checkout/payment/session", {
+                    method: "POST",
+                    body: JSON.stringify(info),
+                    headers
+                })
+                    .then(res =>  res.json())
+                    .catch(err => err);
+            }
+            payment()
+                .then(session => {
+                    if(session.data.sessionId != undefined){
+                        localStorage.removeItem("sessionPayment");
+                        localStorage.setItem("sessionPayment", session.data.sessionId);
+                        const handlerNew = window.ePayco.checkout.configure({
+                            sessionId: session.data.sessionId,
+                            external: external,
+                        });
+                        handlerNew.openNew()
+                    }
+                })
+                .catch(error => {
+                    error.message;
+                });
         }
 	    openChekout()
 		jQuery("#btn_epayco").click(function(){
