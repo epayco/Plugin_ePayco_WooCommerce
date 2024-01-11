@@ -371,5 +371,3 @@ function styling_admin_order_list() {
     <?php
 }
 add_action('admin_head', 'styling_admin_order_list' );
-
-//"http://localhost:81/wordpress/?wc-api=WC_Gateway_EpaycoValidation"
