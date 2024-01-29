@@ -25,7 +25,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 		}
         $this->method_title         = __( 'ePayco Checkout Gateway', 'woo-epayco-gateway' );
         $this->method_description   = __( 'Acepta tarjetas de credito, depositos y transferencias.', 'woo-epayco-gateway' );
-        $this->order_button_text = __('Pagar', 'epayco_woocommerce');
+        //$this->order_button_text = __('Pay', 'epayco_woocommerce');
 		$this->has_fields           = false;
         $this->supports         = array(
             'products',
@@ -143,7 +143,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                                 </label>
                                 <input type="button" class="button-primary woocommerce-save-button validar" value="Validar">
                                 <p class="description">
-                                    Validación de llaves PUBLIC_KEY y PRIVATE_KEY
+                                    <?php esc_html_e( 'Validación de llaves PUBLIC_KEY y PRIVATE_KEY', 'woo-epayco-gateway' ); ?>
                                 </p>
                             </form>
                             <br>
@@ -155,11 +155,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                                     <center>
                                         <img src="'.$logo.'">
                                     </center>
-                                    <p><strong>Llaves de comercio inválidas</strong> </p>
-                                    <p>Las llaves Public Key, Private Key insertadas<br>
-                                        del comercio son inválidas.<br>
-                                        Consúltelas en el apartado de integraciones <br>
-                                        Llaves API en su Dashboard ePayco.</p>
+                                    <p><strong><?php esc_html_e( 'Llaves de comercio inválidas', 'woo-epayco-gateway' );?></strong> </p>
+                                    <p><?php esc_html_e( 'Las llaves Public Key, Private Key insertadas<br>del comercio son inválidas.<br>Consúltelas en el apartado de integraciones <br>Llaves API en su Dashboard ePayco.', 'woo-epayco-gateway' );?></p>
                                 </div>
                             </div>
 
@@ -181,6 +178,9 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 
 
 
+
+
+        
 	<div class="inline error">
         <p><strong><?php esc_html_e( 'Gateway Disabled', 'woo-epayco-gateway' );
 	?>
@@ -457,7 +457,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                     const apiKey = "%s";
                     const privateKey = "%s";
                     var openChekout = function () {
-                        handler.open(data);
+                        //handler.open(data);
+                        console.log(data)
                     }
                     var bntPagar = document.getElementById("btn_epayco");
                     bntPagar.addEventListener("click", openChekout);
@@ -567,7 +568,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                 </div>
                 <p style="text-align: center;" class="epayco-title">
                     <span class="animated-points">' . esc_html__( 'Loading payment methods', 'woo-epayco-gateway' ) . '</span>
-                    <br><small class="epayco-subtitle"> ' . esc_html__( 'If they do not load automatically, click on the "Pay with ePayco" button', 'woo-epayco-gateway' ) . '</small>
+                    <br><small class="epayco-subtitle"> ' . esc_html__( 'Si no se cargan automáticamente, haga clic en el botón \"Pagar con ePayco\"', 'woo-epayco-gateway' ) . '</small>
                 </p>';
 
         if ($this->epayco_lang !== "es") {

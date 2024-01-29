@@ -13,7 +13,7 @@
  * WC requires at least: 7.4
  * WC tested up to: 8.3
  * Text Domain: woo-epayco-gateway
- * Domain Path: /languages/
+ * Domain Path: /i18n/languages/
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
  */
