@@ -13,7 +13,7 @@
  * WC requires at least: 7.4
  * WC tested up to: 8.3
  * Text Domain: woo-epayco-gateway
- * Domain Path: /languages/
+ * Domain Path: /i18n/languages/
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
  */
@@ -371,5 +371,3 @@ function styling_admin_order_list() {
     <?php
 }
 add_action('admin_head', 'styling_admin_order_list' );
-
-//"http://localhost:81/wordpress/?wc-api=WC_Gateway_EpaycoValidation"
