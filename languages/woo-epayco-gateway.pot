@@ -1,26 +1,20 @@
 # Copyright (C) 2024 ePayco
 # This file is distributed under the GNU General Public License v3.0.
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: WooCommerce Epayco Gateway 7.0.0\n"
-"Report-Msgid-Bugs-To: https://wordpress."
-"org/support/plugin/Plugin_ePayco_WooCommerce-7.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/Plugin_ePayco_WooCommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-01-29 21:26+0000\n"
+"POT-Creation-Date: 2024-01-29T22:36:59-05:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: Loco https://localise.biz/\n"
+"X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: woo-epayco-gateway\n"
-"\n"
-"Language: \n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;"
 
 #. Plugin Name of the plugin
-msgctxt "WooCommerce Epayco Gateway"
 msgid "WooCommerce Epayco Gateway"
 msgstr ""
 
@@ -49,10 +43,7 @@ msgid "Configuración Epayco"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:124
-msgid ""
-"Este módulo le permite aceptar pagos seguros por la plataforma de pagos "
-"ePayco.Si el cliente decide pagar por ePayco, el estado del pedido cambiará "
-"a "
+msgid "Este módulo le permite aceptar pagos seguros por la plataforma de pagos ePayco.Si el cliente decide pagar por ePayco, el estado del pedido cambiará a "
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:125
@@ -60,9 +51,7 @@ msgid " Esperando Pago"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:126
-msgid ""
-"Cuando el pago sea Aceptado o Rechazado ePayco envía una confirmación a la "
-"tienda para cambiar el estado del pedido."
+msgid "Cuando el pago sea Aceptado o Rechazado ePayco envía una confirmación a la tienda para cambiar el estado del pedido."
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:137
@@ -78,10 +67,7 @@ msgid "Llaves de comercio inválidas"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:159
-msgid ""
-"Las llaves Public Key, Private Key insertadas<br>del comercio son inválidas."
-"<br>Consúltelas en el apartado de integraciones <br>Llaves API en su "
-"Dashboard ePayco."
+msgid "Las llaves Public Key, Private Key insertadas<br>del comercio son inválidas.<br>Consúltelas en el apartado de integraciones <br>Llaves API en su Dashboard ePayco."
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:185
@@ -93,262 +79,195 @@ msgid "Servired/Epayco only support "
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:207
-msgctxt "Enable/disable"
 msgid "Habilitar/Deshabilitar"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:209
-msgctxt "Enable ePayco"
 msgid "Habilitar ePayco"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:213
-msgctxt "<span class=\"epayco-required\">Title</span>"
 msgid "<span class=\"epayco-required\">Título</span>"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:215
-msgctxt "It corresponds to the title that the user sees during Checkout."
 msgid "Corresponde al título que el usuario ve durante el Checkout."
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:216
-msgctxt "Checkout ePayco (Credit cards, debit cards, cash)"
 msgid "Checkout ePayco (Tarjetas de crédito,debito,efectivo)"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:220
-msgctxt "<span class=\"epayco-required\">Description</span>"
 msgid "<span class=\"epayco-required\">Descripción</span>"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:222
-msgctxt "Corresponds to the description that the user will see during Checkout"
 msgid "Corresponde a la descripción que verá el usuario durante el Checkout"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:223
-msgctxt "Checkout ePayco (Credit cards, debit cards, cash)"
 msgid "Checkout ePayco (Tarjetas de crédito,débito,efectivo)"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:226
-msgctxt "<span class=\"epayco-required\">P_CUST_ID_CLIENTE</span>"
 msgid "<span class=\"epayco-required\">P_CUST_ID_CLIENTE</span>"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:228
-msgctxt ""
-"Customer ID that identifies you in ePayco. You can find it in your customer "
-"panel in the configuration option"
-msgid ""
-"ID de cliente que lo identifica en ePayco. Lo puede encontrar en su panel de "
-"clientes en la opción configuración"
+msgid "ID de cliente que lo identifica en ePayco. Lo puede encontrar en su panel de clientes en la opción configuración"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:234
-msgctxt "<span class=\"epayco-required\">P_KEY</span>"
 msgid "<span class=\"epayco-required\">P_KEY</span>"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:236
-msgctxt ""
-"Key to sign the information sent and received from ePayco. You can find it "
-"in your customer panel in the configuration option"
-msgid ""
-"LLave para firmar la información enviada y recibida de ePayco. Lo puede "
-"encontrar en su panel de clientes en la opción configuración"
+msgid "LLave para firmar la información enviada y recibida de ePayco. Lo puede encontrar en su panel de clientes en la opción configuración"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:242
-msgctxt "<span class=\"epayco-required\">PUBLIC_KEY</span>"
 msgid "<span class=\"epayco-required\">PUBLIC_KEY</span>"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:244
 #: classes/class-wc-gateway-epayco.php:252
-msgctxt ""
-"Key to authenticate and consume ePayco services, Provided in your customer "
-"panel in the configuration option"
-msgid ""
-"LLave para autenticar y consumir los servicios de ePayco, Proporcionado en "
-"su panel de clientes en la opción configuración"
+msgid "LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:250
-msgctxt "<span class=\"epayco-required\">PRIVATE_KEY</span>"
 msgid "<span class=\"epayco-required\">PRIVATE_KEY</span>"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:258
-msgctxt "Test site"
 msgid "Sitio en pruebas"
 msgstr ""
 
+#: classes/class-wc-gateway-epayco.php:260
+msgid "Habilitar el modo de pruebas"
+msgstr ""
+
 #: classes/class-wc-gateway-epayco.php:261
-msgctxt "Enable for testing"
 msgid "Habilite para realizar pruebas"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:265
-msgctxt "Checkout Type"
 msgid "Tipo Checkout"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:268
-msgctxt "Select a Checkout type:"
 msgid "Seleccione un tipo de Checkout:"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:269
-msgctxt ""
-"(Onpage Checkout, the user remains on the site when paying) or (Standard "
-"Checkout, the user when paying is redirected to the ePayco gateway)"
-msgid ""
-"(Onpage Checkout, el usuario al pagar permanece en el sitio) ó (Standard "
-"Checkout, el usario al pagar es redireccionado a la pasarela de ePayco)"
+msgid "(Onpage Checkout, el usuario al pagar permanece en el sitio) ó (Standard Checkout, el usario al pagar es redireccionado a la pasarela de ePayco)"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:273
-msgctxt "Final Order Status"
 msgid "Estado Final del Pedido"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:276
-msgctxt ""
-"Select the order status that will be applied when accepting and confirming "
-"payment for the order"
-msgid ""
-"Seleccione el estado del pedido que se aplicará a la hora de aceptar y "
-"confirmar el pago de la orden"
+msgid "Seleccione el estado del pedido que se aplicará a la hora de aceptar y confirmar el pago de la orden"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:278
-msgctxt "ePayco Processing Payment"
 msgid "ePayco Procesando Pago"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:279
-msgctxt "ePayco Payment Canceled"
 msgid "ePayco Pago Completado"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:280
-msgctxt "Processing"
 msgid "Procesando"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:281
-msgctxt "Complete"
 msgid "Completado"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:285
-msgctxt "Canceled Order Status"
 msgid "Estado Cancelado del Pedido"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:288
-msgctxt ""
-"Select the order status that will be applied when the transaction is "
-"Canceled or Rejected"
-msgid ""
-"Seleccione el estado del pedido que se aplicará cuando la transacciónes "
-"Cancelada o Rechazada"
+msgid "Seleccione el estado del pedido que se aplicará cuando la transacciónes Cancelada o Rechazada"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:290
-msgctxt "ePayco Payment Canceled"
 msgid "ePayco Pago Cancelado"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:291
-msgctxt "ePayco Payment Failed"
 msgid "ePayco Pago Fallido"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:292
-msgctxt "Cancelled"
 msgid "Cancelado"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:293
-msgctxt "Failed"
 msgid "Fallido"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:297
-msgctxt "Response Page"
 msgid "Página de Respuesta"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:300
-msgctxt "URL of the store where the user is redirected after paying the order"
-msgid ""
-"Url de la tienda donde se redirecciona al usuario luego de pagar el pedido"
+msgid "Url de la tienda donde se redirecciona al usuario luego de pagar el pedido"
+msgstr ""
+
+#: classes/class-wc-gateway-epayco.php:301
+#: classes/class-wc-gateway-epayco.php:308
+msgid "Seleccionar pagina"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:304
-msgctxt "Confirmation Page"
 msgid "Página de Confirmación"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:307
-msgctxt "URL of the store where ePayco confirms the payment"
 msgid "Url de la tienda donde ePayco confirma el pago"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:311
-msgctxt "Reduce stock in pending transactions"
 msgid "Reducir el stock en transacciones pendientes"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:315
-msgctxt "Enable to reduce stock in pending transactions"
 msgid "Habilite para reducir el stock en transacciones pendientes"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:318
-msgctxt "Checkout Language"
 msgid "Idioma del Checkout"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:321
-msgctxt "Select the checkout language"
 msgid "Seleccione el idioma del checkout"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:326
-msgctxt "Enable sending attributes via response URL"
 msgid "Habilitar envió de atributos a través de la URL de respuesta"
 msgstr ""
 
+#: classes/class-wc-gateway-epayco.php:328
+msgid "Habilitar el modo redirección con data"
+msgstr ""
+
 #: classes/class-wc-gateway-epayco.php:329
-msgctxt ""
-"By enabling this option you may expose sensitive information of your clients,"
-" the use of this option is under your responsibility, know this information "
-"in the following <a href=\"https://docs.epayco.co/payments/checkout#scroll-"
-"response -p\" target=\"_blank\">link.</a>"
-msgid ""
-"Al habilitar esta opción puede exponer información sensible de sus clientes, "
-"el uso de esta opción es bajo su responsabilidad, conozca esta información "
-"en el siguiente  <a href=\"https://docs.epayco.co/payments/checkout#scroll-"
-"response-p\" target=\"_blank\">link.</a>"
+msgid "Al habilitar esta opción puede exponer información sensible de sus clientes, el uso de esta opción es bajo su responsabilidad, conozca esta información en el siguiente  <a href=\"https://docs.epayco.co/payments/checkout#scroll-response-p\" target=\"_blank\">link.</a>"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:570
-msgctxt "Loading payment methods"
 msgid "Cargando métodos de pago"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:571
-msgctxt ""
-"If they are not loaded automatically, click the \"Pay with ePayco\" button"
-msgid ""
-"Si no se cargan automáticamente, haga clic en el botón \"Pagar con ePayco\""
+msgid "Si no se cargan automáticamente, haga clic en el botón \\\"Pagar con ePayco\\\""
 msgstr ""
 
 #: assets/js/frontend/blocks.js:9
-msgctxt "Epayco"
 msgid "Epayco"
 msgstr ""

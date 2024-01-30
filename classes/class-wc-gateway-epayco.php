@@ -257,7 +257,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 			'epayco_testmode' => array(
 				'title'       => __( 'Sitio en pruebas', 'woo-epayco-gateway' ),
 				'type'        => 'checkbox',
-                'label' => __('Habilitar el modo de pruebas', 'epayco_woocommerce'),
+                'label' => __('Habilitar el modo de pruebas', 'woo-epayco-gateway'),
 				'description' => __( 'Habilite para realizar pruebas', 'woo-epayco-gateway' ),
                 'default' => 'no',
 			),
@@ -298,14 +298,14 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                 'type'        => 'select',
                 'css' =>'line-height: inherit',
                 'description' => __( 'Url de la tienda donde se redirecciona al usuario luego de pagar el pedido', 'woo-epayco-gateway' ),
-                'options'       => $this->get_pages(__('Seleccionar pagina', 'epayco-woocommerce')),
+                'options'       => $this->get_pages(__('Seleccionar pagina', 'woo-epayco-gateway')),
             ),
 			'epayco_url_confirmation'          => array(
 				'title'       => __( 'Página de Confirmación', 'woo-epayco-gateway' ),
 				'type'        => 'select',
                 'css' =>'line-height: inherit',
 				'description' => __( 'Url de la tienda donde ePayco confirma el pago', 'woo-epayco-gateway' ),
-                'options'       => $this->get_pages(__('Seleccionar pagina', 'epayco-woocommerce')),
+                'options'       => $this->get_pages(__('Seleccionar pagina', 'woo-epayco-gateway')),
 			),
 			'epayco_reduce_stock_pending'    => array(
 				'title'       => __( 'Reducir el stock en transacciones pendientes', 'woo-epayco-gateway' ),
@@ -325,7 +325,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             'response_data'     => array(
 				'title'       => __( 'Habilitar envió de atributos a través de la URL de respuesta', 'woo-epayco-gateway' ),
                 'type' => 'checkbox',
-                'label' => __('Habilitar el modo redirección con data', 'epayco_woocommerce'),
+                'label' => __('Habilitar el modo redirección con data', 'woo-epayco-gateway'),
 				'description' => __( 'Al habilitar esta opción puede exponer información sensible de sus clientes, el uso de esta opción es bajo su responsabilidad, conozca esta información en el siguiente  <a href="https://docs.epayco.co/payments/checkout#scroll-response-p" target="_blank">link.</a>', 'woo-epayco-gateway' ),
                 'default'     => 'no',
 			),
@@ -456,13 +456,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                     }
                     const apiKey = "%s";
                     const privateKey = "%s";
-                    var openChekout = function () {
-                        //handler.open(data);
-                        openNewChekout()
-                    }
-                    var bntPagar = document.getElementById("btn_epayco");
-                    bntPagar.addEventListener("click", openChekout);
-            	    openChekout()
                     var openNewChekout = function () {
                         if(localStorage.getItem("invoicePayment") == null){
                             localStorage.setItem("invoicePayment", data.invoice);
@@ -506,6 +499,13 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                                 error.message;
                             });
                     }
+                    var openChekout = function () {
+                        //handler.open(data);
+                        openNewChekout()
+                    }
+                    var bntPagar = document.getElementById("btn_epayco");
+                    bntPagar.addEventListener("click", openChekout);
+            	    openChekout()
                 </script>
                 </form>
                 </center>
@@ -567,11 +567,11 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                     <div class="loading"></div>
                 </div>
                 <p style="text-align: center;" class="epayco-title">
-                    <span class="animated-points">' . esc_html__( 'Loading payment methods', 'woo-epayco-gateway' ) . '</span>
-                    <br><small class="epayco-subtitle"> ' . esc_html__( 'Si no se cargan automáticamente, haga clic en el botón \"Pagar con ePayco\"', 'woo-epayco-gateway' ) . '</small>
+                    <span class="animated-points">' . esc_html__( 'Cargando métodos de pago', 'woo-epayco-gateway' ) . '</span>
+                    <br><small class="epayco-subtitle"> ' . esc_html__( 'Si no se cargan automáticamente, haga clic en el botón "Pagar con ePayco"', 'woo-epayco-gateway' ) . '</small>
                 </p>';
 
-        if ($this->epayco_lang !== "es") {
+        if ($this->epayco_lang === "2") {
             $epaycoButtonImage = 'https://multimedia.epayco.co/epayco-landing/btns/Boton-epayco-color-Ingles.png';
         }else{
             $epaycoButtonImage = 'https://multimedia.epayco.co/epayco-landing/btns/Boton-epayco-color1.png';
