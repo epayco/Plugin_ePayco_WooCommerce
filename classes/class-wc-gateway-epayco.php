@@ -15,7 +15,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 	public function __construct() {
 
 		$this->id                   = 'epayco';
-		$this->version = '7.0.0';
+		$this->version = '7.1.0';
 		$logo_url = $this->get_option( 'logo' );
 		if ( ! empty( $logo_url ) ) {
 			$logo_url   = $this->get_option( 'logo' );
@@ -422,7 +422,19 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             EpaycoOrder::create($order_id,1);
             $this->restore_order_stock($order->get_id(),"decrease");
         }
-
+        if($current_state != "on-hold"){
+            $order->update_status("on-hold");
+            if($current_state == "epayco_failed" ||
+                $current_state == "epayco_cancelled" ||
+                $current_state == "failed" ||
+                $current_state == "epayco-cancelled" ||
+                $current_state == "epayco-failed"
+            ){
+                $this->restore_order_stock($order->get_id(),"decrease");
+            }else{
+                $this->restore_order_stock($order->get_id());
+            }
+        }
         echo sprintf('
                     <script
                        src="https://checkout.epayco.co/checkout.js">
