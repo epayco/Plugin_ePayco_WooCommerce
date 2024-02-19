@@ -452,7 +452,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                         mobilephone_billing: "%s",
                         autoclick: "true",
                         ip: "%s",
-                        test: "%s".toString()
+                        test: "%s".toString(),
+                        extras_epayco:{extra5:"p19"}
                     }
                     const apiKey = "%s";
                     const privateKey = "%s";
