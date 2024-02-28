@@ -422,6 +422,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             EpaycoOrder::create($order_id,1);
             $this->restore_order_stock($order->get_id(),"decrease");
         }
+        $current_state = $order->get_status();
         if($current_state != "on-hold"){
             $order->update_status("on-hold");
             if($current_state == "epayco_failed" ||
@@ -844,7 +845,10 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                             if($current_state =="epayco-cancelled"||
                                 $current_state == $orderStatus ){
                             }else{
-                                $this->restore_order_stock($order->get_id());
+                                if($current_state =="on-hold"){
+                                    $order->update_status($orderStatus);
+                                    $order->add_order_note($message);
+                                }
                             }
                         }
                     }else{
@@ -860,8 +864,9 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                             $messageClass = 'woocommerce-error';
                             $order->update_status($this->epayco_cancelled_endorder_state);
                             $order->add_order_note($message);
-                            if($current_state !=$this->epayco_cancelled_endorder_state){
-                                $this->restore_order_stock($order->get_id());
+                            if($current_state =="on-hold"){
+                                $order->update_status($this->epayco_cancelled_endorder_state);
+                                $order->add_order_note($message);
                             }
                         }
                     }
@@ -890,16 +895,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                     if($current_state != $orderStatus){
                         $order->update_status($orderStatus);
                         $order->add_order_note($message);
-                        if($current_state == "epayco_failed" ||
-                            $current_state == "epayco_cancelled" ||
-                            $current_state == "failed" ||
-                            $current_state == "epayco-cancelled" ||
-                            $current_state == "epayco-failed"
-                        ){
-                            $this->restore_order_stock($order->get_id(),"decrease");
-                        }else{
-                            $this->restore_order_stock($order->get_id());
-                        }
                     }
                     echo "3";
                 } break;
@@ -918,7 +913,10 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                             if($current_state =="epayco-failed"||
                                 $current_state == "epayco_failed" ){
                             }else{
-                                $this->restore_order_stock($order->get_id());
+                                if($current_state =="on-hold"){
+                                    $order->update_status($orderStatus);
+                                    $order->add_order_note($message);
+                                }
                             }
                         }
                     }else{
@@ -932,10 +930,9 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                         ){}else{
                             $message = 'Pago rechazado: ' .$x_ref_payco;
                             $messageClass = 'woocommerce-error';
-                            $order->update_status('epayco-failed');
-                            $order->add_order_note($message);
-                            if($current_state !="epayco-failed"){
-                                $this->restore_order_stock($order->get_id());
+                            if($current_state =="on-hold"){
+                                $order->update_status($this->epayco_cancelled_endorder_state);
+                                $order->add_order_note($message);
                             }
                         }
                     }
