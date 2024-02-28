@@ -422,7 +422,19 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             EpaycoOrder::create($order_id,1);
             $this->restore_order_stock($order->get_id(),"decrease");
         }
-
+        if($current_state != "on-hold"){
+            $order->update_status("on-hold");
+            if($current_state == "epayco_failed" ||
+                $current_state == "epayco_cancelled" ||
+                $current_state == "failed" ||
+                $current_state == "epayco-cancelled" ||
+                $current_state == "epayco-failed"
+            ){
+                $this->restore_order_stock($order->get_id(),"decrease");
+            }else{
+                $this->restore_order_stock($order->get_id());
+            }
+        }
         echo sprintf('
                     <script
                        src="https://checkout.epayco.co/checkout.js">
@@ -569,7 +581,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                 </div>
                 <p style="text-align: center;" class="epayco-title">
                     <span class="animated-points">' . esc_html__( 'Cargando métodos de pago', 'woo-epayco-gateway' ) . '</span>
-                    <br><small class="epayco-subtitle"> ' . esc_html__( 'Si no se cargan automáticamente, haga clic en el botón "Pagar con ePayco"', 'woo-epayco-gateway' ) . '</small>
+                    <br><small class="epayco-subtitle"> ' . esc_html__( '', 'woo-epayco-gateway' ) . '</small>
                 </p>';
 
         if ($this->epayco_lang === "2") {
