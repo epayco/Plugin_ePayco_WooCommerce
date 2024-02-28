@@ -6,7 +6,7 @@
  *
  * Plugin Name: WooCommerce Epayco Gateway
  * Description: Plugin ePayco Gateway for WooCommerce.
- * Version: 7.1.0
+ * Version: 8.0.0
  * Author: ePayco
  * Author URI: http://epayco.co
  * Tested up to: 6.4
