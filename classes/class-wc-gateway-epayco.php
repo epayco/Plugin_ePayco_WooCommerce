@@ -438,7 +438,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
         }
         echo sprintf('
                     <script
-                       src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js">
+                       src="https://checkout.epayco.co/checkout.js">
                     </script>
                     <script> var handler = ePayco.checkout.configure({
                         key: "%s",
@@ -689,7 +689,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 
             }
 
-            $url = 'https://secure.epayco.io/validation/v1/reference/'.$ref_payco;
+            $url = 'https://secure.epayco.co/validation/v1/reference/'.$ref_payco;
             $response = wp_remote_get(  $url );
             $body = wp_remote_retrieve_body( $response );
             $jsonData = @json_decode($body, true);
@@ -1191,7 +1191,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
     {
         $username = sanitize_text_field($validationData['epayco_publickey']);
         $password = sanitize_text_field($validationData['epayco_privatey']);
-        $response = wp_remote_post( 'https://apify.epayco.io/login', array(
+        $response = wp_remote_post( 'https://apify.epayco.co/login', array(
             'headers' => array(
                 'Authorization' => 'Basic ' . base64_encode( $username . ':' . $password ),
             ),
