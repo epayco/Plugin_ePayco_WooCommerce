@@ -15,7 +15,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 	public function __construct() {
 
 		$this->id                   = 'epayco';
-		$this->version = '8.0.0';
+		$this->version = '8.0.1';
 		$logo_url = $this->get_option( 'logo' );
 		if ( ! empty( $logo_url ) ) {
 			$logo_url   = $this->get_option( 'logo' );
@@ -507,6 +507,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                                         external: external,
                                     });
                                     handlerNew.openNew()
+                                }else{
+                                    handler.open(data)
                                 }
                             })
                             .catch(error => {
