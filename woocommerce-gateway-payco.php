@@ -6,7 +6,7 @@
  *
  * Plugin Name: WooCommerce Epayco Gateway
  * Description: Plugin ePayco Gateway for WooCommerce.
- * Version: 8.0.1
+ * Version: 8.0.2
  * Author: ePayco
  * Author URI: http://epayco.co
  * Tested up to: 6.4
@@ -371,3 +371,70 @@ function styling_admin_order_list() {
     <?php
 }
 add_action('admin_head', 'styling_admin_order_list' );
+
+/////////////////////////////////////////////////////////////////////
+// Display as order meta
+function my_field_order_meta_handler( $item_id, $values, $cart_item_key ) {
+    if( isset( $values['modo'] ) ) {
+        wc_add_order_item_meta( $item_id, "modo", $values['modo'] );
+    }
+}
+add_action( 'woocommerce_add_order_item_meta', 'my_field_order_meta_handler', 1, 3 );
+
+// Update the user meta with field value
+add_action('woocommerce_checkout_update_user_meta', 'my_custom_checkout_field_update_user_meta');
+function my_custom_checkout_field_update_user_meta( $user_id ) {
+    if ($user_id && $_POST['modo']) update_user_meta( $user_id, 'modo', esc_attr($_POST['modo']) );
+}
+
+// Update the order meta with field value
+add_action('woocommerce_checkout_update_order_meta', 'my_custom_checkout_field_update_order_meta');
+function my_custom_checkout_field_update_order_meta( $order_id ) {
+    if ($_POST['modo']) update_post_meta( $order_id, 'My Field', esc_attr($_POST['modo']));
+}
+/**
+ * Display field value on the order edit page
+ */
+//woocommerce_admin_order_data_after_payment_info
+//woocommerce_admin_order_data_after_order_details
+//woocommerce_admin_order_data_after_billing_address
+//woocommerce_admin_order_data_after_shipping_address
+add_action( 'woocommerce_admin_order_data_after_payment_info', 'my_custom_checkout_field_display_admin_order_meta', 10, 1 );
+function my_custom_checkout_field_display_admin_order_meta( $order ){
+     $order_id = method_exists( $order, 'get_id' ) ? $order->get_id() : $order->id;
+     if( null !== get_post_meta( $order_id, 'modo', true ) && null !== get_post_meta( $order_id, 'fecha', true )
+        && null !== get_post_meta( $order_id, 'franquicia', true ) && null !== get_post_meta( $order_id, 'autorizacion', true )
+     ){
+    echo '<br>
+    <h3>Detalle de la transacción</h3>
+    <div>
+        <div class="order_data_column_container">
+            <div class="order_data_column">
+                <div class="address">    
+                    <p><strong>'.__('Modo').':</strong> ' . get_post_meta( $order_id, 'modo', true ) . '</p>
+                    <p><strong>'.__('Fecha y hora transacción').':</strong> ' . get_post_meta( $order_id, 'fecha', true ) . '</p>
+                </div>
+            </div>
+            <div class="order_data_column">
+                <div class="address">    
+                    <p><strong>'.__('Franquicia/Medio de pago').':</strong> ' . get_post_meta( $order_id, 'franquicia', true ) . '</p>
+                    <p><strong>'.__('Código de autorización').':</strong> ' . get_post_meta( $order_id, 'autorizacion', true ) . '</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    ';
+     }
+
+}
+
+
+///////////////////////////////////////////////////////////////////////
+add_action('woocommerce_checkout_create_order_line_item', 'add_custom_hiden_order_item_meta_data', 20, 4 );
+function add_custom_hiden_order_item_meta_data( $item, $cart_item_key, $values, $order ) {
+
+    // Set user meta custom field as order item meta
+    if( $meta_value = get_user_meta( $order->get_user_id(), 'billing_enumber', true ) )
+        $item->update_meta_data( 'pa_billing-e-number', $meta_value );
+}
+
