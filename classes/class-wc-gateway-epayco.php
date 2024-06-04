@@ -15,7 +15,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 	public function __construct() {
 
 		$this->id                   = 'epayco';
-		$this->version = '8.0.1';
+		$this->version = '8.1.2';
         $this->icon = apply_filters( 'woocommerce_' . $this->id . '_icon', EPAYCO_PLUGIN_URL . 'assets/images/paymentLogo.svg' );
         $this->method_title         = __( 'ePayco Checkout Gateway', 'woo-epayco-gateway' );
         $this->method_description   = __( 'Acepta tarjetas de credito, depositos y transferencias.', 'woo-epayco-gateway' );
@@ -416,19 +416,11 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             EpaycoOrder::create($order_id,1);
             $this->restore_order_stock($order->get_id(),"decrease");
         }
+        $orderStatus = "pending";
         $current_state = $order->get_status();
-        if($current_state != "on-hold"){
-            $order->update_status("on-hold");
-            if($current_state == "epayco_failed" ||
-                $current_state == "epayco_cancelled" ||
-                $current_state == "failed" ||
-                $current_state == "epayco-cancelled" ||
-                $current_state == "epayco-failed"
-            ){
-                $this->restore_order_stock($order->get_id(),"decrease");
-            }else{
-                $this->restore_order_stock($order->get_id());
-            }
+        if($current_state != $orderStatus){
+            $order->update_status($orderStatus);
+            $this->restore_order_stock($order->get_id(),"decrease");
         }
         echo sprintf('
                     <script
@@ -861,7 +853,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                             if($current_state =="epayco-cancelled"||
                                 $current_state == $orderStatus ){
                             }else{
-                                if($current_state =="on-hold"){
+                                if($current_state =="pending"){
                                     $order->update_status($orderStatus);
                                     //$order->add_order_note($message);
                                 }
@@ -884,7 +876,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                             $messageClass = 'woocommerce-error';
                             $order->update_status($this->epayco_cancelled_endorder_state);
                             //$order->add_order_note($message);
-                            if($current_state =="on-hold"){
+                            if($current_state =="pending"){
                                 $order->update_status($this->epayco_cancelled_endorder_state);
                                 //$order->add_order_note($message);
                             }
@@ -913,7 +905,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                         EpaycoOrder::updateStockDiscount($order_id,1);
                     }
                     $message = 'Pago pendiente de aprobación';
-                    $orderStatus = "on-hold";
+                    $orderStatus = "pending";
                     if($isTestMode=="true"){
                         update_post_meta( $order->get_id(), 'modo', esc_attr('pruebas'));
                         update_post_meta( $order->get_id(), 'fecha', esc_attr($x_fecha_transaccion));
@@ -958,7 +950,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             }
 
             //validar si la transaccion esta pendiente y pasa a rechazada y ya habia descontado el stock
-            if($current_state == 'on-hold' && ((int)$x_cod_transaction_state == 2 || (int)$x_cod_transaction_state == 4) && EpaycoOrder::ifStockDiscount($order_id)){
+            if($current_state == 'pending' && ((int)$x_cod_transaction_state == 2 || (int)$x_cod_transaction_state == 4) && EpaycoOrder::ifStockDiscount($order_id)){
                 //si no se restauro el stock restaurarlo inmediatamente
                 $this->restore_order_stock($order_id);
             };
