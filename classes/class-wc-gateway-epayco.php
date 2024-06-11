@@ -63,6 +63,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 		add_action( 'woocommerce_api_wc_gateway_' . $this->id, array( $this, 'check_ipn_response' ) );
         add_action( 'woocommerce_api_' . strtolower( get_class( $this )."Validation" ), array( $this, 'validate_ePayco_request' ) );
 
+        add_action( 'woocommerce_checkout_create_order'. $this->id,array( $this, 'add_expiration') );
 		if ( ! $this->is_valid_for_use() ) {
 			$this->enabled = false;
 		}
@@ -791,7 +792,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                             //se descuenta el stock
                             EpaycoOrder::updateStockDiscount($order_id,1);
                         }
-
+                        
                         if($current_state == "epayco_processing" ||
                             $current_state == "epayco_completed" ||
                             $current_state == "processing_test" ||
@@ -804,7 +805,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                             $current_state == "completed"
                         ){}
                         else{
-
+                            
                             if($current_state =="pending")
                             {
                                 $this->restore_order_stock($order->get_id());
@@ -878,6 +879,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                             //$order->add_order_note($message);
                             if($current_state =="pending"){
                                 $order->update_status($this->epayco_cancelled_endorder_state);
+                                $this->restore_order_stock($order->get_id(),"increase");
                                 //$order->add_order_note($message);
                             }
                         }
@@ -904,8 +906,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                         //actualizar el stock
                         EpaycoOrder::updateStockDiscount($order_id,1);
                     }
-                    $message = 'Pago pendiente de aprobación';
-                    $orderStatus = "pending";
                     if($isTestMode=="true"){
                         update_post_meta( $order->get_id(), 'modo', esc_attr('pruebas'));
                         update_post_meta( $order->get_id(), 'fecha', esc_attr($x_fecha_transaccion));
@@ -918,10 +918,20 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                         update_post_meta( $order->get_id(), 'franquicia', esc_attr($x_franchise));
                         update_post_meta( $order->get_id(), 'autorizacion', esc_attr($x_approval_code));
                     }
-                    if($current_state != $orderStatus){
-                        $order->update_status($orderStatus);
-                       // $order->add_order_note($message);
-                    }
+                        $message = 'Pago pendiente de aprobación';
+                        $orderStatus = "pending";
+                        if($current_state != $orderStatus){
+                            $order->update_status($orderStatus);
+                            if($current_state == "epayco_failed" ||
+                                $current_state == "epayco_cancelled" ||
+                                $current_state == "failed" ||
+                                $current_state == "epayco-cancelled" ||
+                                $current_state == "epayco-failed"
+                            ){
+                                $this->restore_order_stock($order->get_id(),"decrease");
+                            }
+                            //$order->add_order_note($message);
+                        }
                     echo "3";
                 } break;
                 case 6: {
@@ -1063,6 +1073,13 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
         );
         return $signature;
     }
+
+    function add_expiration( $order, $data ) {
+        $items_count  = WC()->cart->get_cart_contents_count();
+
+        $order->update_meta_data('expiration_date', date( 'Y-m-d H:i:s', strtotime( '+'. ( $items_count * 60 ) .' minutes' ) ) );
+    }
+
     /**
      * @param $validationData
      */
