@@ -415,13 +415,13 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
         if (!EpaycoOrder::ifExist($order_id)) {
             //si no se restauro el stock restaurarlo inmediatamente
             EpaycoOrder::create($order_id,1);
-            $this->restore_order_stock($order->get_id(),"decrease");
+            //$this->restore_order_stock($order->get_id(),"decrease");
         }
         $orderStatus = "pending";
         $current_state = $order->get_status();
         if($current_state != $orderStatus){
             $order->update_status($orderStatus);
-            $this->restore_order_stock($order->get_id(),"decrease");
+            //$this->restore_order_stock($order->get_id(),"decrease");
         }
         echo sprintf('
                     <script
@@ -454,7 +454,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                         autoclick: "true",
                         ip: "%s",
                         test: "%s".toString(),
-                        extras_epayco:{extra5:"p19"}
+                        extras_epayco:{extra5:"p19"},
+                        method_confirmation: "POST"
                     }
                     const apiKey = "%s";
                     const privateKey = "%s";
@@ -792,7 +793,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                             //se descuenta el stock
                             EpaycoOrder::updateStockDiscount($order_id,1);
                         }
-                        
+
                         if($current_state == "epayco_processing" ||
                             $current_state == "epayco_completed" ||
                             $current_state == "processing_test" ||
@@ -854,7 +855,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                             if($current_state =="epayco-cancelled"||
                                 $current_state == $orderStatus ){
                             }else{
-                                if($current_state =="pending"){
+                                if($current_state =="on-hold" || $current_state =="pending"){
                                     $order->update_status($orderStatus);
                                     //$order->add_order_note($message);
                                 }
@@ -881,6 +882,9 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                                 $order->update_status($this->epayco_cancelled_endorder_state);
                                 $this->restore_order_stock($order->get_id(),"increase");
                                 //$order->add_order_note($message);
+                            }
+                            if($current_state =="on-hold"){
+                                $order->update_status($this->epayco_cancelled_endorder_state);
                             }
                         }
                     }
@@ -919,17 +923,17 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                         update_post_meta( $order->get_id(), 'autorizacion', esc_attr($x_approval_code));
                     }
                         $message = 'Pago pendiente de aprobación';
-                        $orderStatus = "pending";
+                        $orderStatus = "on-hold";
                         if($current_state != $orderStatus){
                             $order->update_status($orderStatus);
-                            if($current_state == "epayco_failed" ||
+                            /*if($current_state == "epayco_failed" ||
                                 $current_state == "epayco_cancelled" ||
                                 $current_state == "failed" ||
                                 $current_state == "epayco-cancelled" ||
                                 $current_state == "epayco-failed"
                             ){
                                 $this->restore_order_stock($order->get_id(),"decrease");
-                            }
+                            }*/
                             //$order->add_order_note($message);
                         }
                     echo "3";
@@ -960,7 +964,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             }
 
             //validar si la transaccion esta pendiente y pasa a rechazada y ya habia descontado el stock
-            if($current_state == 'pending' && ((int)$x_cod_transaction_state == 2 || (int)$x_cod_transaction_state == 4) && EpaycoOrder::ifStockDiscount($order_id)){
+            if(($current_state == 'on-hold' || $current_state == 'pending') && ((int)$x_cod_transaction_state == 2 || (int)$x_cod_transaction_state == 4) && EpaycoOrder::ifStockDiscount($order_id)){
                 //si no se restauro el stock restaurarlo inmediatamente
                 $this->restore_order_stock($order_id);
             };
