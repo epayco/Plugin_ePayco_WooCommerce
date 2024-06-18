@@ -735,6 +735,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             switch ($x_cod_transaction_state) {
                 case 1: {
                     if($isTestMode=="true"){
+                        update_post_meta( $order->get_id(), 'refPayco', esc_attr($x_ref_payco));
                         update_post_meta( $order->get_id(), 'modo', esc_attr('pruebas'));
                         update_post_meta( $order->get_id(), 'fecha', esc_attr($x_fecha_transaccion));
                         update_post_meta( $order->get_id(), 'franquicia', esc_attr($x_franchise));
@@ -756,6 +757,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                         }
                     }else{
                         $message = "Modo:Producción, \nref_payco: ".$x_ref_payco." \nFecha y hora transacción: ".$x_fecha_transaccion." \nFranquicia/Medio de pago: ".$x_franchise. " \nCódigo de autorización: ".$x_approval_code;
+                        update_post_meta( $order->get_id(), 'refPayco', esc_attr($x_ref_payco));
                         update_post_meta( $order->get_id(), 'modo', esc_attr('Producción'));
                         update_post_meta( $order->get_id(), 'fecha', esc_attr($x_fecha_transaccion));
                         update_post_meta( $order->get_id(), 'franquicia', esc_attr($x_franchise));
@@ -766,6 +768,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                     if($current_state == "epayco_failed" ||
                         $current_state == "epayco_cancelled" ||
                         $current_state == "failed" ||
+                        $current_state == "canceled" ||
                         $current_state == "epayco-cancelled" ||
                         $current_state == "epayco-failed"
                     ){
@@ -845,6 +848,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                                 }break;
                             }
                             $message = "Modo:pruebas, \nref_payco: ".$x_ref_payco." \nFecha y hora transacción: ".$x_fecha_transaccion." \nFranquicia/Medio de pago: ".$x_franchise. " \nCódigo de autorización: ".$x_approval_code;
+                            update_post_meta( $order->get_id(), 'refPayco', esc_attr($x_ref_payco));
                             update_post_meta( $order->get_id(), 'modo', esc_attr('pruebas'));
                             update_post_meta( $order->get_id(), 'fecha', esc_attr($x_fecha_transaccion));
                             update_post_meta( $order->get_id(), 'franquicia', esc_attr($x_franchise));
@@ -871,6 +875,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                             $current_state == "completed"
                         ){}else{
                             $message = "Modo:Producción, \nref_payco: ".$x_ref_payco." \nFecha y hora transacción: ".$x_fecha_transaccion." \nFranquicia/Medio de pago: ".$x_franchise. " \nCódigo de autorización: ".$x_approval_code;
+                            update_post_meta( $order->get_id(), 'refPayco', esc_attr($x_ref_payco));
                             update_post_meta( $order->get_id(), 'modo', esc_attr('Producción'));
                             update_post_meta( $order->get_id(), 'fecha', esc_attr($x_fecha_transaccion));
                             update_post_meta( $order->get_id(), 'franquicia', esc_attr($x_franchise));
@@ -880,7 +885,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                             //$order->add_order_note($message);
                             if($current_state =="pending"){
                                 $order->update_status($this->epayco_cancelled_endorder_state);
-                                $this->restore_order_stock($order->get_id(),"increase");
+                                //$this->restore_order_stock($order->get_id(),"increase");
                                 //$order->add_order_note($message);
                             }
                             if($current_state =="on-hold"){
@@ -910,19 +915,24 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                         //actualizar el stock
                         EpaycoOrder::updateStockDiscount($order_id,1);
                     }
+                    
                     if($isTestMode=="true"){
+                         $message = "Modo:Pruebas, \nref_payco: ".$x_ref_payco." \nFecha y hora transacción: ".$x_fecha_transaccion." \nFranquicia/Medio de pago: ".$x_franchise. " \nCódigo de autorización: ".$x_approval_code;
+                        update_post_meta( $order->get_id(), 'refPayco', esc_attr($x_ref_payco));
                         update_post_meta( $order->get_id(), 'modo', esc_attr('pruebas'));
                         update_post_meta( $order->get_id(), 'fecha', esc_attr($x_fecha_transaccion));
                         update_post_meta( $order->get_id(), 'franquicia', esc_attr($x_franchise));
                         update_post_meta( $order->get_id(), 'autorizacion', esc_attr($x_approval_code));
                         
                     }else{
+                         $message = "Modo:Producción, \nref_payco: ".$x_ref_payco." \nFecha y hora transacción: ".$x_fecha_transaccion." \nFranquicia/Medio de pago: ".$x_franchise. " \nCódigo de autorización: ".$x_approval_code;
+                        update_post_meta( $order->get_id(), 'refPayco', esc_attr($x_ref_payco));
                         update_post_meta( $order->get_id(), 'modo', esc_attr('Producción'));
                         update_post_meta( $order->get_id(), 'fecha', esc_attr($x_fecha_transaccion));
                         update_post_meta( $order->get_id(), 'franquicia', esc_attr($x_franchise));
                         update_post_meta( $order->get_id(), 'autorizacion', esc_attr($x_approval_code));
                     }
-                        $message = 'Pago pendiente de aprobación';
+                        //$message = 'Pago pendiente de aprobación';
                         $orderStatus = "on-hold";
                         if($current_state != $orderStatus){
                             $order->update_status($orderStatus);
@@ -973,6 +983,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             if($isTestMode=="true"){
                 if($x_cod_transaction_state==1){
                     $message = 'Pago exitoso Prueba';
+                        update_post_meta( $order->get_id(), 'refPayco', esc_attr($x_ref_payco));
                         update_post_meta( $order->get_id(), 'modo', esc_attr('prueba'));
                         update_post_meta( $order->get_id(), 'fecha', esc_attr($x_fecha_transaccion));
                         update_post_meta( $order->get_id(), 'franquicia', esc_attr($x_franchise));
@@ -995,6 +1006,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                     if($current_state == "epayco_failed" ||
                         $current_state == "epayco_cancelled" ||
                         $current_state == "failed" ||
+                        $current_state == "canceled" ||
                         $current_state == "epayco-cancelled" ||
                         $current_state == "epayco-failed"
                     ){}else{
@@ -1013,6 +1025,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                     $current_state == "completed"){
                 }else{
                     $message = 'Firma no valida';
+                    update_post_meta( $order->get_id(), 'refPayco', esc_attr($x_ref_payco));
                     update_post_meta( $order->get_id(), 'modo', esc_attr('Producción'));
                     update_post_meta( $order->get_id(), 'fecha', esc_attr($x_fecha_transaccion));
                     update_post_meta( $order->get_id(), 'franquicia', esc_attr($x_franchise));
