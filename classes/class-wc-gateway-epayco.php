@@ -810,10 +810,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                         ){}
                         else{
                             
-                            if($current_state =="pending")
-                            {
-                                $this->restore_order_stock($order->get_id());
-                            }
                             $order->payment_complete($x_ref_payco);
                             $order->update_status($orderStatus);
                             //$order->add_order_note($message);
