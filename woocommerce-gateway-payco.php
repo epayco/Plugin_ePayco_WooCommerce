@@ -379,7 +379,7 @@ function my_field_order_meta_handler( $item_id, $values, $cart_item_key ) {
         wc_add_order_item_meta( $item_id, "modo", $values['modo'] );
     }
 }
-add_action( 'woocommerce_add_order_item_meta', 'my_field_order_meta_handler', 1, 3 );
+add_action( 'woocommerce_new_order_item', 'my_field_order_meta_handler', 1, 3 );
 
 // Update the user meta with field value
 add_action('woocommerce_checkout_update_user_meta', 'my_custom_checkout_field_update_user_meta');
