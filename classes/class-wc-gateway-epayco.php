@@ -891,12 +891,12 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                     }
                     echo "2";
                     if(!$isConfirmation){
-                        $woocommerce->cart->empty_cart();
+                        //$woocommerce->cart->empty_cart();
                         foreach ($order->get_items() as $item) {
                             // Get an instance of corresponding the WC_Product object
                             $product_id = $item->get_product()->id;
                             $qty = $item->get_quantity(); // Get the item quantity
-                            WC()->cart->add_to_cart( $product_id ,(int)$qty);
+                            //WC()->cart->add_to_cart( $product_id ,(int)$qty);
                         }
                         wp_safe_redirect( wc_get_checkout_url() );
                         exit();
