@@ -443,3 +443,12 @@ function add_custom_hiden_order_item_meta_data( $item, $cart_item_key, $values, 
         $item->update_meta_data( 'pa_billing-e-number', $meta_value );
 }
 
+/*****
+ * 
+ * 
+ * clients
+ */
+
+ function test(){
+    return;
+ }
