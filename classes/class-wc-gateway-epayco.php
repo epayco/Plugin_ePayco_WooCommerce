@@ -208,14 +208,14 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 				'title'       => __( '<span class="epayco-required">Título</span>', 'woo-epayco-gateway' ),
 				'type'        => 'text',
 				'description' => __( 'Corresponde al título que el usuario ve durante el Checkout.', 'woo-epayco-gateway' ),
-				'default'     => __( 'Checkout ePayco (Tarjetas de crédito,debito,efectivo)', 'woo-epayco-gateway' ),
+				'default'     => __( 'Paga con ePayco', 'woo-epayco-gateway' ),
 				'desc_tip'    => true,
 			),
 			'description'      => array(
 				'title'       => __( '<span class="epayco-required">Descripción</span>', 'woo-epayco-gateway' ),
 				'type'        => 'textarea',
 				'description' => __( 'Corresponde a la descripción que verá el usuario durante el Checkout', 'woo-epayco-gateway' ),
-				'default'     => __( 'Checkout ePayco (Tarjetas de crédito,débito,efectivo)', 'woo-epayco-gateway' ),
+				'default'     => __( 'ePayco: Paga con Tarjeta de crédito/débito nacional e internacional, PSE, Daviplata, Nequi, Paypal, Efectivo, Safetypay y muchos más. ', 'woo-epayco-gateway' ),
 			),
             'epayco_customerid' => array(
                 'title'       => __( '<span class="epayco-required">P_CUST_ID_CLIENTE</span>', 'woo-epayco-gateway' ),
