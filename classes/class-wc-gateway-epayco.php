@@ -208,14 +208,14 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 				'title'       => __( '<span class="epayco-required">Título</span>', 'woo-epayco-gateway' ),
 				'type'        => 'text',
 				'description' => __( 'Corresponde al título que el usuario ve durante el Checkout.', 'woo-epayco-gateway' ),
-				'default'     => __( 'Checkout ePayco (Tarjetas de crédito,debito,efectivo)', 'woo-epayco-gateway' ),
+				'default'     => __( 'Paga con ePayco', 'woo-epayco-gateway' ),
 				'desc_tip'    => true,
 			),
 			'description'      => array(
 				'title'       => __( '<span class="epayco-required">Descripción</span>', 'woo-epayco-gateway' ),
 				'type'        => 'textarea',
 				'description' => __( 'Corresponde a la descripción que verá el usuario durante el Checkout', 'woo-epayco-gateway' ),
-				'default'     => __( 'Checkout ePayco (Tarjetas de crédito,débito,efectivo)', 'woo-epayco-gateway' ),
+				'default'     => __( 'ePayco: Paga con Tarjeta de crédito/débito nacional e internacional, PSE, Daviplata, Nequi, Paypal, Efectivo, Safetypay y muchos más. ', 'woo-epayco-gateway' ),
 			),
             'epayco_customerid' => array(
                 'title'       => __( '<span class="epayco-required">P_CUST_ID_CLIENTE</span>', 'woo-epayco-gateway' ),
@@ -425,7 +425,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
         }
         echo sprintf('
                     <script
-                       src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js">
+                       src="https://checkout.epayco.co/checkout.js">
                     </script>
                     <script> var handler = ePayco.checkout.configure({
                         key: "%s",
@@ -478,7 +478,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                         headers["privatekey"] = privatekey;
                         headers["apikey"] = apikey;
                         var payment =   function (){
-                            return  fetch("https://cms.epayco.io/checkout/payment/session", {
+                            return  fetch("https://cms.epayco.co/checkout/payment/session", {
                                 method: "POST",
                                 body: JSON.stringify(info),
                                 headers
@@ -539,7 +539,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             trim($this->epayco_publickey),
             trim($this->epayco_privatekey)
         );
-        wp_enqueue_script('epayco',  'https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js', array(), $this->version, null);
+        wp_enqueue_script('epayco',  'https://checkout.epayco.co/checkout.js', array(), $this->version, null);
 		wc_enqueue_js('
 		jQuery("#btn_epayco_new").click(function(){
             console.log("epayco")
@@ -680,7 +680,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 
             }
 
-            $url = 'https://secure.epayco.io/validation/v1/reference/'.$ref_payco;
+            $url = 'https://secure.epayco.co/validation/v1/reference/'.$ref_payco;
             $response = wp_remote_get(  $url );
             $body = wp_remote_retrieve_body( $response );
             $jsonData = @json_decode($body, true);
@@ -1100,7 +1100,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
     {
         $username = sanitize_text_field($validationData['epayco_publickey']);
         $password = sanitize_text_field($validationData['epayco_privatey']);
-        $response = wp_remote_post( 'https://apify.epayco.io/login', array(
+        $response = wp_remote_post( 'https://apify.epayco.co/login', array(
             'headers' => array(
                 'Authorization' => 'Basic ' . base64_encode( $username . ':' . $password ),
             ),
