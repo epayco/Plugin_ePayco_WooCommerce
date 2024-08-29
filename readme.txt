@@ -1,11 +1,11 @@
 === ePayco plugin for WooCommerce ===
 Contributors: ePayco Team
 Donate link: https://epayco.com/
-Tags: e-commerce, commerce, wordpress ecommerce, store, sales, sell, shop, shopping, cart, checkout, configurable, epayco
-Requires at least: 5.5
-Tested up to: 6.4
-Stable tag: 7.0.0
-Requires PHP: 5.6.0
+Tags: e-commerce, commerce, wordpress ecommerce, store, epayco
+Requires at least: 8.8.5
+Tested up to: 6.7
+Stable tag: 6.7
+Requires PHP: 7.4
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -45,8 +45,11 @@ Yes. But it is advisable that you consider using it since it is revealing for br
 
 == Changelog ==
 
-= 6.0.0 =
+= 6.7.0 =
 * Initial stable release
+
+= 8.1.0 =
+* upload release
 
 == Additional Info ==
 **Contribute** [repository on github](https://github.com/epayco/Plugin_ePayco_WooCommerce)
