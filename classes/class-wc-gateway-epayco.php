@@ -444,7 +444,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                             </a>
                         <form id="appGateway">
                             <script
-                               src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js">
+                               src="https://checkout.epayco.co/checkout.js">
                             </script>
                             <script>
                             var handler = ePayco.checkout.configure({
@@ -498,7 +498,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                                 headers["privatekey"] = privatekey;
                                 headers["apikey"] = apikey;
                                 var payment =   function (){
-                                    return  fetch("https://cms.epayco.io/checkout/payment/session", {
+                                    return  fetch("https://cms.epayco.co/checkout/payment/session", {
                                         method: "POST",
                                         body: JSON.stringify(info),
                                         headers
@@ -706,7 +706,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 
             }
 
-            $url = 'https://secure.epayco.io/validation/v1/reference/'.$ref_payco;
+            $url = 'https://secure.epayco.co/validation/v1/reference/'.$ref_payco;
             $response = wp_remote_get(  $url );
             $body = wp_remote_retrieve_body( $response );
             $jsonData = @json_decode($body, true);
