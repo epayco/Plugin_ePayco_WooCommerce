@@ -1,7 +1,7 @@
 === ePayco plugin for WooCommerce ===
 Contributors: ePayco Team
 Donate link: https://epayco.com/
-Tags: e-commerce, commerce, wordpress ecommerce, store, epayco
+Tags: e-commerce, commerce, wordpress ecommerce, store, sales, sell, shop, shopping, cart, checkout, configurable, epayco
 Requires at least: 8.8.5
 Tested up to: 6.7
 Stable tag: 6.7
