@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WC_Gateway_Epayco extends WC_Payment_Gateway {
 
+
+    public const PAYMENTS_IDS = 'epayco_meta_data';
 	/**
 	 * Constructor for the gateway.
 	 *
@@ -64,6 +66,11 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
         add_action( 'woocommerce_api_' . strtolower( get_class( $this )."Validation" ), array( $this, 'validate_ePayco_request' ) );
 
         add_action( 'woocommerce_checkout_create_order'. $this->id,array( $this, 'add_expiration') );
+
+        add_action( 'admin_init', [ $this, 'install' ] );
+        add_action( 'woocommerce_epayco_cleanup_draft_orders', [ $this, 'delete_epayco_expired_draft_orders' ] );
+        add_action( 'woocommerc_epayco_cron_hook', [ $this, 'woocommerc_epayco_cron_job_funcion' ]);
+        register_deactivation_hook( __FILE__, [ $this, 'mi_plugin_desactivar_cron_job' ] );
 		if ( ! $this->is_valid_for_use() ) {
 			$this->enabled = false;
 		}
@@ -76,6 +83,67 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             }
         }
 	}
+
+    /**
+     * Installation related logic for Draft order functionality.
+     *
+     * @internal
+     */
+    public function install() {
+        $this->maybe_create_cronjobs();
+    }
+
+    /**
+     * Maybe create cron events.
+     */
+    protected function maybe_create_cronjobs() {
+        if ( function_exists( 'as_next_scheduled_action' ) && false === as_next_scheduled_action( 'woocommerce_epayco_cleanup_draft_orders' ) ) {
+            as_schedule_recurring_action(time() + 3600, 3600, 'woocommerce_epayco_cleanup_draft_orders' );
+        }
+
+        add_filter( 'cron_schedules', function ($schedules) {
+            $schedules['hour'] = array(
+                'interval' => 3600,
+                'display'  => 'Cada hora'
+            );
+            return $schedules;
+        });
+
+        if (!wp_next_scheduled('woocommerc_epayco_cron_hook')) {
+            wp_schedule_event(time(), 'hourly', 'woocommerc_epayco_cron_hook');
+        }
+
+    }
+
+    public function mi_plugin_desactivar_cron_job() {
+        as_unschedule_action( 'woocommerce_epayco_cleanup_draft_orders' );
+    }
+
+    public function woocommerc_epayco_cron_job_funcion()
+    {
+        if ( class_exists( 'WC_Logger' ) ) {
+            $logger = new WC_Logger();
+            $logger->add( $this->id, 'El cron job de woocommerc_epayco_cron_job_funcion se ha ejecutado.'.time() );
+        }
+        $this->getEpaycoORders();
+    }
+
+    /**
+     * Delete draft orders older than a day in batches of 20.
+     *
+     * Ran on a daily cron schedule.
+     *
+     * @internal
+     */
+    public function delete_epayco_expired_draft_orders() {
+        error_log('El cron job de delete_epayco_expired_draft_orders se ha ejecutado.'.time());
+        if ( class_exists( 'WC_Logger' ) ) {
+            $logger = new WC_Logger();
+            $logger->add( $this->id, 'El cron job de delete_epayco_expired_draft_orders se ha ejecutado.'.time() );
+        }
+        $this->getEpaycoORders();
+    }
+
 
 
 	function is_valid_for_use() {
@@ -425,7 +493,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
         }
         echo sprintf('
                     <script
-                       src="https://checkout.epayco.co/checkout.js">
+                       src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js">
                     </script>
                     <script> var handler = ePayco.checkout.configure({
                         key: "%s",
@@ -454,6 +522,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                         autoclick: "true",
                         ip: "%s",
                         test: "%s".toString(),
+                        extra1: "%s",
                         extras_epayco:{extra5:"p19"},
                         method_confirmation: "POST"
                     }
@@ -478,7 +547,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
                         headers["privatekey"] = privatekey;
                         headers["apikey"] = apikey;
                         var payment =   function (){
-                            return  fetch("https://cms.epayco.co/checkout/payment/session", {
+                            return  fetch("https://cms.epayco.io/checkout/payment/session", {
                                 method: "POST",
                                 body: JSON.stringify(info),
                                 headers
@@ -536,10 +605,11 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             $phone_billing,
             $myIp,
             $testMode,
+            $order->get_id(),
             trim($this->epayco_publickey),
             trim($this->epayco_privatekey)
         );
-        wp_enqueue_script('epayco',  'https://checkout.epayco.co/checkout.js', array(), $this->version, null);
+        wp_enqueue_script('epayco',  'https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js', array(), $this->version, null);
 		wc_enqueue_js('
 		jQuery("#btn_epayco_new").click(function(){
             console.log("epayco")
@@ -549,6 +619,29 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 		return '<form  method="post" id="appGateway">
 		        </form>';
 	}
+
+    /**
+     * @param WC_Order $order
+     * @param bool $single
+     *
+     * @return mixed
+     */
+    public function getPaymentsIdMeta(WC_Order $order, bool $single = true)
+    {
+        return $order->get_meta(self::PAYMENTS_IDS, $single);
+    }
+
+    /**
+     * @param WC_Order $order
+     * @param mixed $value
+     *
+     * @return void
+     */
+    public function setPaymentsIdData(WC_Order $order, $value): void
+    {
+        $order->add_meta_data($order, self::PAYMENTS_IDS, $value);
+    }
+
 	/**
 	 * Process the payment and return the result
 	 *
@@ -680,7 +773,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 
             }
 
-            $url = 'https://secure.epayco.co/validation/v1/reference/'.$ref_payco;
+            $url = 'https://secure.epayco.io/validation/v1/reference/'.$ref_payco;
             $response = wp_remote_get(  $url );
             $body = wp_remote_retrieve_body( $response );
             $jsonData = @json_decode($body, true);
@@ -696,6 +789,23 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             $x_approval_code = trim($validationData['x_approval_code']);
             $x_franchise = trim($validationData['x_franchise']);
             $x_fecha_transaccion = trim($validationData['x_fecha_transaccion']);
+        }
+
+        $epaycoOrder = [
+            'refPayco'  => $x_ref_payco
+        ];
+        $paymentsIdMetadata = $this->getPaymentsIdMeta($order);
+        if (empty($paymentsIdMetadata)) {
+            $this->setPaymentsIdData($order, implode(', ', $epaycoOrder));
+        }
+
+        foreach ($epaycoOrder as $paymentId) {
+            $paymentDetailMetadata = $order->get_meta($paymentId);
+
+            if (empty($paymentDetailMetadata)) {
+                $order->update_meta_data(self::PAYMENTS_IDS, $paymentId);
+                $order->save();
+            }
         }
 
         // Validamos la firma
@@ -1100,7 +1210,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
     {
         $username = sanitize_text_field($validationData['epayco_publickey']);
         $password = sanitize_text_field($validationData['epayco_privatey']);
-        $response = wp_remote_post( 'https://apify.epayco.co/login', array(
+        $response = wp_remote_post( 'https://apify.epayco.io/login', array(
             'headers' => array(
                 'Authorization' => 'Basic ' . base64_encode( $username . ':' . $password ),
             ),
@@ -1157,4 +1267,160 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             $ipaddress = 'UNKNOWN';
         return $ipaddress;
     }
+
+    public function getEpaycoORders()
+    {
+        try {
+            $orders = wc_get_orders(array(
+                'limit'    => -1,
+                'status'   => 'on-hold',
+                'meta_query' => array(
+                    'key' => self::PAYMENTS_IDS
+                )
+            ));
+            $ref_payco_list = [];
+            foreach ($orders as $order) {
+                $ref_payco = $this->syncOrderStatus($order);
+                if($ref_payco){
+                    $ref_payco_list[] = $ref_payco;
+                }
+            }
+
+            if (is_array($ref_payco_list) && !empty($ref_payco_list))
+            {
+                $token = $this->epyacoBerarToken();
+                if($token){
+                    foreach ($ref_payco_list as $ref_payco) {
+                        $this->getEpaycoStatusOrder($ref_payco, $token);
+                    }
+                }
+            }
+
+        } catch (\Exception $ex) {
+            $error_message = "Unable to update batch of orders on action got error: {$ex->getMessage()}";
+            throw new Exception($error_message);
+        }
+    }
+
+    public function getEpaycoStatusOrder($ref_payco,$token)
+    {
+        if($token){
+            $headers = array(
+                'Content-Type' => 'application/json',
+                'Authorization' => "Bearer ".$token['token']
+            );
+            $path = "transaction/response.json?ref_payco=".$ref_payco."&&public_key=".$this->epayco_publickey;
+            $epayco_status = $this->epayco_realizar_llamada_api($path,[],$headers,false, 'GET');
+            if($epayco_status['success']){
+                if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
+                    $this->epaycoUploadOrderStatus($epayco_status);
+                }
+            }
+
+        }
+    }
+
+    public function epaycoUploadOrderStatus($epayco_status)
+    {
+        $order_id = isset($epayco_status['data']['x_extra1']) ? $epayco_status['data']['x_extra1'] : null;
+        $x_cod_transaction_state = isset($epayco_status['data']['x_cod_transaction_state']) ? $epayco_status['data']['x_cod_transaction_state'] : null;
+        $x_ref_payco = isset($epayco_status['data']['x_ref_payco']) ? $epayco_status['data']['x_ref_payco'] : null;
+        if ($order_id) {
+            $order = wc_get_order($order_id);
+            if ($order) {
+                $orderStatus = $order->get_status();
+                switch ($x_cod_transaction_state) {
+                    case 1: {
+                        $order->payment_complete($x_ref_payco);
+                        $order->update_status($this->epayco_endorder_state, 'La orden se ha completado automáticamente por la integración con ePayco.');
+                        $order->add_order_note('ePayco.');
+                    } break;
+                    case 3:
+                    case 7:
+                    {
+                        $orderStatus = "on-hold";
+                        if($orderStatus !== $orderStatus){
+                            $order->update_status($orderStatus);
+                            $order->add_order_note('ePayco.');
+                        }
+                    } break;
+                    case 2:
+                    case 4:
+                    case 10:
+                    case 11:{
+                        if($orderStatus == 'pending' || $orderStatus == 'on-hold'){
+                            $order->update_status($this->epayco_cancelled_endorder_state);
+                            $order->add_order_note('ePayco.');
+                        }
+                    }break;
+                }
+
+            }
+        }
+    }
+
+    public function syncOrderStatus(\WC_Order $order): string
+    {
+        $paymentsIds   = explode(',', $order->get_meta(self::PAYMENTS_IDS));
+        $lastPaymentId = trim(end($paymentsIds));
+        if ($lastPaymentId) {
+            return $lastPaymentId;
+        }else{
+            return false;
+        }
+    }
+
+    public function epyacoBerarToken()
+    {
+        $publicKey = $this->epayco_publickey;
+        $privateKey = $this->epayco_privatekey;
+
+        if(!isset($_COOKIE[$publicKey])) {
+            $token = base64_encode($publicKey.":".$privateKey);
+            $bearer_token = $token;
+            $cookie_value = $bearer_token;
+            setcookie($publicKey, $cookie_value, time() + (60 * 14), "/");
+        }else{
+            $bearer_token = $_COOKIE[$publicKey];
+        }
+
+        $headers = array(
+            'Content-Type' => 'application/json',
+            'Authorization' => "Basic ".$bearer_token
+        );
+        return $this->epayco_realizar_llamada_api("login",[],$headers);
+    }
+
+    public function epayco_realizar_llamada_api($path, $data, $headers, $afify = true, $method = 'POST') {
+       if($afify){
+           $url = 'https://apify.epayco.io/'.$path;
+       }else{
+           $url = 'https://secure2.epayco.io/restpagos/'.$path;
+       }
+
+        $response = wp_remote_post($url, array(
+            'method'    => $method,
+            'headers' => $headers,
+            'data' => json_encode($data),
+            'timeout'   => 120,
+        ));
+
+        if (is_wp_error($response)) {
+            $error_message = $response->get_error_message();
+            error_log("Error al hacer la llamada a la API de ePayco: " . $error_message);
+            return false;
+        } else {
+            $response_body = wp_remote_retrieve_body($response);
+            $status_code = wp_remote_retrieve_response_code($response);
+
+            if ($status_code == 200) {
+                $data = json_decode($response_body, true);
+                return $data;
+            } else {
+                error_log("Error en la respuesta de la API de ePayco, código de estado: " . $status_code);
+                return false;
+            }
+        }
+    }
+
 }
