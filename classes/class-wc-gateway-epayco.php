@@ -54,6 +54,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
         $this->epayco_url_confirmation=$this->get_option('epayco_url_confirmation');
         $this->epayco_lang=$this->get_option('epayco_lang');
         $this->response_data = $this->get_option('response_data');
+        $this->cron_data = $this->get_option('cron_data');
 
 		// Actions
 		add_action( 'valid-' . $this->id . '-standard-ipn-request', array( $this, 'successful_request' ) );
@@ -97,20 +98,24 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
      * Maybe create cron events.
      */
     protected function maybe_create_cronjobs() {
-        if ( function_exists( 'as_next_scheduled_action' ) && false === as_next_scheduled_action( 'woocommerce_epayco_cleanup_draft_orders' ) ) {
-            as_schedule_recurring_action(time() + 3600, 3600, 'woocommerce_epayco_cleanup_draft_orders' );
-        }
 
-        add_filter( 'cron_schedules', function ($schedules) {
-            $schedules['hour'] = array(
-                'interval' => 3600,
-                'display'  => 'Cada hora'
-            );
-            return $schedules;
-        });
+        $cron_data = $this->cron_data == "yes" ? true : false;
+        if($cron_data){
+            if ( function_exists( 'as_next_scheduled_action' ) && false === as_next_scheduled_action( 'woocommerce_epayco_cleanup_draft_orders' ) ) {
+                as_schedule_recurring_action(time() + 3600, 3600, 'woocommerce_epayco_cleanup_draft_orders' );
+            }
 
-        if (!wp_next_scheduled('woocommerc_epayco_cron_hook')) {
-            wp_schedule_event(time(), 'hourly', 'woocommerc_epayco_cron_hook');
+            add_filter( 'cron_schedules', function ($schedules) {
+                $schedules['hour'] = array(
+                    'interval' => 3600,
+                    'display'  => 'Cada hora'
+                );
+                return $schedules;
+            });
+
+            if (!wp_next_scheduled('woocommerc_epayco_cron_hook')) {
+                wp_schedule_event(time(), 'hourly', 'woocommerc_epayco_cron_hook');
+            }
         }
 
     }
@@ -392,6 +397,13 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
 				'description' => __( 'Al habilitar esta opción puede exponer información sensible de sus clientes, el uso de esta opción es bajo su responsabilidad, conozca esta información en el siguiente  <a href="https://docs.epayco.co/payments/checkout#scroll-response-p" target="_blank">link.</a>', 'woo-epayco-gateway' ),
                 'default'     => 'no',
 			),
+            'cron_data'     => array(
+                'title'       => __( 'Rastreo de orden ', 'woo-epayco-gateway' ),
+                'type' => 'checkbox',
+                'label' => __('Habilitar el rastreo de orden ', 'woo-epayco-gateway'),
+                'description' => __( 'Mantendremos tus pedidos actualizados cada hora. Recomendamos activar esta opción sólo en caso de fallos en la actualización automática de pedidos. ', 'woo-epayco-gateway' ),
+                'default'     => 'no',
+            ),
 			/*'monto_maximo' => array(
 				'title'       => __( 'Monto máximo', 'woo-epayco-gateway' ),
 				'type'        => 'text',
