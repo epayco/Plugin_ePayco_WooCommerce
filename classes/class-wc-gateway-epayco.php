@@ -1294,7 +1294,9 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway {
             foreach ($orders as $order) {
                 $ref_payco = $this->syncOrderStatus($order);
                 if($ref_payco){
-                    $ref_payco_list[] = $ref_payco;
+                    if($ref_payco !== self::PAYMENTS_IDS){
+                        $ref_payco_list[] = $ref_payco;
+                    }
                 }
             }
 
