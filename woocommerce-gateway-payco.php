@@ -379,7 +379,7 @@ function my_field_order_meta_handler( $item_id, $values, $cart_item_key ) {
         wc_add_order_item_meta( $item_id, "modo", $values['modo'] );
     }
 }
-add_action( 'woocommerce_add_order_item_meta', 'my_field_order_meta_handler', 1, 3 );
+add_action( 'woocommerce_new_order_item', 'my_field_order_meta_handler', 1, 3 );
 
 // Update the user meta with field value
 add_action('woocommerce_checkout_update_user_meta', 'my_custom_checkout_field_update_user_meta');
@@ -443,3 +443,50 @@ function add_custom_hiden_order_item_meta_data( $item, $cart_item_key, $values, 
         $item->update_meta_data( 'pa_billing-e-number', $meta_value );
 }
 
+
+function epayco_cron_job_deactivation() {
+    wp_clear_scheduled_hook('woocommerc_epayco_cron_hook');
+    as_unschedule_action( 'woocommerce_epayco_cleanup_draft_orders' );
+    $timestamp = wp_next_scheduled('woocommerce_epayco_cleanup_draft_orders');
+    if ($timestamp) {
+        wp_unschedule_event($timestamp, 'woocommerce_epayco_cleanup_draft_orders');
+    }
+}
+register_deactivation_hook(__FILE__, 'epayco_cron_job_deactivation');
+
+function payco_shop_order($postOrOrderObject) {
+    $order = ($postOrOrderObject instanceof WP_Post) ? wc_get_order($postOrOrderObject->ID) : $postOrOrderObject;
+    try {
+        $paymentsIds   = explode(',', $order->get_meta(WC_Gateway_Epayco::PAYMENTS_IDS, true));
+        $lastPaymentId = trim(end($paymentsIds));
+        $orderStatus = $order->get_status();
+
+        if (!$lastPaymentId) {
+            return false;
+        }
+        if($orderStatus == 'pending' || $orderStatus == 'on-hold'){
+            $epayco = new WC_Gateway_Epayco();
+            $token = $epayco->epyacoBerarToken();
+            if($token){
+                $headers = array(
+                    'Content-Type' => 'application/json',
+                    'Authorization' => "Bearer ".$token['token']
+                );
+                $path = "transaction/response.json?ref_payco=".$paymentsIds[0]."&&public_key=".$epayco->epayco_publickey;
+                $epayco_status = $epayco->epayco_realizar_llamada_api($path,[],$headers,false, 'GET');
+                if($epayco_status['success']){
+                    if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
+                        $epayco->epaycoUploadOrderStatus($epayco_status);
+                    }
+                }
+            }
+        }
+    } catch (Exception $e) {
+        throw new Exception('Couldn\'t find order'.$e->getMessage());
+    }
+}
+
+
+
+add_action('add_meta_boxes_shop_order', 'payco_shop_order');
+add_action('add_meta_boxes_woocommerce_page_wc-orders', 'payco_shop_order');
