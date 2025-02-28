@@ -54,7 +54,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         $this->epayco_url_confirmation = $this->get_option('epayco_url_confirmation');
         $this->epayco_lang = $this->get_option('epayco_lang');
         $this->response_data = $this->get_option('response_data');
-        $this->cron_data = $this->get_option('cron_data');
 
         // Actions
         add_action('valid-' . $this->id . '-standard-ipn-request', array($this, 'successful_request'));
@@ -442,7 +441,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 '
                     <script
                        src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js">
-                       src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js">
                     </script>
                     <script> var handler = ePayco.checkout.configure({
                         key: "%s",
@@ -469,9 +467,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         email_billing: "%s",
                         mobilephone_billing: "%s",
                         autoclick: "true",
-                        ip: "%s",
+                        ip: "%s" ,
                         test: "%s".toString(),
-                        extra1: "%s",
                         extras_epayco:{extra5:"p19"},
                         method_confirmation: "POST"
                     }
@@ -496,7 +493,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         headers["privatekey"] = privatekey;
                         headers["apikey"] = apikey;
                         var payment =   function (){
-                            return  fetch("https://cms.epayco.io/checkout/payment/session", {
                             return  fetch("https://cms.epayco.io/checkout/payment/session", {
                                 method: "POST",
                                 body: JSON.stringify(info),
@@ -1207,6 +1203,3 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             return $ipaddress;
         }
     }
-
-
-    
