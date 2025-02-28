@@ -525,7 +525,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             echo sprintf(
                 '
                     <script
-                       src="https://checkout.epayco.io/checkout.js">
+                       src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js">
                     </script>
                     <script> var handler = ePayco.checkout.configure({
                         key: "%s",
