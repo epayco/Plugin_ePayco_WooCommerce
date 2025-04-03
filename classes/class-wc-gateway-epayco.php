@@ -18,7 +18,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
     public function __construct()
     {
 
-        $this->id                   = 'epayco';
+        $this->id = 'epayco';
         $this->version = '8.2.0';
         $this->icon = apply_filters('woocommerce_' . $this->id . '_icon', EPAYCO_PLUGIN_URL . 'assets/images/paymentLogo.svg');
         $this->method_title         = __('ePayco Checkout Gateway', 'woo-epayco-gateway');
@@ -479,9 +479,10 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     $ico += round($item->get_tax_total(), 2);
                 }
             }
-
+            
             $base_tax = $order->get_subtotal() - $order->get_total_discount();
 
+            $iva = $iva !== 0 ? $iva : $order->get_total() - $base_tax;
 
 
             foreach ($order->get_items() as $product) {
@@ -1053,8 +1054,14 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                                 foreach ($order->get_items() as $item) {
                                     // Get an instance of corresponding the WC_Product object
                                     $product_id = $item->get_product()->id;
+                                    $product = $item->get_product();
                                     $qty = $item->get_quantity(); // Get the item quantity
-                                    WC()->cart->add_to_cart($product_id, (int)$qty);
+                                    // Verificar si el producto es una variación
+                                    if ($product->is_type('variation')) {
+                                        WC()->cart->add_to_cart($product_id, $qty, $product->get_id(), $product->get_attributes());
+                                    }else{
+                                        WC()->cart->add_to_cart($product_id, (int)$qty);
+                                    }
                                 }
                                 wp_safe_redirect(wc_get_checkout_url());
                                 exit();
