@@ -1054,8 +1054,14 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                                 foreach ($order->get_items() as $item) {
                                     // Get an instance of corresponding the WC_Product object
                                     $product_id = $item->get_product()->id;
+                                    $product = $item->get_product();
                                     $qty = $item->get_quantity(); // Get the item quantity
-                                    WC()->cart->add_to_cart($product_id, (int)$qty);
+                                    // Verificar si el producto es una variación
+                                    if ($product->is_type('variation')) {
+                                        WC()->cart->add_to_cart($product_id, $qty, $product->get_id(), $product->get_attributes());
+                                    }else{
+                                        WC()->cart->add_to_cart($product_id, (int)$qty);
+                                    }
                                 }
                                 wp_safe_redirect(wc_get_checkout_url());
                                 exit();
