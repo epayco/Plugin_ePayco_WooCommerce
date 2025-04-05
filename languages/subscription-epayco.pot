@@ -1,0 +1,100 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Subscription ePayco\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-07-18 22:41+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.2.1; wp-5.1.1"
+
+#: includes/class-subscription-epayco.php:53
+msgid "An internal error has arisen, try again"
+msgstr ""
+
+#: includes/class-subscription-epayco.php:400
+#: includes/class-gateway-subscription-epayco.php:189
+#, php-format
+msgid "Successful subscription (subscription ID: %s), reference (%s)"
+msgstr ""
+
+#: includes/class-subscription-epayco-plugin.php:112
+msgid "Tipo de documento"
+msgstr ""
+
+#: includes/class-subscription-epayco-plugin.php:113
+msgctxt "placeholder"
+msgid ""
+msgstr ""
+
+#: includes/class-subscription-epayco-plugin.php:131
+msgid "DNI"
+msgstr ""
+
+#: includes/class-subscription-epayco-plugin.php:132
+msgctxt "placeholder"
+msgid "Your DNI here...."
+msgstr ""
+
+#: includes/class-subscription-epayco-plugin.php:150
+msgid "The type of card is not accepted"
+msgstr ""
+
+#: includes/class-subscription-epayco-plugin.php:151
+msgid "Enter the card information"
+msgstr ""
+
+#: includes/class-subscription-epayco-plugin.php:152
+msgid "Please wait..."
+msgstr ""
+
+#: includes/class-subscription-epayco-plugin.php:153
+msgid "Redirecting to verify status..."
+msgstr ""
+
+#: includes/class-subscription-epayco-plugin.php:154
+msgid "Card number, invalid"
+msgstr ""
+
+#: includes/class-subscription-epayco-plugin.php:155
+msgid "Invalid card expiration date"
+msgstr ""
+
+#: includes/class-gateway-subscription-epayco.php:18
+msgid "To subscribe"
+msgstr ""
+
+#: includes/class-gateway-subscription-epayco.php:77
+msgid "Data of card"
+msgstr ""
+
+#: includes/class-gateway-subscription-epayco.php:78
+msgid "Card number"
+msgstr ""
+
+#: includes/class-gateway-subscription-epayco.php:79
+msgid "Cardholder"
+msgstr ""
+
+#. Name of the plugin
+msgid "Subscription ePayco"
+msgstr ""
+
+#. Description of the plugin
+msgid "Cobros periódicos, suscripciones de ePayco"
+msgstr ""
+
+#. Author of the plugin
+msgid "Saul Morales Pacheco"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://saulmoralespa.com"
+msgstr ""

@@ -1,0 +1,1465 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ePayco WooCommerce\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-23 17:36+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.6.11; wp-6.7.1\n"
+"X-Domain: woo-epayco-api"
+
+#: src/Translations/StoreTranslations.php:65
+#: src/Translations/StoreTranslations.php:125
+#: src/Translations/StoreTranslations.php:176
+#: src/Translations/StoreTranslations.php:230
+#: src/Translations/StoreTranslations.php:270
+#: src/Translations/StoreTranslations.php:337
+msgid " and the"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:245
+msgid " for test mode"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:64
+#: src/Translations/StoreTranslations.php:120
+#: src/Translations/StoreTranslations.php:170
+#: src/Translations/StoreTranslations.php:223
+#: src/Translations/StoreTranslations.php:262
+#: src/Translations/StoreTranslations.php:328
+msgid " of ePayco."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:66
+#: src/Translations/StoreTranslations.php:126
+#: src/Translations/StoreTranslations.php:177
+#: src/Translations/StoreTranslations.php:231
+#: src/Translations/StoreTranslations.php:271
+#: src/Translations/StoreTranslations.php:338
+msgid " personal data processing policy"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:72
+#, php-format
+msgid "%s, help us improve the experience we offer"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:125
+msgid "1. Enter your credentials to integrate your store with ePayco"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:196
+msgid "2. Activate and set up payment methods"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:214
+msgid "3. Test your store before you start to sell"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:385
+msgid ""
+"<strong>For safety reasons, the card issuing bank declined the "
+"payment</strong><br>We recommended paying with your usual payment method and "
+"device for online purchases."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:370
+#: src/Translations/StoreTranslations.php:371
+msgid ""
+"<strong>For safety reasons, your payment was declined</strong><br>We "
+"recommended paying with your usual payment method and device for online "
+"purchases."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:420
+msgid ""
+"<strong>Invalid transaction attempt</strong><br>It is not possible to pay "
+"with the email address entered. Please enter another e-mail address."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:419
+msgid ""
+"<strong>Invalid transaction attempt</strong><br>You are trying to perform a "
+"productive transaction using test credentials, or test transaction using "
+"productive credentials. Please ensure that you are using the correct "
+"environment settings for the desired action."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:372
+#: src/Translations/StoreTranslations.php:373
+#: src/Translations/StoreTranslations.php:374
+#: src/Translations/StoreTranslations.php:375
+msgid ""
+"<strong>One or more card details were entered incorrecctly</strong><br>"
+"Please enter them again as they appear on the card to complete the payment."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:382
+#: src/Translations/StoreTranslations.php:383
+#: src/Translations/StoreTranslations.php:384
+msgid ""
+"<strong>The card issuing bank declined the payment</strong><br>We "
+"recommended paying with another payment method or contact your bank."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:379
+msgid ""
+"<strong>You need to activate your card</strong><br>Please contact your bank "
+"by calling the number on the back of your card or choose another payment "
+"method."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:380
+msgid ""
+"<strong>You reached the limit of payment attempts with this card</strong><br>"
+"Please pay using another card or choose another payment method."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:369
+msgid ""
+"<strong>Your bank needs you to authorize the payment</strong><br>Please call "
+"the telephone number on your card or pay with another method."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:378
+msgid ""
+"<strong>Your card does not accept the number of installments "
+"selected</strong><br>Please choose a different number of installments or use "
+"a different payment method ."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:376
+msgid ""
+"<strong>Your credit card has no available limit</strong><br>Please pay using "
+"another card or choose another payment method."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:377
+msgid ""
+"<strong>Your debit card has insufficient founds</strong><br>Please pay using "
+"another card or choose another payment method."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:386
+msgid ""
+"<strong>Your payment was declined because something went wrong</strong><br>"
+"We recommended trying again or paying with another method."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:381
+msgid ""
+"<strong>Your payment was declined because you already paid for this "
+"purchase</strong><br>Check your card transactions to verify it."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:399
+msgid ""
+"A problem was occurred when processing your payment. Are you sure you have "
+"correctly filled all information in the checkout form?"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:398
+msgid "A problem was occurred when processing your payment. Please, try again."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:106
+msgid "Accept"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:352
+msgid ""
+"Accept fast and secure payments directly from your store using credit and "
+"debit cards from any bank. No redirects, ensuring a seamless shopping "
+"experience.  (Visa, Mastercard, Amex & Dinners)"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:77
+msgid "Activate"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:143
+msgid "Activate credentials"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:433
+msgid ""
+"Activate this option so that the payment experience is within your store "
+"environment, without redirection."
+msgstr ""
+
+#: src/WoocommerceEpayco.php:347 src/Translations/AdminTranslations.php:69
+msgid "Activate WooCommerce"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:141
+msgid "Activate your credentials to be able to sell"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:275
+msgid ""
+"Add the cash payment option directly in your store. Perfect for customers "
+"who prefer paying at physical locations, with no hassles or redirects."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:309
+msgid ""
+"Add the Daviplata payment option directly in your store. Perfect for "
+"customers who prefer paying at physical locations, with no hassles or "
+"redirects."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:215
+msgid "Address"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:164
+#: src/Translations/StoreTranslations.php:325
+msgid "Address "
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:295
+msgid "All payment methods"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:171
+msgid ""
+"Allow your customers to subscribe to recurring payment plans quickly and "
+"easily. Automatically charge every set period without requiring additional "
+"actions from the customer."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:469
+msgid "Any questions?"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:68
+#: src/Translations/StoreTranslations.php:178
+#: src/Translations/StoreTranslations.php:232
+#: src/Translations/StoreTranslations.php:272
+#: src/Translations/StoreTranslations.php:339
+msgid "Approved transaction"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:259
+msgid "At least one payment method is enabled"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:82
+#: src/Translations/StoreTranslations.php:192
+#: src/Translations/StoreTranslations.php:246
+#: src/Translations/StoreTranslations.php:286
+#: src/Translations/StoreTranslations.php:353
+msgid "Authorization"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:224
+msgid "Bank"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:425
+msgid "By deactivating it, you will disable Checkout payment from ePayco"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:386
+msgid "By deactivating it, you will disable PSE payments from ePayco"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:283
+msgid ""
+"By disabling it, you will disable all cash payments from ePayco Transparent "
+"Checkout."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:358
+msgid ""
+"By disabling it, you will disable all credit cards payments from ePayco."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:317
+msgid ""
+"By disabling it, you will disable daviplata payment from ePayco Transparent "
+"Checkout."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:177
+msgid "By disabling it, you will disable subscriptions payments from ePayco."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:144
+#: src/Translations/StoreTranslations.php:145
+#: src/Translations/StoreTranslations.php:306
+msgid "Card details"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:148
+#: src/Translations/StoreTranslations.php:310
+msgid "Card number"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:274
+msgid "Cash"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:277
+msgid "Cash Checkout"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:285
+msgid "Cash is <b>disabled</b>."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:284
+msgid "Cash is <b>enabled</b>."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:219
+msgid "Cellphone"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:181
+#: src/Translations/AdminTranslations.php:287
+#: src/Translations/AdminTranslations.php:321
+#: src/Translations/AdminTranslations.php:362
+#: src/Translations/AdminTranslations.php:390
+#: src/Translations/AdminTranslations.php:429
+msgid "Change the display text in Checkout, maximum characters: 85"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:406
+msgid "Check the card number."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:407
+msgid "Check the expiration date."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:408
+msgid "Check the information provided."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:409
+msgid "Check the informed security code."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:430
+msgid "Checkout"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:427
+msgid "Checkout is <b>disabled</b>."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:426
+msgid "Checkout is <b>enabled</b>."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:432
+msgid "Checkout mode"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:218
+msgid "Choose how you want to operate your store:"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:294
+msgid "Choose the available payment methods in your store."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:402
+msgid "Click to try again"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:86
+msgid "Convention code"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:202
+msgid "Configure your credentials to enable ePayco payment methods."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:454
+msgid "Consult the reasons for refusal"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:413
+msgid ""
+"Contact your card issuer to activate it. The phone is on the back of your "
+"card."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:199
+msgid "Continue"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:106
+msgid "OPTIMIZE YOUR STORE WITH THE"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:107
+msgid "ePayco PLUGIN"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:108
+msgid "Facilitate payments in your online store with the ePayco plugin. With this integration, you will be able to offer your customers a fast, secure and frictionless payment experience."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:113
+msgid "Configuration"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:128
+msgid "copy and paste your credentials "
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:126
+msgid "Credentials"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:142
+msgid ""
+"Credentials are codes that you must enter to enable sales. Go below on "
+"Activate Credentials. On the next screen, use again the Activate Credentials "
+"button and fill in the fields with the requested information."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:261
+msgid "Credentials fields are valid"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:262
+msgid "Credentials fields could not be validated"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:239
+msgid "Credentials were updated"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:363
+msgid "Credit and debit cards"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:351
+#: src/Translations/AdminTranslations.php:355
+msgid "Credit and Debit Cards by ePayco"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:156
+#: src/Translations/AdminTranslations.php:162
+#: src/Translations/AdminTranslations.php:337
+#: src/Translations/AdminTranslations.php:343
+msgid "Credit cards is"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:85
+#: src/Translations/StoreTranslations.php:124
+#: src/Translations/StoreTranslations.php:148
+#: src/Translations/StoreTranslations.php:157
+#: src/Translations/StoreTranslations.php:244
+#: src/Translations/StoreTranslations.php:283
+#: src/Translations/StoreTranslations.php:307
+#: src/Translations/StoreTranslations.php:315
+#: src/Translations/StoreTranslations.php:349
+msgid "Customer data"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:74
+#: src/Translations/StoreTranslations.php:184
+#: src/Translations/StoreTranslations.php:238
+#: src/Translations/StoreTranslations.php:278
+#: src/Translations/StoreTranslations.php:345
+msgid "Date and time"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:308
+msgid "Daviplata"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:311
+msgid "Daviplata Checkout"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:319
+msgid "Daviplata is <b>disabled</b>."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:318
+msgid "Daviplata is <b>enabled</b>."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:77
+#: src/Translations/StoreTranslations.php:187
+#: src/Translations/StoreTranslations.php:241
+#: src/Translations/StoreTranslations.php:281
+#: src/Translations/StoreTranslations.php:348
+msgid "Description"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:201
+msgid "Disabled"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:163
+#: src/Translations/AdminTranslations.php:344
+#: src/Translations/AdminTranslations.php:413
+msgid "disabled"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:166
+#: src/Translations/StoreTranslations.php:213
+#: src/Translations/StoreTranslations.php:327
+msgid "Email"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:176
+#: src/Translations/AdminTranslations.php:357
+msgid "Enable"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:424
+msgid "Enable ePayco"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:75
+msgid "Enable payments via Sdk account"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:385
+msgid "Enable PSE"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:293
+msgid "Enable the available payment methods"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:282
+#: src/Translations/AdminTranslations.php:316
+msgid "Enable the Checkout"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:200
+msgid "Enabled"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:157
+#: src/Translations/AdminTranslations.php:338
+#: src/Translations/AdminTranslations.php:407
+msgid "enabled"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:140
+msgid "Enter credentials"
+msgstr ""
+
+#. Author of the plugin
+#: src/Translations/AdminTranslations.php:110
+#: src/Translations/AdminTranslations.php:421
+msgid "ePayco"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:276
+msgid "ePayco - Checkout Cash"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:353
+msgid "ePayco - Checkout Credit card"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:310
+msgid "ePayco - Checkout Daviplata"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:382
+msgid "ePayco - Checkout Pse"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:172
+msgid "ePayco - Checkout Subscription"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:223
+msgid "ePayco Checkouts Production."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:220
+msgid "ePayco Checkouts Test."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:67
+msgid "ePayco Error: PHP Extension CURL is not installed."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:68
+msgid ""
+"ePayco Error: PHP Extension GD is not installed. Installation of GD "
+"extension is required to send QR Code Pix by email."
+msgstr ""
+
+#: src/WoocommerceEpayco.php:351
+#, php-format
+msgid "Epayco module needs an active version of %s in order to work!"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:224
+msgid "ePayco payment methods in Production Mode"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:225
+msgid "ePayco payment methods in Test Mode"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:66
+msgid ""
+"ePayco payments for WooCommerce requires PHP version 7.4 or later. Please "
+"update your PHP version."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:167
+#: src/Translations/AdminTranslations.php:279
+#: src/Translations/AdminTranslations.php:313
+#: src/Translations/AdminTranslations.php:348
+#: src/Translations/AdminTranslations.php:377
+#: src/Translations/AdminTranslations.php:416
+msgid "ePayco plugin general settings"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:84
+#: src/Translations/StoreTranslations.php:194
+#: src/Translations/StoreTranslations.php:248
+#: src/Translations/StoreTranslations.php:288
+#: src/Translations/StoreTranslations.php:355
+msgid "ePayco Reference"
+msgstr ""
+
+#. Name of the plugin
+msgid "ePayco WooCommerce"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:150
+#: src/Translations/StoreTranslations.php:312
+msgid "Expiration"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:87
+msgid "Expiration Date"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:154
+#: src/Translations/StoreTranslations.php:316
+msgid "Expiration date incomplete"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:153
+#: src/Translations/StoreTranslations.php:155
+#: src/Translations/StoreTranslations.php:315
+#: src/Translations/StoreTranslations.php:317
+msgid "Expiration date invalid"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:471
+msgid "FAQs"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:156
+msgid "Fees"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:80
+msgid ""
+"Follow the instructions below to integrate your store with Sdk and start to "
+"sell."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:169
+#: src/Translations/AdminTranslations.php:281
+#: src/Translations/AdminTranslations.php:315
+#: src/Translations/AdminTranslations.php:350
+#: src/Translations/AdminTranslations.php:379
+#: src/Translations/AdminTranslations.php:418
+msgid "Go to Settings"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:265
+msgid ""
+"Great, we processed your purchase order. Complete the payment with ticket so "
+"that we finish approving it."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:51
+#: src/Translations/StoreTranslations.php:110
+msgid "Holder address"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:165
+#: src/Translations/StoreTranslations.php:326
+msgid "Holder address is required"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:53
+#: src/Translations/StoreTranslations.php:112
+msgid "Holder cellphone"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:58
+#: src/Translations/StoreTranslations.php:117
+#: src/Translations/StoreTranslations.php:171
+#: src/Translations/StoreTranslations.php:221
+#: src/Translations/StoreTranslations.php:332
+msgid "Holder Country"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:56
+#: src/Translations/StoreTranslations.php:115
+#: src/Translations/StoreTranslations.php:162
+#: src/Translations/StoreTranslations.php:217
+#: src/Translations/StoreTranslations.php:323
+msgid "Holder document"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:49
+#: src/Translations/StoreTranslations.php:108
+msgid "Holder email"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:168
+#: src/Translations/StoreTranslations.php:329
+msgid "Holder email invalid"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:167
+#: src/Translations/StoreTranslations.php:328
+msgid "Holder email is required"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:47
+#: src/Translations/StoreTranslations.php:106
+#: src/Translations/StoreTranslations.php:211
+msgid "Holder name"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:146
+#: src/Translations/StoreTranslations.php:308
+msgid "Holder name as it appears on the card"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:147
+#: src/Translations/StoreTranslations.php:309
+msgid "Holder name is required"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:169
+#: src/Translations/StoreTranslations.php:330
+msgid "Holder Phone"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:244
+msgid "how to enter the credentials the right way."
+msgstr ""
+
+#. Author URI of the plugin
+msgid "http://epayco.co"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://github.com/epayco/Plugin_ePayco_WooCommerce"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:63
+#: src/Translations/StoreTranslations.php:122
+#: src/Translations/StoreTranslations.php:173
+#: src/Translations/StoreTranslations.php:227
+#: src/Translations/StoreTranslations.php:267
+#: src/Translations/StoreTranslations.php:334
+msgid "I confirm and accept the"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:291
+msgid "In how many days will cash payments expire."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:129
+msgid ""
+"in the fields below. If you don’t have credentials yet, you’ll have to "
+"create them from this link."
+msgstr ""
+
+#: src/WoocommerceEpayco.php:348 src/Translations/AdminTranslations.php:70
+msgid "Install WooCommerce"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:216
+msgid "Invalid address"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:52
+#: src/Translations/StoreTranslations.php:111
+msgid "Invalid adress"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:54
+#: src/Translations/StoreTranslations.php:113
+#: src/Translations/StoreTranslations.php:220
+msgid "Invalid cellphone"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:59
+#: src/Translations/StoreTranslations.php:118
+#: src/Translations/StoreTranslations.php:172
+#: src/Translations/StoreTranslations.php:222
+#: src/Translations/StoreTranslations.php:333
+msgid "Invalid City"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:242
+msgid "Invalid credentials"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:57
+#: src/Translations/StoreTranslations.php:116
+#: src/Translations/StoreTranslations.php:163
+#: src/Translations/StoreTranslations.php:218
+#: src/Translations/StoreTranslations.php:324
+msgid "Invalid document"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:50
+#: src/Translations/StoreTranslations.php:109
+#: src/Translations/StoreTranslations.php:214
+msgid "Invalid email"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:48
+#: src/Translations/StoreTranslations.php:107
+#: src/Translations/StoreTranslations.php:212
+msgid "Invalid name"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:170
+#: src/Translations/StoreTranslations.php:331
+msgid "Invalid Phone"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:288
+#: src/Translations/AdminTranslations.php:322
+msgid "Invoice"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:80
+#: src/Translations/StoreTranslations.php:190
+#: src/Translations/StoreTranslations.php:244
+#: src/Translations/StoreTranslations.php:284
+#: src/Translations/StoreTranslations.php:351
+msgid "IP address"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:381
+msgid ""
+"Let your customers pay with direct bank transfers from any Colombian bank, "
+"all without leaving your online store. Secure, fast, and interruption-free."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:61
+#: src/Translations/StoreTranslations.php:120
+msgid "more options"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:260
+msgid "No payment method enabled"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:420
+msgid ""
+"Offer your customers a complete payment experience with multiple options: "
+"cards, bank transfers, digital wallets, and cash. All in one secure and easy-"
+"to-use platform!"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:44
+#: src/Translations/StoreTranslations.php:103
+msgid "Offline Methods in Test Mode"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:472
+msgid "on the dev website."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:406
+#: src/Translations/AdminTranslations.php:412
+msgid "One Page Checkout is"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:78
+msgid ""
+"Our plugin does not support the language you've chosen, so we've switched it "
+"to the English default. If you prefer, you can also select Spanish or "
+"Portuguese (Brazilian)."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:130
+msgid "P_CUST_ID_CLIENTE"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:133
+msgid "P_KEY"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:134
+msgid "Paste your P_CUST_ID here"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:137
+msgid "Paste your P_KEY here"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:136
+msgid "Paste your PRIVATE_KEY here"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:135
+msgid "Paste your PUBLIC_KEY here"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:417
+msgid "Payment cannot process the selected fee."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:290
+msgid "Payment Due"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:71
+#: src/Translations/StoreTranslations.php:181
+#: src/Translations/StoreTranslations.php:235
+#: src/Translations/StoreTranslations.php:275
+#: src/Translations/StoreTranslations.php:342
+msgid "Payment has failed"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:83
+#: src/Translations/StoreTranslations.php:183
+#: src/Translations/StoreTranslations.php:193
+#: src/Translations/StoreTranslations.php:237
+#: src/Translations/StoreTranslations.php:247
+#: src/Translations/StoreTranslations.php:287
+#: src/Translations/StoreTranslations.php:354
+msgid "Payment method"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:73
+#: src/Translations/StoreTranslations.php:277
+#: src/Translations/StoreTranslations.php:344
+msgid "payment method"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:93
+#: src/Translations/AdminTranslations.php:292
+msgid "Payment methods"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:448
+msgid "Payment status on ePayco"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:107
+msgid "payments"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:173
+#: src/Translations/AdminTranslations.php:354
+msgid "Payments without leaving your store with our customizable checkout"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:69
+#: src/Translations/StoreTranslations.php:179
+#: src/Translations/StoreTranslations.php:233
+#: src/Translations/StoreTranslations.php:273
+#: src/Translations/StoreTranslations.php:340
+msgid "Pending transaction"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:55
+#: src/Translations/StoreTranslations.php:114
+msgid "Person type"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:223
+msgid "Person type "
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:470
+msgid "Please check the"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:457
+msgid ""
+"Please recommend you customer to try again or to pay with another payment "
+"method."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:72
+#: src/Translations/StoreTranslations.php:182
+#: src/Translations/StoreTranslations.php:236
+#: src/Translations/StoreTranslations.php:276
+#: src/Translations/StoreTranslations.php:343
+msgid "Please try again later."
+msgstr ""
+
+#. Description of the plugin
+msgid "Plugin ePayco WooCommerce."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:132
+msgid "PRIVATE_KEY"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:216
+msgid "Production"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:222
+msgid "Production Mode"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:391
+msgid "PSE"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:380
+#: src/Translations/AdminTranslations.php:383
+msgid "PSE"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:388
+msgid "PSE is <b>disabled</b>."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:387
+msgid "PSE is <b>enabled</b>."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:131
+msgid "PUBLIC_KEY"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:79
+#: src/Translations/StoreTranslations.php:185
+#: src/Translations/StoreTranslations.php:238
+#: src/Translations/StoreTranslations.php:277
+#: src/Translations/StoreTranslations.php:343
+msgid "Purchase details"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:74
+msgid "Rate the plugin"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:81
+#: src/Translations/StoreTranslations.php:191
+#: src/Translations/StoreTranslations.php:245
+#: src/Translations/StoreTranslations.php:285
+#: src/Translations/StoreTranslations.php:352
+msgid "Receipt"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:78
+#: src/Translations/StoreTranslations.php:188
+#: src/Translations/StoreTranslations.php:242
+#: src/Translations/StoreTranslations.php:282
+#: src/Translations/StoreTranslations.php:349
+msgid "Reference"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:149
+#: src/Translations/StoreTranslations.php:311
+msgid "Required Card number"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:151
+#: src/Translations/StoreTranslations.php:157
+#: src/Translations/StoreTranslations.php:313
+#: src/Translations/StoreTranslations.php:319
+msgid "Required data"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:75
+#: src/Translations/StoreTranslations.php:185
+#: src/Translations/StoreTranslations.php:239
+#: src/Translations/StoreTranslations.php:279
+#: src/Translations/StoreTranslations.php:346
+msgid "Response"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:108
+msgid "safely"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:138
+msgid "Save and continue"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:227
+msgid "Save changes"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:152
+#: src/Translations/StoreTranslations.php:311
+msgid "Security Code"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:159
+#: src/Translations/StoreTranslations.php:321
+msgid "Security code incomplete"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:158
+#: src/Translations/StoreTranslations.php:320
+msgid "Security code is required"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:243
+msgid "See our manual to learn"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:46
+#: src/Translations/StoreTranslations.php:105
+#: src/Translations/StoreTranslations.php:143
+#: src/Translations/StoreTranslations.php:210
+#: src/Translations/StoreTranslations.php:264
+#: src/Translations/StoreTranslations.php:305
+msgid "See the rules for the test mode."
+msgstr ""
+
+#: src/WoocommerceEpayco.php:349 src/Translations/AdminTranslations.php:71
+msgid "See WooCommerce"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:400
+msgid "See your order form"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:62
+#: src/Translations/StoreTranslations.php:121
+msgid "Select a payment method"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:225
+#: src/Translations/StoreTranslations.php:226
+msgid "Select the Bank"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:197
+msgid ""
+"Select the payment method you want to appear in your store to activate and "
+"set it up."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:60
+#: src/Translations/StoreTranslations.php:119
+msgid "Select where you want to pay"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:217
+msgid ""
+"Select “Test Mode” if you want to try the payment experience before you "
+"start to sell or “Sales Mode” (Production) to start now."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:92
+msgid "Set plugin"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:168
+#: src/Translations/AdminTranslations.php:280
+#: src/Translations/AdminTranslations.php:314
+#: src/Translations/AdminTranslations.php:349
+#: src/Translations/AdminTranslations.php:378
+#: src/Translations/AdminTranslations.php:417
+msgid ""
+"Set the deadlines and fees, test your store or access the Plugin manual."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:198
+msgid "Settings"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:88
+msgid "Taking into account the payment date, go to the nearest earning point and indicate the following information:"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:89
+#: src/Translations/AdminTranslations.php:128
+#: src/Translations/AdminTranslations.php:195
+#: src/Translations/AdminTranslations.php:250
+#: src/Translations/AdminTranslations.php:290
+#: src/Translations/AdminTranslations.php:357
+msgid "Collection in the name of EPAYCO.COM S.A.S."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:90
+msgid "Download ePayco receipt"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:73
+msgid ""
+"Share your opinion with us so that we improve our product and offer the best "
+"payment solution."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:456
+msgid "Something went wrong and the payment was declined"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:257
+msgid "Store business fields are valid"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:258
+msgid "Store business fields could not be validated"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:170
+#: src/Translations/AdminTranslations.php:174
+#: src/Translations/AdminTranslations.php:182
+#: src/Translations/StoreTranslations.php:307
+msgid "Subscription"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:451
+#: src/Translations/AdminTranslations.php:453
+#: src/Translations/AdminTranslations.php:455
+msgid "Sync order status"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:67
+#: src/Translations/StoreTranslations.php:121
+#: src/Translations/StoreTranslations.php:171
+#: src/Translations/StoreTranslations.php:224
+#: src/Translations/StoreTranslations.php:263
+#: src/Translations/StoreTranslations.php:329
+msgid "Terms and conditions"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:215
+msgid "test"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:208
+#: src/Translations/StoreTranslations.php:141
+#: src/Translations/StoreTranslations.php:262
+#: src/Translations/StoreTranslations.php:303
+msgid "Test Mode"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:221
+msgid "Test Mode rules."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:403
+msgid "That's it, payment accepted!"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:226
+msgid "The clients can make real purchases in your store."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:60
+#, php-format
+msgid "The ePayco module needs an active version of %s in order to work!"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:183
+#: src/Translations/AdminTranslations.php:289
+#: src/Translations/AdminTranslations.php:323
+#: src/Translations/AdminTranslations.php:364
+#: src/Translations/AdminTranslations.php:392
+#: src/Translations/AdminTranslations.php:431
+msgid "The text inserted here will not be translated to other languages"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:43
+#: src/Translations/StoreTranslations.php:102
+#: src/Translations/StoreTranslations.php:140
+#: src/Translations/StoreTranslations.php:207
+#: src/Translations/StoreTranslations.php:266
+#: src/Translations/StoreTranslations.php:302
+msgid "There was an error. Please try again in a few minutes."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:449
+msgid ""
+"This is the payment status of your ePayco Activities. To check the order "
+"status, please refer to Order details."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:421
+msgid "This payment method cannot process your payment."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:180
+#: src/Translations/AdminTranslations.php:286
+#: src/Translations/AdminTranslations.php:320
+#: src/Translations/AdminTranslations.php:361
+#: src/Translations/AdminTranslations.php:389
+#: src/Translations/AdminTranslations.php:428
+msgid "Title in the store Checkout"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:127
+msgid "To start selling, "
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:241
+msgid "To test the store, re-enter both test credentials."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:76
+#: src/Translations/StoreTranslations.php:186
+#: src/Translations/StoreTranslations.php:240
+#: src/Translations/StoreTranslations.php:280
+#: src/Translations/StoreTranslations.php:347
+msgid "Total value"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:70
+#: src/Translations/StoreTranslations.php:180
+#: src/Translations/StoreTranslations.php:234
+#: src/Translations/StoreTranslations.php:274
+#: src/Translations/StoreTranslations.php:341
+msgid "Transaction rejected"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:142
+#: src/Translations/StoreTranslations.php:304
+msgid "Use ePayco's payment methods without real charges. "
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:450
+#: src/Translations/AdminTranslations.php:452
+msgid "View purchase details at ePayco"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:405
+msgid ""
+"We are processing your payment. In less than 2 days we will send you by "
+"email if the payment has been approved or if additional information is "
+"needed."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:404
+msgid ""
+"We are processing your payment. In less than an hour we will send you the "
+"result by email."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:419
+#: src/Translations/AdminTranslations.php:422
+msgid "Web CheckOut"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:76
+msgid ""
+"When you enable this function, your customers pay faster using their Sdk "
+"accounts.</br>The approval rate of these payments in your store can be 25% "
+"higher compared to other payment methods."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:109
+msgid "with"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:356
+msgid ""
+"With the Credit card payment, you can sell inside your store environment, "
+"without redirection and with the security from ePayco."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:175
+msgid ""
+"With the Subscription payment, you can sell inside your store environment, "
+"without redirection and with the security from ePayco."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:278
+#: src/Translations/AdminTranslations.php:312
+msgid ""
+"With the Transparent Checkout, you can sell inside your store environment, "
+"without redirection and all the safety from ePayco."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:79
+msgid "You activated Sdk’s plug-in"
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:384
+#: src/Translations/AdminTranslations.php:423
+msgid ""
+"you can sell inside your store environment, without redirection and all the "
+"safety from ePayco."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:257
+msgid "You can test the flow to generate a payment with ePayco"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:209
+msgid "You can test the flow to generate a payment with PSE"
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:45
+#: src/Translations/StoreTranslations.php:104
+msgid ""
+"You can test the flow to generate an invoice, but you cannot finalize the "
+"payment."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:414
+msgid ""
+"You have already made a payment of this amount. If you have to pay again, "
+"use another card or other method of payment."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:418
+msgid ""
+"You have reached the limit of allowed attempts. Choose another card or other "
+"payment method."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:139
+msgid ""
+"You have to enter your production credentials to start selling with ePayco."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:412
+msgid "You must authorize payments for your orders."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:410
+#: src/Translations/StoreTranslations.php:411
+msgid "Your payment cannot be processed."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:416
+msgid "Your payment does not have sufficient funds."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:415
+msgid ""
+"Your payment was declined. Please select another payment method. It is "
+"recommended in cash."
+msgstr ""
+
+#: src/Translations/StoreTranslations.php:401
+msgid "Your payment was declined. You can try again."
+msgstr ""
+
+#: src/Translations/AdminTranslations.php:240
+msgid ""
+"Your store has exited Test Mode and is making real sales in Production Mode."
+msgstr ""

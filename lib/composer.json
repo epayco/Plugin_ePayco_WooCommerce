@@ -1,0 +1,5 @@
+{
+    "require": {
+        "epayco/epayco-php": "^1.5"
+    }
+}

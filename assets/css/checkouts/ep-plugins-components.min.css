@@ -1,0 +1,733 @@
+/* latin-ext */
+@font-face {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/poppins/v21/pxiEyp8kv8JHgFVrJJnecmNE.woff2) format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* latin */
+@font-face {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/poppins/v21/pxiEyp8kv8JHgFVrJJfecg.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* latin */
+@font-face {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/electrolize/v18/cIf5Ma1dtE0zSiGSiED7AXEBuI8.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+.ep-checkout-container {
+    border: 0 !important;
+    font: inherit !important;
+    font-size: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    vertical-align: baseline !important;
+}
+
+.ep-checkout-container a,
+.ep-checkout-container abbr,
+.ep-checkout-container acronym,
+.ep-checkout-container address,
+.ep-checkout-container applet,
+.ep-checkout-container article,
+.ep-checkout-container aside,
+.ep-checkout-container audio,
+.ep-checkout-container b,
+.ep-checkout-container big,
+.ep-checkout-container blockquote,
+.ep-checkout-container canvas,
+.ep-checkout-container caption,
+.ep-checkout-container center,
+.ep-checkout-container cite,
+.ep-checkout-container code,
+.ep-checkout-container dd,
+.ep-checkout-container del,
+.ep-checkout-container details,
+.ep-checkout-container dfn,
+.ep-checkout-container div,
+.ep-checkout-container dl,
+.ep-checkout-container dt,
+.ep-checkout-container em,
+.ep-checkout-container embed,
+.ep-checkout-container fieldset,
+.ep-checkout-container figcaption,
+.ep-checkout-container figure,
+.ep-checkout-container footer,
+.ep-checkout-container form,
+.ep-checkout-container h1,
+.ep-checkout-container h2,
+.ep-checkout-container h3,
+.ep-checkout-container h4,
+.ep-checkout-container h5,
+.ep-checkout-container h6,
+.ep-checkout-container header,
+.ep-checkout-container hgroup,
+.ep-checkout-container i,
+.ep-checkout-container iframe,
+.ep-checkout-container img,
+.ep-checkout-container ins,
+.ep-checkout-container kbd,
+.ep-checkout-container label,
+.ep-checkout-container legend,
+.ep-checkout-container li,
+.ep-checkout-container li input,
+.ep-checkout-container mark,
+.ep-checkout-container menu,
+.ep-checkout-container nav,
+.ep-checkout-container object,
+.ep-checkout-container ol,
+.ep-checkout-container output,
+.ep-checkout-container pre,
+.ep-checkout-container q,
+.ep-checkout-container ruby,
+.ep-checkout-container s,
+.ep-checkout-container samp,
+.ep-checkout-container section,
+.ep-checkout-container select,
+.ep-checkout-container small,
+.ep-checkout-container span,
+.ep-checkout-container strike,
+.ep-checkout-container strong,
+.ep-checkout-container sub,
+.ep-checkout-container summary,
+.ep-checkout-container sup,
+.ep-checkout-container table,
+.ep-checkout-container tbody,
+.ep-checkout-container td,
+.ep-checkout-container tfoot,
+.ep-checkout-container th,
+.ep-checkout-container thead,
+.ep-checkout-container time,
+.ep-checkout-container tr,
+.ep-checkout-container tt,
+.ep-checkout-container u,
+.ep-checkout-container ul,
+.ep-checkout-container var,
+.ep-checkout-container video {
+
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 14px;
+    font-style: normal;
+    line-height: 16px;
+    margin: 0;
+    padding: 0 3px;
+    vertical-align: baseline;
+}
+
+.ep-checkout-container a {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 14px;
+    font-style: normal;
+    line-height: 16px;
+    margin: 0;
+    padding: 0 3px;
+    vertical-align: baseline;
+}
+
+.ep-checkout-container p {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 14px;
+    font-style: normal;
+    line-height: 16px;
+    margin: 0;
+    padding: 0 3px;
+    vertical-align: baseline;
+
+}
+
+#ep-daviplata .ep-checkout-container a {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 14px;
+    font-style: normal;
+    line-height: 16px;
+    margin: 0;
+    padding: 0 3px;
+    vertical-align: baseline;
+}
+
+#ep-daviplata .ep-checkout-container p {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 14px;
+    font-style: normal;
+    line-height: 16px;
+    margin: 0;
+    padding: 0 3px;
+    vertical-align: baseline;
+
+}
+
+.ep-checkout-container input {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 14px;
+    font-style: normal;
+    line-height: 16px;
+    margin: 0;
+    padding: 0 3px;
+    vertical-align: baseline;
+    cursor: pointer;
+}
+.ep-input-radio-radio {
+    display: none;
+}
+.ep-input-radio-label {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    position: relative;
+    top: -4px;
+}
+
+.ep-input-radio-label i {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-size: contain;
+    transition: all 0.3s ease;
+}
+
+.ep-input-radio-container-checked{
+    color: green;
+    background: url(../../images/settings/Boton_aceptado.png) no-repeat center;
+    background-size: cover;
+    height: 48px !important;
+    width: 40px !important;
+    position: relative;
+    transform: scale(0.7);
+}
+.ep-input-radio-container-unchecked{
+    color: green;
+    background: url(../../images/settings/Boton.png) no-repeat center;
+    background-size: cover;
+    height: 48px !important;
+    width: 40px !important;
+    position: relative;
+    transform: scale(0.7);
+}
+
+
+.ep-checkout-custom-load {
+    align-items: center;
+    display: none;
+    justify-content: center;
+}
+
+.ep-checkout-custom-container {
+    background-color: #fff !important;
+    display: flex;
+    flex-direction: column !important;
+    justify-content: center !important;
+}
+
+.ep-test-mode-epayco-card {
+    background: rgba(255, 250, 224, 1) !important;
+    border: 2px solid #FFD100 !important;
+    border-radius: 7px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 16px !important;
+}
+
+.ep-test-mode-epayco-credit-card {
+    background: rgba(198, 229, 248, 1) !important;
+    border: 2px solid #40A8E6 !important;
+    border-radius: 7px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    padding: 16px !important;
+    margin-top: 10px !important;
+    align-items: center;
+}
+
+div .ep-error {
+    border: 2px solid #f23d4f !important;
+    color: #f23d4f !important;
+    border-radius: 8px !important;
+}
+
+
+.ep-helper .ep-helper-icon {
+    background: #fff !important;
+    border: 2px solid #f23d4f !important;
+    border-radius: 12px !important;
+    color: #a70a0a !important;
+    display: flex !important;
+    height: 15px !important;
+    margin: 0 4px !important;
+    align-content: center !important;
+    justify-content: center !important;
+    align-items: flex-end !important;
+    font-size: 10px !important;
+    font-weight: bold !important;
+    flex-wrap: nowrap;
+    width: 13px !important;
+    box-sizing:unset !important;
+    word-break: keep-all !important;
+
+}
+
+
+.ep-helper {
+    align-items: center;
+    color: #f23d4f;
+    display: none;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 13px !important;
+    font-weight: bold !important;
+    margin-bottom: 10px !important;
+    margin-top: 4px !important;
+    word-break: keep-all !important;
+}
+
+.ep-test-mode-epayco-badge {
+    align-items: center !important;
+    background: #f73 !important;
+    border-radius: 12px !important;
+    color: #fff !important;
+    display: flex !important;
+    flex-direction: row !important;
+    height: 16px !important;
+    justify-content: center !important;
+    margin-right: 16px !important;
+    width: 16px !important;
+}
+
+.payment_method_woo-epayco-custom {
+    padding-left: 0rem !important;
+}
+
+.payment_method_woo-epayco-daviplata {
+    padding-left: 0rem !important;
+}
+
+.payment_method_woo-epayco-pse {
+    padding-left: 0rem !important;
+    max-width: 500px;
+}
+
+.payment_method_woo-epayco-ticket {
+    padding-left: 0rem !important;
+}
+
+.payment_method_woo-epayco-checkout {
+    padding-left: 0rem !important;
+}
+
+.ep-test-mode-epayco-badge {
+    align-items: center !important;
+    background: #f73 !important;
+    border-radius: 12px !important;
+    color: #fff !important;
+    display: flex !important;
+    flex-direction: row !important;
+    height: 16px !important;
+    justify-content: center !important;
+    margin-right: 16px !important;
+    width: 16px !important;
+}
+
+.ep-checkout-custom-card-form {
+    display: flex;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+}
+
+.ep-test-mode-epayco-description,
+.ep-test-mode-epayco-title {
+    font-size: 14px !important;
+    font-style: normal !important;
+    line-height: 120% !important;
+    margin-block-end: 0 !important;
+    margin-block-start: 0 !important;
+    margin-inline-end: 0 !important;
+    margin-inline-start: 0 !important;
+}
+
+.ep-test-mode-epayco-title {
+    color: rgba(0, 0, 0, .9) !important;
+    font-weight: 700 !important;
+    margin-left: 16px !important;
+    padding: 5px !important;
+}
+
+.ep-checkout-custom-dual-column-row {
+    align-items: flex-start !important;
+    flex-direction: row !important;
+}
+
+.ep-test-mode-epayco-card-content {
+    align-items: center !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+}
+
+.ep-test-mode-epayco-description {
+    color: #000 !important;
+    font-weight: 400 !important;
+    padding-left: 32px !important;
+    padding-top: 4px !important;
+    display: none;
+}
+
+.ep-test-mode-epayco-description,
+.ep-test-mode-epayco-epayco-title {
+    font-size: 14px !important;
+    font-style: normal !important;
+    line-height: 120% !important;
+    margin-block-end: 0 !important;
+    margin-block-start: 0 !important;
+    margin-inline-end: 0 !important;
+    margin-inline-start: 0 !important;
+}
+
+.ep-checkout-custom-card-form .ep-checkout-custom-card-row {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.ep-checkout-custom-card-form .ep-checkout-custom-card-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 50%;
+}
+
+.ep-checkout-custom-left-card-input {
+    margin-right: 16px !important;
+}
+
+.ep-input-label {
+    align-items: flex-end !important;
+    color: #2D3748 !important;
+    display: flex;
+    font-size: 14px !important;
+    font-style: normal !important;
+    font-weight: 400 !important;
+    height: 30px;
+    line-height: 18px !important;
+    padding-bottom: 4px !important;
+    width: 100% !important;
+}
+
+.ep-input-element {
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    width: 100% !important;
+}
+
+.ep-input-document {
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    width: 100% !important;
+}
+
+.ep-input-document .ep-input {
+    align-items: center !important;
+    background: #fff !important;
+    border: 1px solid rgba(0, 0, 0, .25);
+    border-radius: 8px !important;
+    display: flex !important;
+    height: 48px !important;
+}
+
+.ep-input-select-input {
+    align-items: center !important;
+    background: #fff !important;
+    border: 1px solid rgba(0, 0, 0, .25) !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    height: 48px !important;
+}
+
+.ep-document-select,
+.ep-input-document {
+    background: #fff !important;
+    border: 0 !important;
+    color: #000 !important;
+    font-size: 14px !important;
+    font-style: normal !important;
+    font-weight: 400 !important;
+    line-height: 20px !important;
+    outline: 0 !important;
+}
+
+.ep-cellphone-select {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 14px !important;
+    font-style: normal !important;
+    font-weight: 400 !important;
+    line-height: 20px !important;
+    outline: 0 !important;
+    padding: 13px !important;
+    border: 1px solid rgba(0, 0, 0, .25);
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+    margin-bottom: 15px;
+    height: 100%;
+    width: 200px !important;
+    text-align: center;
+}
+
+.ep-document-select,
+.ep-cellphone {
+    align-items: center !important;
+    background: #fff !important;
+    border: 1px solid rgba(0, 0, 0, .25);
+    border-radius: 8px !important;
+    display: flex !important;
+    height: 45px !important;
+}
+
+.ep-input-element .ep-input {
+    align-items: center !important;
+    background: #fff !important;
+    border: 1px solid rgba(0, 0, 0, .25);
+    border-radius: 8px !important;
+    display: flex !important;
+    height: 48px !important;
+    width: 100% !important;
+}
+
+.with-country {
+    width: 100% !important
+}
+
+.ep-input-cellphone-epayco .ep-input {
+    align-items: center !important;
+    background: #fff !important;
+    display: flex !important;
+    height: 48px !important;
+    justify-content: space-between;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+}
+
+.ep-input-cellphone-epayco {
+    margin-bottom: 10px !important;
+}
+
+.ep-input-element .ep-input .ep-cellphone {
+    background: #fff !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    color: #000;
+    font-size: 16px !important;
+    font-style: normal !important;
+    font-weight: 400 !important;
+    height: 100% !important;
+    line-height: 20px !important;
+    min-height: 38px !important;
+    outline: 0 !important;
+    padding: 0 14px !important;
+    width: 100% !important;
+}
+
+.ep-input-select-select {
+    background: #fff !important;
+    border: 0 !important;
+    color: #000 !important;
+    cursor: pointer !important;
+    font-size: 16px !important;
+    font-style: normal !important;
+    font-weight: 400 !important;
+    height: 100% !important;
+    letter-spacing: 0 !important;
+    line-height: 20px !important;
+    margin: 0 10px !important;
+    outline: 0 !important;
+    width: 100% !important;
+}
+
+.ep-input-select-bank {
+    background: #fff !important;
+    border: 0 !important;
+    color: #000 !important;
+    cursor: pointer !important;
+    font-size: 16px !important;
+    font-style: normal !important;
+    font-weight: 400 !important;
+    height: 100% !important;
+    letter-spacing: 0 !important;
+    line-height: 20px !important;
+    margin: 0 12px !important;
+    outline: 0 !important;
+    width: 100% !important;
+}
+
+input.ep-cellphone {
+    align-items: center !important;
+    background: #fff !important;
+    border: 1px solid rgba(0, 0, 0, .25);
+    border-radius: 8px !important;
+    display: flex !important;
+    height: 48px !important;
+    padding: 0 14px !important;
+    width: 102%;
+}
+
+.ep-input-element .ep-input:hover {
+    border: 1px solid black !important
+}
+
+.ep-input-element .ep-input:focus {
+    border: 1px solid black !important
+}
+
+.ep-input-table-epayco-container,
+.ep-input-table-epayco-list {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.ep-input-table-epayco-container {
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.ep-input-table-epayco-list {
+    /*border: 1px solid rgba(0, 0, 0, .25) !important;*/
+    border-radius: 6px !important;
+    list-style-type: none !important;
+    margin-left: 0 !important;
+    width: 100%;
+}
+
+.ep-input-table-epayco-item {
+    /*cursor: pointer !important;*/
+    margin: 0 16px !important;
+    padding: 0 4px 0 0 !important;
+    /*border-bottom: 1px solid rgba(0, 0, 0, .25) !important;*/
+}
+
+.ep-input-table-epayco-list div:not(:last-child) {
+    /*border-bottom: 1px solid rgba(0, 0, 0, .25) !important;*/
+}
+
+.ep-input-table-epayco-label,
+.ep-input-table-epayco-option {
+    align-items: center !important;
+    display: flex !important;
+    width: 100%;
+}
+@media (max-width: 425px){
+    .ep-input-table-epayco-label,
+    .ep-input-table-epayco-option {
+        flex-direction: column;
+    }  
+}
+
+.ep-input-table-epayco-label {
+    /*cursor: pointer !important;*/
+    justify-content: space-between !important;
+    padding: 16px 0 !important;
+    width: 100% !important;
+}
+
+.ep-input-table-epayco-option {
+    justify-content: space-between !important;
+}
+
+option {
+    align-items: center !important;
+    display: flex !important;
+}
+
+.ep-input-table-epayco-row-text-image {
+    align-items: center !important;
+    color: #000000e5 !important;
+    display: flex !important;
+    flex-direction: row-reverse !important;
+}
+
+.ep-input-radio-container {
+    display: flex;
+    position: relative !important;
+    align-items: center;
+}
+
+.ep-input-table-epayco-row-text,
+.ep-input-table-epayco-row-text-image {
+    font-size: 16px !important;
+    font-style: normal !important;
+    /*font-weight: 700 !important;*/
+    line-height: 20px !important;
+    padding-left: 16px !important;
+}
+
+.ep-payment-method-logo-container,
+.ep-payment-method-logo-slider-container {
+    background: #fff !important;
+    /*border: 1px solid #e5e5e5 !important;*/
+    border-radius: 4px !important;
+    box-sizing: border-box !important;
+    display: flex;
+    justify-content: center !important;
+    /*padding: 4px !important;*/
+    width: 130px !important;
+    height: 36px !important;
+}
+
+.flex-gap {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+}
+
+.ep-checkout-ticket-text,
+.ep-checkout-ticket-terms-and-conditions {
+    margin: 14px !important;
+}
+
+.ep-terms-and-conditions-container {
+    display: flex !important;
+    flex-direction: column;
+}
+
+.ep-terms-and-conditions-container label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    gap: 10px;
+}
+
+.svg-logo {
+    margin-top: 10px !important;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.ep-input-table-epayco-link {
+    cursor: pointer !important;
+    font-size: 16px !important;
+    font-style: normal !important;
+    font-weight: 400 !important;
+    line-height: 16px !important;
+    text-decoration: none !important;
+}
+
+.ep-input-table-epayco-container-link {
+    align-items: center !important;
+    display: flex !important;
+    justify-content: center !important;
+    padding: 16px 0 24px !important;
+}

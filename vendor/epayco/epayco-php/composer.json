@@ -1,0 +1,24 @@
+{
+    "name": "epayco/epayco-php",
+    "type": "sdk",
+    "description": "Epayco API client for PHP",
+    "keywords": ["epayco", "api"],
+    "homepage": "https://github.com/epayco/epayco-php",
+    "license": "MIT",
+    "authors": [{
+        "name": "Epayco and contributors",
+        "homepage": "https://github.com/epayco/epayco-php/graphs/contributors"
+    }],
+    "require": {
+        "php": ">=5.3.0",
+        "rmccue/requests": ">=2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Epayco\\" : "src/"
+        }
+    }
+}
