@@ -20,7 +20,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         $this->id = 'epayco';
         $this->version = '8.2.0';
-        $this->icon = apply_filters('woocommerce_' . $this->id . '_icon', EPAYCO_PLUGIN_URL . 'assets/images/paymentLogo.svg');
+        $this->icon = apply_filters('woocommerce_' . $this->id . '_icon', EPAYCO_PLUGIN_URL . 'assets/images/logoepayco.png');
         $this->method_title         = __('ePayco Checkout Gateway', 'woo-epayco-gateway');
         $this->method_description   = __('Acepta tarjetas de credito, depositos y transferencias.', 'woo-epayco-gateway');
         //$this->order_button_text = __('Pay', 'epayco_woocommerce');
@@ -181,7 +181,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         <div class="container-fluid">
             <div class="panel panel-default" style="">
-                <img src="<?php echo EPAYCO_PLUGIN_URL . '/assets/images/logo.svg' ?>">
+                <img src="<?php echo EPAYCO_PLUGIN_URL . '/assets/images/iconoepayco.png' ?>">
                 <div id="path_upload" hidden>
                     <?php esc_html_e($logo_url, 'text_domain'); ?>
                 </div>
