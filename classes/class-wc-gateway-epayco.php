@@ -537,7 +537,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     var data = {
                         name: "%s",
                         description: "%s",
-                        invoice: "%s-test",
+                        invoice: "%s",
                         currency: "%s",
                         amount: "%s".toString(),
                         tax_base: "%s".toString(),
@@ -553,7 +553,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         email_billing: "%s",
                         mobilephone_billing: "%s",
                         autoclick: "true",
-                        ip: "179.12.113.12",
+                        ip: "%s",
                         test: "%s".toString(),
                         extra1: "%s",
                         extras_epayco:{extra5:"p19"},
