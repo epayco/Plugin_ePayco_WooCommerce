@@ -20,7 +20,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         $this->id = 'epayco';
         $this->version = '8.2.0';
-        $this->icon = apply_filters('woocommerce_' . $this->id . '_icon', EPAYCO_PLUGIN_URL . 'assets/images/paymentLogo.svg');
+        $this->icon = apply_filters('woocommerce_' . $this->id . '_icon', EPAYCO_PLUGIN_URL . 'assets/images/logoepayco.png' );
         $this->method_title         = __('ePayco Checkout Gateway', 'woo-epayco-gateway');
         $this->method_description   = __('Acepta tarjetas de credito, depositos y transferencias.', 'woo-epayco-gateway');
         //$this->order_button_text = __('Pay', 'epayco_woocommerce');
@@ -181,7 +181,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         <div class="container-fluid">
             <div class="panel panel-default" style="">
-                <img src="<?php echo EPAYCO_PLUGIN_URL . '/assets/images/logo.svg' ?>">
+                <img src="<?php echo EPAYCO_PLUGIN_URL . '/assets/images/logo2epayco.png' ?>" >
                 <div id="path_upload" hidden>
                     <?php esc_html_e($logo_url, 'text_domain'); ?>
                 </div>
@@ -580,7 +580,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         headers["privatekey"] = privatekey;
                         headers["apikey"] = apikey;
                         var payment =   function (){
-                            return  fetch("https://cms.epayco.io/checkout/payment/session", {
+                            return  fetch("https://eks-cms-backend-platforms-service.epayco.io/checkout/payment/session", {
                                 method: "POST",
                                 body: JSON.stringify(info),
                                 headers
@@ -810,7 +810,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     exit();
                 }
 
-                $url = 'https://secure.epayco.io/validation/v1/reference/' . $ref_payco;
+                $url = 'https://eks-checkout-service.epayco.io/validation/v1/reference/' . $ref_payco;
                 $response = wp_remote_get($url);
                 $body = wp_remote_retrieve_body($response);
                 $jsonData = @json_decode($body, true);
@@ -1277,7 +1277,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         {
             $username = sanitize_text_field($validationData['epayco_publickey']);
             $password = sanitize_text_field($validationData['epayco_privatey']);
-            $response = wp_remote_post('https://apify.epayco.io/login', array(
+            $response = wp_remote_post('https://eks-apify-service.epayco.io/login', array(
                 'headers' => array(
                     'Authorization' => 'Basic ' . base64_encode($username . ':' . $password),
                 ),
@@ -1461,9 +1461,9 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         public function epayco_realizar_llamada_api($path, $data, $headers, $afify = true, $method = 'POST')
         {
             if ($afify) {
-                $url = 'https://apify.epayco.io/' . $path;
+                $url = 'https://eks-apify-service.epayco.io/' . $path;
             } else {
-                $url = 'https://secure2.epayco.io/restpagos/' . $path;
+                $url = 'https://eks-rest-recaudo-service.epayco.io/restpagos/' . $path;
             }
 
             $response = wp_remote_post($url, array(
