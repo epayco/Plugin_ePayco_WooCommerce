@@ -84,16 +84,8 @@
 9. Realiza una o varias compras para comprobar que todo esté bien.
 10. Si todo está bien recuerda cambiar la variable Modo Prueba a NO y empieza a recibir pagos de forma instantánea y segura con ePayco.
 
-
-## Pasos
-
-<img src="ImgTutorialWooCommerce/tuto-1.png" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-2.png" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-3.png" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-4.png" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-5.png" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-6.png" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-7.png" width="400px"/>
-<img src="ImgTutorialWooCommerce/tuto-8.png" width="400px"/>
-
-
+**Nota sobre la actualización manual de órdenes:**  
+Si deseas actualizar manualmente todas las órdenes para sincronizar su estado con ePayco, sigue estos pasos:  
+Ve a **WooCommerce → Estado → Acciones programadas**, filtra por **ePayco**, selecciona la opción de estado y haz clic en **Ejecutar**.  
+Esto sincronizará los estados de las órdenes con el estado actual en tu dashboard de ePayco.  
+Ten en cuenta que estas actualizaciones también se ejecutan automáticamente por defecto, pero puedes realizarlas manualmente si lo prefieres o según la configuración personalizada que tenga tu tienda.
