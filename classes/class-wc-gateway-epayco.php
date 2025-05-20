@@ -674,7 +674,16 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
          */
         public function setPaymentsIdData(WC_Order $order, $value): void
         {
-            $order->add_meta_data($order, self::PAYMENTS_IDS, $value);
+            try {
+                $logger = new WC_Logger();
+                if ( $order instanceof WC_Order ) {
+                    $order->add_meta_data( self::PAYMENTS_IDS, $value );
+                    $order->save();
+                }
+            } catch (\Exception $ex) {
+                $error_message = "Unable to update batch of orders on action got error: {$ex->getMessage()}";
+                $logger->add($this->id,$error_message);
+            }
         }
 
         /**
@@ -1372,12 +1381,18 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         public function getEpaycoStatusOrder($ref_payco, $token)
         {
             if ($token) {
-                $headers = array(
-                    'Content-Type' => 'application/json',
-                    'Authorization' => "Bearer " . $token['token']
-                );
-                $path = "transaction/response.json?ref_payco=" . $ref_payco . "&&public_key=" . $this->epayco_publickey;
-                $epayco_status = $this->epayco_realizar_llamada_api($path, [], $headers, false, 'GET');
+                $headers = [
+                        'Content-Type'  => 'application/json',
+                        'Authorization' => 'Bearer '.$token['token'],
+                ];
+                $path = "transaction/detail";
+                $data = [
+                   "filter" => [
+                       "referencePayco" => $ref_payco
+                   ]
+                ];
+
+                $epayco_status = $this->epayco_realizar_llamada_api($path, $data, $headers);
                 if ($epayco_status['success']) {
                     if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
                         $this->epaycoUploadOrderStatus($epayco_status);
@@ -1388,22 +1403,24 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         public function epaycoUploadOrderStatus($epayco_status)
         {
-            $order_id = isset($epayco_status['data']['x_extra1']) ? $epayco_status['data']['x_extra1'] : null;
-            $x_cod_transaction_state = isset($epayco_status['data']['x_cod_transaction_state']) ? $epayco_status['data']['x_cod_transaction_state'] : null;
-            $x_ref_payco = isset($epayco_status['data']['x_ref_payco']) ? $epayco_status['data']['x_ref_payco'] : null;
+            $order_id = isset($epayco_status['data']['extras']['extra1']) ?$epayco_status['data']['extras']['extra1'] : null;
+            //$x_cod_transaction_state = isset($epayco_status['data']['x_cod_transaction_state']) ? $epayco_status['data']['x_cod_transaction_state'] : null;
+            $status = isset($epayco_status['data']['status']) ? $epayco_status['data']['status'] : null;
+            $ePaycoSttus = strtolower($status);
+            $x_ref_payco = isset($epayco_status['data']['referencePayco']) ? $epayco_status['data']['referencePayco'] : null;
             if ($order_id) {
                 $order = wc_get_order($order_id);
                 if ($order) {
                     $orderStatus = $order->get_status();
-                    switch ($x_cod_transaction_state) {
-                        case 1: {
+                    switch ($ePaycoSttus) {
+                        case 'aceptada': {
                                 $order->payment_complete($x_ref_payco);
                                 $order->update_status($this->epayco_endorder_state, 'La orden se ha completado automáticamente por la integración con ePayco.');
                                 $order->add_order_note('ePayco.');
                             }
                             break;
-                        case 3:
-                        case 7: {
+                        case 'pendiente':
+                        case 'retenido': {
                                 $orderStatus = "on-hold";
                                 if ($orderStatus !== $orderStatus) {
                                     $order->update_status($orderStatus);
@@ -1411,10 +1428,10 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                                 }
                             }
                             break;
-                        case 2:
-                        case 4:
-                        case 10:
-                        case 11: {
+                        case 'rechazada':
+                        case 'fallida':
+                        case 'abandonada':
+                        case 'cancelada': {
                                 if ($orderStatus == 'pending' || $orderStatus == 'on-hold') {
                                     $order->update_status($this->epayco_cancelled_endorder_state);
                                     $order->add_order_note('ePayco.');
@@ -1458,23 +1475,20 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             return $this->epayco_realizar_llamada_api("login", [], $headers);
         }
 
-        public function epayco_realizar_llamada_api($path, $data, $headers, $afify = true, $method = 'POST')
+        public function epayco_realizar_llamada_api($path, $data, $headers, $method = 'POST')
         {
-            if ($afify) {
-                $url = 'https://eks-apify-service.epayco.io/' . $path;
-            } else {
-                $url = 'https://eks-rest-recaudo-service.epayco.io/restpagos/' . $path;
-            }
+            $logger = new WC_Logger();
+            $url = 'https://eks-apify-service.epayco.io/' . $path;
 
-            $response = wp_remote_post($url, array(
-                'method'    => $method,
+            $response = wp_remote_post($url, [
                 'headers' => $headers,
-                'data' => json_encode($data),
-                'timeout'   => 120,
-            ));
+                'body'    => json_encode($data),
+                'timeout' => 15,
+            ]);
 
             if (is_wp_error($response)) {
                 $error_message = $response->get_error_message();
+			    $logger->add($this->id, "Error al hacer la llamada a la API de ePayco: " . $error_message);
                 error_log("Error al hacer la llamada a la API de ePayco: " . $error_message);
                 return false;
             } else {
@@ -1482,9 +1496,10 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $status_code = wp_remote_retrieve_response_code($response);
 
                 if ($status_code == 200) {
-                    $data = json_decode($response_body, true);
-                    return $data;
+                    $responseTransaction = json_decode($response_body, true);
+                     return $responseTransaction;
                 } else {
+				 $logger->add($this->id,"Error en la respuesta de la API de ePayco, código de estado: " . $status_code);
                     error_log("Error en la respuesta de la API de ePayco, código de estado: " . $status_code);
                     return false;
                 }
