@@ -601,7 +601,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $testMode,
                 $descripcion,
                 $descripcion,
-                $order->get_id()."_test_002",
+                $order->get_id(),
                 $currency,
                 $order->get_total(),
                 $base_tax,
@@ -656,11 +656,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             try {
                 $logger = new WC_Logger();
                 if ( $order instanceof WC_Order ) {
-                    var_dump("www");
                     $order->add_meta_data( self::PAYMENTS_IDS, $value );
                     $order->save();
-                }else{
-                     var_dump("nnn");
                 }
             } catch (\Exception $ex) {
                 $error_message = "Unable to update batch of orders on action got error: {$ex->getMessage()}";
