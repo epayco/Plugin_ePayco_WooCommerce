@@ -6,7 +6,7 @@
  *
  * Plugin Name: WooCommerce Epayco Gateway
  * Description: Plugin ePayco Gateway for WooCommerce.
- * Version: 8.2.0
+ * Version: 8.2.1
  * Author: ePayco
  * Author URI: http://epayco.co
  * Tested up to: 6.7
@@ -457,10 +457,11 @@ register_deactivation_hook(__FILE__, 'epayco_cron_job_deactivation');
 function payco_shop_order($postOrOrderObject) {
     $order = ($postOrOrderObject instanceof WP_Post) ? wc_get_order($postOrOrderObject->ID) : $postOrOrderObject;
     try {
+        $logger = new WC_Logger();
         $paymentsIds   = explode(',', $order->get_meta(WC_Gateway_Epayco::PAYMENTS_IDS, true));
         $lastPaymentId = trim(end($paymentsIds));
         $orderStatus = $order->get_status();
-
+        $logger->add('ePayco_shop_order', $lastPaymentId);
         if (!$lastPaymentId) {
             return false;
         }
@@ -490,3 +491,50 @@ function payco_shop_order($postOrOrderObject) {
 
 add_action('add_meta_boxes_shop_order', 'payco_shop_order');
 add_action('add_meta_boxes_woocommerce_page_wc-orders', 'payco_shop_order');
+
+
+add_action('woocommerc_epayco_order_hook', 'woocommerce_epayco_cleanup_draft_orders');
+
+register_deactivation_hook(__FILE__, 'epayco_cron_inactive');
+function epayco_cron_inactive() {
+    wp_clear_scheduled_hook('bf_epayco_event');
+}
+// function that registers new custom schedule
+function bf_add_epayco_schedule( $schedules )
+{
+    $schedules[ 'every_five_minutes' ] = array(
+        'interval' => 300,
+        'display'  => 'Every 5 minutes',
+    );
+
+    return $schedules;
+}
+
+// function that schedules epayco event
+
+function bf_schedule_epayco_event()
+{
+    // the actual hook to register new epayco schedule
+
+    add_filter( 'cron_schedules', 'bf_add_epayco_schedule' );
+
+    // schedule epayco event
+
+    if( !wp_next_scheduled( 'bf_epayco_event' ) )
+    {
+        wp_schedule_event( time(), 'every_five_minutes', 'bf_epayco_event' );
+    }
+}
+add_action( 'init', 'bf_schedule_epayco_event' );
+
+// fire custom event
+
+function bf_do_something_on_schedule()
+{
+    if (class_exists('WC_Gateway_Epayco')) {
+        $ePayco = new WC_Gateway_Epayco();
+        $ePayco->woocommerc_epayco_cron_job_funcion();
+    }
+    
+}
+add_action( 'bf_epayco_event', 'bf_do_something_on_schedule' );
