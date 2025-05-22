@@ -1490,7 +1490,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
             if (is_wp_error($response)) {
                 $error_message = $response->get_error_message();
-			    $this->log->add($this->id, "Error al hacer la llamada a la API de ePayco: " . $error_message);
+			          $this->log->add($this->id, "Error al hacer la llamada a la API de ePayco: " . $error_message);
                 error_log("Error al hacer la llamada a la API de ePayco: " . $error_message);
                 return false;
             } else {
@@ -1500,7 +1500,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     $responseTransaction = json_decode($response_body, true);
                     return $responseTransaction;
                 } else {
-				    $this->log->add($this->id,"Error en la respuesta de la API de ePayco, código de estado: " . $status_code);
+				            $this->log->add($this->id,"Error en la respuesta de la API de ePayco, código de estado: " . $status_code);
                     error_log("Error en la respuesta de la API de ePayco, código de estado: " . $status_code);
                     return false;
                 }
