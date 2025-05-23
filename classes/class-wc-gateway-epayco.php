@@ -565,7 +565,11 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                                 headers
                             })
                                 .then(res =>  res.json())
-                                .catch(err => err);
+                                .catch(err => {
+                                    console.log(err.message);
+                                    bntPagar.style.pointerEvents = "auto";
+                                    bntPagar.style.opacity = "1";
+                                });
                         }
                         payment()
                             .then(session => {
@@ -583,12 +587,15 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                                 }
                             })
                             .catch(error => {
-                                error.message;
+                                console.log(error.message);
+                                bntPagar.style.pointerEvents = "auto";
+                                bntPagar.style.opacity = "1";
                             });
                     }
                     var openChekout = function () {
                         //handler.open(data);
                         bntPagar.style.pointerEvents = "none";
+                        bntPagar.style.opacity = "0.5";
                         openNewChekout()
                     }
                     bntPagar.addEventListener("click", openChekout);
@@ -776,15 +783,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         $ref_payco = $explode[1];
                     }
                     if (!$ref_payco) {
-                        if ($this->epayco_testmode == "yes") {
-                            $order->update_status('epayco_cancelled');
-                            $order->add_order_note('Pago rechazado');
-                            Epayco_Transaction_Handler::restore_stock($order->get_id());
-                        } else {
-                            $order->update_status('epayco-cancelled');
-                            $order->add_order_note('Pago rechazado');
-                            Epayco_Transaction_Handler::restore_stock($order->get_id());
-                        }
                         wp_safe_redirect(wc_get_checkout_url());
                         exit();
                     }
@@ -1047,12 +1045,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         'Content-Type'  => 'application/json',
                         'Authorization' => 'Bearer '.$token['token'],
                 ];
-                $path = "transaction/detail";
-                $data = [
-                   "filter" => [
-                       "referencePayco" => $ref_payco
-                   ]
-                ];
+                $path = "payment/transaction";
+                $data = [ "referencePayco" => $ref_payco];
 
                 $epayco_status = $this->epayco_realizar_llamada_api($path, $data, $headers);
                 if ($epayco_status['success']) {
@@ -1065,24 +1059,20 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         public function epaycoUploadOrderStatus($epayco_status)
         {
-            $order_id = isset($epayco_status['data']['extras']['extra1']) ?$epayco_status['data']['extras']['extra1'] : null;
+            $order_id = isset($epayco_status['data']['transaction']['extra1']) ?$epayco_status['data']['transaction']['extra1'] : null;
             //$x_cod_transaction_state = isset($epayco_status['data']['x_cod_transaction_state']) ? $epayco_status['data']['x_cod_transaction_state'] : null;
-            $status = isset($epayco_status['data']['status']) ? $epayco_status['data']['status'] : null;
-            $ePaycoSttus = strtolower($status);
-            $x_ref_payco = isset($epayco_status['data']['referencePayco']) ? $epayco_status['data']['referencePayco'] : null;
-            $x_fecha_transaccion = isset($epayco_status['data']['transactionDate']) ? $epayco_status['data']['transactionDate'] : null;
-            $x_franchise = isset($epayco_status['data']['bank']) ? $epayco_status['data']['bank'] : null;
-            $x_approval_code = isset($epayco_status['data']['authorization']) ? $epayco_status['data']['authorization'] : null;
+            $status = isset($epayco_status['data']['transaction']['status']) ? $epayco_status['data']['transaction']['status'] : null;
+            $ePaycoStatus = strtolower($status);
+            $x_ref_payco = isset($epayco_status['data']['transaction']['refPayco']) ? $epayco_status['data']['transaction']['refPayco'] : null;
+            $x_fecha_transaccion = isset($epayco_status['data']['transaction']['date']) ? $epayco_status['data']['transaction']['date'] : null;
+            $x_franchise = isset($epayco_status['data']['transaction']['bank']) ? $epayco_status['data']['transaction']['bank'] : null;
+            $x_approval_code = isset($epayco_status['data']['transaction']['autorizacion']) ? $epayco_status['data']['transaction']['autorizacion'] : null;
+            $x_cod_transaction_state =  isset($epayco_status['data']['transaction']['codeResponse']) ? $epayco_status['data']['transaction']['codeResponse'] :$this->get_epayco_estado_codigo_detallado($ePaycoStatus);
             $isTestMode = get_option('epayco_order_status') == "yes" ? "true" : "false";
-            $this->log->add($this->id." Ref_payco: ", "epaycoUploadOrderStatus: " . json_encode($epayco_status));
-            error_log("epaycoUploadOrderStatus: " . $x_ref_payco);
             if ($order_id) {
                 $order = wc_get_order($order_id);
                 if ($order) {
-                    $orderStatus = $order->get_status();
-                    $x_cod_transaction_state = $this->get_epayco_estado_codigo_detallado($orderStatus);
                     $isTestMode = get_option('x_cod_transaction_state') == "yes" ? "true" : "false";
-            $this->log->add($this->id." transaction_state: ", "x_cod_transaction_state: " . $x_cod_transaction_state);
                     Epayco_Transaction_Handler::handle_transaction($order, [
                         'x_cod_transaction_state' => $x_cod_transaction_state,
                         'x_ref_payco'             => $x_ref_payco,
