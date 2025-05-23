@@ -1070,40 +1070,66 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             $status = isset($epayco_status['data']['status']) ? $epayco_status['data']['status'] : null;
             $ePaycoSttus = strtolower($status);
             $x_ref_payco = isset($epayco_status['data']['referencePayco']) ? $epayco_status['data']['referencePayco'] : null;
-            $this->log->add($this->id." Ref_payco: ", "epaycoUploadOrderStatus: " . $x_ref_payco);
+            $x_fecha_transaccion = isset($epayco_status['data']['transactionDate']) ? $epayco_status['data']['transactionDate'] : null;
+            $x_franchise = isset($epayco_status['data']['bank']) ? $epayco_status['data']['bank'] : null;
+            $x_approval_code = isset($epayco_status['data']['authorization']) ? $epayco_status['data']['authorization'] : null;
+            $isTestMode = get_option('epayco_order_status') == "yes" ? "true" : "false";
+            $this->log->add($this->id." Ref_payco: ", "epaycoUploadOrderStatus: " . json_encode($epayco_status));
             error_log("epaycoUploadOrderStatus: " . $x_ref_payco);
             if ($order_id) {
                 $order = wc_get_order($order_id);
                 if ($order) {
                     $orderStatus = $order->get_status();
-                    switch ($ePaycoSttus) {
-                        case 'aceptada': {
-                                $order->payment_complete($x_ref_payco);
-                                $order->update_status($this->epayco_endorder_state, 'La orden se ha completado automáticamente por la integración con ePayco.');
-                                $order->add_order_note('ePayco.');
-                            }
-                            break;
-                        case 'pendiente':
-                        case 'retenido': {
-                                $orderStatus = "on-hold";
-                                if ($orderStatus !== $orderStatus) {
-                                    $order->update_status($orderStatus);
-                                    $order->add_order_note('ePayco.');
-                                }
-                            }
-                            break;
-                        case 'rechazada':
-                        case 'fallida':
-                        case 'abandonada':
-                        case 'cancelada': {
-                                if ($orderStatus == 'pending' || $orderStatus == 'on-hold') {
-                                    $order->update_status($this->epayco_cancelled_endorder_state);
-                                    $order->add_order_note('ePayco.');
-                                }
-                            }
-                            break;
-                    }
+                    $x_cod_transaction_state = $this->get_epayco_estado_codigo_detallado($orderStatus);
+                    $isTestMode = get_option('x_cod_transaction_state') == "yes" ? "true" : "false";
+            $this->log->add($this->id." transaction_state: ", "x_cod_transaction_state: " . $x_cod_transaction_state);
+                    Epayco_Transaction_Handler::handle_transaction($order, [
+                        'x_cod_transaction_state' => $x_cod_transaction_state,
+                        'x_ref_payco'             => $x_ref_payco,
+                        'x_fecha_transaccion'     => $x_fecha_transaccion,
+                        'x_franchise'             => $x_franchise,
+                        'x_approval_code'         => $x_approval_code,
+                        'is_confirmation'         => true,
+                    ], [
+                        'test_mode'               => $isTestMode,
+                        'end_order_state'         => $this->epayco_endorder_state,
+                        'cancel_order_state'      => $this->epayco_cancelled_endorder_state,
+                        'reduce_stock_pending'    => $this->get_option('epayco_reduce_stock_pending'),
+                    ]);
                 }
+            }
+        }
+
+        public function get_epayco_estado_codigo_detallado($estado_texto) {
+            $estado_texto = strtolower(trim($estado_texto));
+
+            switch ($estado_texto) {
+                case 'aprobada':
+                case 'aceptada':    
+                    return 1;
+
+                case 'abandonada':
+                    return 10;
+
+                case 'fallida':
+                    return 4;
+
+                case 'cancelada':
+                case 'rechazada':
+                    return 2;
+
+                case 'pendiente':
+                    return 3;
+
+                case 'retenido':
+                    return 7;
+
+                case 'reversada':
+                case 'reversado':
+                    return 6;
+
+                default:
+                    return 0;
             }
         }
 
