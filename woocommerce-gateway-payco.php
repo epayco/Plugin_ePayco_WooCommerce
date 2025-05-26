@@ -472,7 +472,7 @@ function payco_shop_order($postOrOrderObject) {
         if($orderStatus == 'pending' || $orderStatus == 'on-hold'){
             $epayco = new WC_Gateway_Epayco();
             $token = $epayco->epyacoBerarToken();
-            if($token){
+            if($token && !isset($token['error'])){
                 $headers = [
                     'Content-Type'  => 'application/json',
                     'Authorization' => 'Bearer '.$token['token'],
