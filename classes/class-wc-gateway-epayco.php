@@ -631,14 +631,15 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     $explode = explode('=', $order_id);
                     $ref_payco = $explode[1];
                 }
-                if (!$ref_payco) {
+                if (!$ref_payco || $ref_payco=='undefined') {
                     wp_safe_redirect(wc_get_checkout_url());
                     exit();
                 }
-                $url = 'https://eks-checkout-service.epayco.io/validation/v1/reference/' . $ref_payco;
-                $response = wp_remote_get($url);
-                $body = wp_remote_retrieve_body($response);
-                $jsonData = @json_decode($body, true);
+                $jsonData = $this->getRefPayco($ref_payco);
+                if(is_null($jsonData)){
+                    sleep(3);
+                    $jsonData = $this->getRefPayco($ref_payco);
+                }
                 $validationData = $jsonData['data'];
                 $x_signature = trim($validationData['x_signature']);
                 $x_cod_transaction_state = (int)trim($validationData['x_cod_transaction_state']) ?
@@ -780,6 +781,15 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             self::$logger->add($this->id, $error_message);
             throw new Exception($error_message);
         }
+    }
+
+    public function getRefPayco($refPayco)
+    {
+        $url = 'https://eks-checkout-service.epayco.io/validation/v1/reference/' . $refPayco;
+        $response = wp_remote_get($url);
+        $body = wp_remote_retrieve_body($response);
+        $jsonData = @json_decode($body, true);
+        return $jsonData;
     }
 
     public function authSignature($x_ref_payco, $x_transaction_id, $x_amount, $x_currency_code)
