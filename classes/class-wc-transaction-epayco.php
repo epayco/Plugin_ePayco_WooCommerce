@@ -63,13 +63,12 @@ class Epayco_Transaction_Handler {
     }
 
     private static function get_cancel_status($settings) {
-        return $settings['test_mode'] === "true"
-            ? (
-            ($settings['cancel_order_state'] == "cancelled") ? "cancelled" :
-                (($settings['cancel_order_state'] == "epayco-cancelled") ? "epayco_cancelled" :
-                    (($settings['cancel_order_state'] == "epayco-failed") ? "epayco_failed"
-                        : "failed"))
-            ):$settings['cancel_order_state'];
+        if ($settings['test_mode'] === "true") {
+            return ($settings['cancel_order_state'] == "cancelled") ? "cancelled" :
+                ( ($settings['cancel_order_state'] == "epayco-cancelled") ? "epayco_cancelled" :
+                    ( ($settings['cancel_order_state'] == "epayco-failed") ? "epayco_failed" : "failed"));
+        }
+        return $settings['cancel_order_state'];
     }
 
     private static function handle_approved($order, $order_id, $current_state, $settings, $estado_final_exitoso,$franchise) {
