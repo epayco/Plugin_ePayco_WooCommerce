@@ -7,7 +7,7 @@ class Epayco_Transaction_Handler {
     public static function handle_transaction($order, $data, $settings) {
         $order_id = $order->get_id();
         $current_state = $order->get_status();
-        $modo = $settings['test_mode'] === "true" ? "pruebas" : "Production";
+        $modo = $settings['test_mode'] === "true" ? "pruebas" : "Producción";
 
         self::save_epayco_metadata($order, $modo, $data);
 
