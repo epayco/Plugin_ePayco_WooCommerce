@@ -931,7 +931,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         if ($order_id) {
             $order = wc_get_order($order_id);
             if ($order) {
-                $isTestMode = get_option('x_cod_transaction_state') == "yes" ? "true" : "false";
                 Epayco_Transaction_Handler::handle_transaction($order, [
                     'x_cod_transaction_state' => $x_cod_transaction_state,
                     'x_ref_payco'             => $x_ref_payco,
