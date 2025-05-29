@@ -927,6 +927,20 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                             foreach ($epayco_status['data'] as $epaycoData) {
                                 $refPayco = $epaycoData['referencePayco'];
                             }
+                            $epaycoOrder = [
+                                'refPayco' => $refPayco
+                            ];
+                            $paymentsIdMetadata = $this->getPaymentsIdMeta($order);
+                            if (empty($paymentsIdMetadata)) {
+                                $this->setPaymentsIdData($order, implode(', ', $epaycoOrder));
+                            }
+                            foreach ($epaycoOrder as $paymentId) {
+                                $paymentDetailMetadata = $order->get_meta($paymentId);
+                                if (empty($paymentDetailMetadata)) {
+                                    $order->update_meta_data(self::PAYMENTS_IDS, $paymentId);
+                                    $order->save();
+                                }
+                            }
                             $path = "payment/transaction";
                             $data = [ "referencePayco" => $refPayco];
                             $epayco_status = $this->getEpaycoStatusOrder($path,$data, $token);
