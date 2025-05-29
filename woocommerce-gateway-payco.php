@@ -473,14 +473,10 @@ function payco_shop_order($postOrOrderObject) {
             $epayco = new WC_Gateway_Epayco();
             $token = $epayco->epyacoBerarToken();
             if($token && !isset($token['error'])){
-                $headers = [
-                    'Content-Type'  => 'application/json',
-                    'Authorization' => 'Bearer '.$token['token'],
-                ];
                 $path = "payment/transaction";
                 $data = [ "referencePayco" => $paymentsIds[0]];
-                $epayco_status = $epayco->epayco_realizar_llamada_api($path,$data,$headers,);
-                if($epayco_status['success']){
+                $epayco_status = $epayco->getEpaycoStatusOrder($path,$data, $token);
+                if ($epayco_status['success']) {
                     if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
                         $epayco->epaycoUploadOrderStatus($epayco_status);
                     }
@@ -534,7 +530,7 @@ add_action( 'init', 'bf_schedule_epayco_event' );
 
 // fire custom event
 
-function bf_do_something_on_schedule()
+function bf_do_epayco_on_schedule()
 {
     if (class_exists('WC_Gateway_Epayco')) {
         $ePayco = new WC_Gateway_Epayco();
@@ -542,4 +538,4 @@ function bf_do_something_on_schedule()
     }
     
 }
-add_action( 'bf_epayco_event', 'bf_do_something_on_schedule' );
+add_action( 'bf_epayco_event', 'bf_do_epayco_on_schedule' );

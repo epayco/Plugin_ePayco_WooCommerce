@@ -108,6 +108,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             $cron_data = $this->settings['cron_data'] == "yes" ? true : false;
             if ($cron_data) {
                 $this->getEpaycoORders();
+                $this->getWoocommercePendigsORders();
             }
         }
     }
@@ -122,6 +123,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
     public function delete_epayco_expired_draft_orders()
     {
         $this->getEpaycoORders();
+        $this->getWoocommercePendigsORders();
     }
 
 
@@ -886,7 +888,14 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $token = $this->epyacoBerarToken();
                 if ($token) {
                     foreach ($ref_payco_list as $ref_payco) {
-                        $this->getEpaycoStatusOrder($ref_payco, $token);
+                        $path = "payment/transaction";
+                        $data = [ "referencePayco" => $ref_payco];
+                        $epayco_status = $this->getEpaycoStatusOrder($path,$data, $token);
+                        if ($epayco_status['success']) {
+                            if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
+                                $this->epaycoUploadOrderStatus($epayco_status);
+                            }
+                        }
                     }
                 }
             }
@@ -897,22 +906,55 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         }
     }
 
-    public function getEpaycoStatusOrder($ref_payco, $token)
+    public function getWoocommercePendigsORders(){
+        try {
+            $orders = wc_get_orders([
+                'limit'        => -1, 
+                'status'       => 'pending', 
+                'payment_method' => 'epayco',
+                'orderby'      => 'date',
+                'order'        => 'DESC',
+            ]);
+            $token = $this->epyacoBerarToken();
+            foreach ($orders as $order) {
+                $orderId = $order->get_id();
+                if ($token) {
+                    $path = "transaction/detail";
+                    $data = [ "filter" => ["referenceClient" => $orderId]];
+                    $epayco_status = $this->getEpaycoStatusOrder($path,$data, $token);
+                    if ($epayco_status['success']) {
+                        if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
+                            foreach ($epayco_status['data'] as $epaycoData) {
+                                $refPayco = $epaycoData['referencePayco'];
+                            }
+                            $path = "payment/transaction";
+                            $data = [ "referencePayco" => $refPayco];
+                            $epayco_status = $this->getEpaycoStatusOrder($path,$data, $token);
+                            if ($epayco_status['success']) {
+                                if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
+                                    $this->epaycoUploadOrderStatus($epayco_status);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (\Exception $ex) {
+            $error_message = "Unable to update batch of orders on action got error: {$ex->getMessage()}";
+            self::$logger->add($this->id, $error_message);
+            throw new Exception($error_message);
+        }
+    }
+
+    public function getEpaycoStatusOrder($path,$data, $token)
     {
         if ($token) {
             $headers = [
                 'Content-Type'  => 'application/json',
                 'Authorization' => 'Bearer '.$token['token'],
             ];
-            $path = "payment/transaction";
-            $data = [ "referencePayco" => $ref_payco];
-
-            $epayco_status = $this->epayco_realizar_llamada_api($path, $data, $headers);
-            if ($epayco_status['success']) {
-                if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
-                    $this->epaycoUploadOrderStatus($epayco_status);
-                }
-            }
+            return $this->epayco_realizar_llamada_api($path, $data, $headers);
+            
         }
     }
 
