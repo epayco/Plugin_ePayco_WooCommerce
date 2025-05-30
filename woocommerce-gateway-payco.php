@@ -6,7 +6,7 @@
  *
  * Plugin Name: WooCommerce Epayco Gateway
  * Description: Plugin ePayco Gateway for WooCommerce.
- * Version: 8.2.2
+ * Version: 8.2.1
  * Author: ePayco
  * Author URI: http://epayco.co
  * Tested up to: 6.7
@@ -534,7 +534,7 @@ add_action( 'init', 'bf_schedule_epayco_event' );
 
 // fire custom event
 
-function bf_do_something_on_schedule()
+function bf_do_epayco_on_schedule()
 {
     if (class_exists('WC_Gateway_Epayco')) {
         $ePayco = new WC_Gateway_Epayco();
@@ -542,4 +542,4 @@ function bf_do_something_on_schedule()
     }
     
 }
-add_action( 'bf_epayco_event', 'bf_do_something_on_schedule' );
+add_action( 'bf_epayco_event', 'bf_do_epayco_on_schedule' );

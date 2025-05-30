@@ -127,22 +127,10 @@ class Epayco_Transaction_Handler {
                 if ($settings['reduce_stock_pending'] === "yes" && in_array($current_state, ['pending', 'on-hold'])) {
                     if($current_state == 'pending'){
                         if (!$isConfirmation) {
-                            /*WC()->cart->empty_cart();
-                            foreach ($order->get_items() as $item) {
-                                $product_id = $item->get_product()->id;
-                                $product = $item->get_product();
-                                $qty = $item->get_quantity();
-                                if ($product->is_type('variation')) {
-                                    WC()->cart->add_to_cart($product_id, $qty, $product->get_id(), $product->get_attributes());
-                                } else {
-                                    WC()->cart->add_to_cart($product_id, (int)$qty);
-                                }
-                            }*/
                             wp_safe_redirect(wc_get_checkout_url());
                             exit;
                         }
                     }else{
-                        //$order->update_status($estado_cancelado);
                         self::restore_stock($order->get_id());
                     }
                 }
