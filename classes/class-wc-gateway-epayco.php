@@ -151,7 +151,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         <div class="container-fluid">
         <div class="panel panel-default" style="">
-            <img src="<?php echo EPAYCO_PLUGIN_URL . '/assets/images/paymentLogo.svg' ?>" >
+            <img src="<?php echo EPAYCO_PLUGIN_URL . '/assets/images/logoepayco.svg' ?>" >
             <div id="path_upload" hidden>
                 <?php esc_html_e($logo_url, 'text_domain'); ?>
             </div>
