@@ -1,10 +1,11 @@
-#ePayco plugin para WooCommerce
+## ePayco plugin para WooCommerce
 
 **Si usted tiene alguna pregunta o problema, no dude en ponerse en contacto con nuestro soporte técnico: desarrollo@epayco.com.**
 
 ** Se recomienda emplear la última versión disponible. **
 
 ## Versiones
+* [epayco plugin WooCommerce v8.2.1](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.2.1).
 * [epayco plugin WooCommerce v8.2.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.2.0).
 * [epayco plugin WooCommerce v8.1.1](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.1.1).
 * [epayco plugin WooCommerce v8.1.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.1.0).
@@ -83,6 +84,20 @@
 8. Selecciona o crea una página de respuesta donde el usuario será devuelto después de finalizar la compra.
 9. Realiza una o varias compras para comprobar que todo esté bien.
 10. Si todo está bien recuerda cambiar la variable Modo Prueba a NO y empieza a recibir pagos de forma instantánea y segura con ePayco.
+
+### Nota sobre la actualización manual de órdenes
+
+Si deseas actualizar manualmente todas las órdenes para sincronizar su estado con **ePayco**, sigue estos pasos:
+
+1. Ve a **WooCommerce → Estado → Acciones programadas**.
+2. Filtra por **ePayco**.
+3. Selecciona la opción de estado.
+4. Haz clic en **Ejecutar**.
+
+Esto sincronizará los estados de las órdenes con el estado actual en tu dashboard de ePayco.
+
+**Importante:** Estas actualizaciones también se ejecutan automáticamente por defecto, pero puedes realizarlas manualmente si lo prefieres o según la configuración 
+personalizada de tu tienda.
 
 
 ## Pasos
