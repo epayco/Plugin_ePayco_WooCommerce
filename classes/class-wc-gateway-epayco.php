@@ -153,7 +153,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         <div class="container-fluid">
         <div class="panel panel-default" style="">
-            <img src="<?php echo EPAYCO_PLUGIN_URL . '/assets/images/paymentLogo.svg' ?>" >
+            <img src="<?php echo EPAYCO_PLUGIN_URL . '/assets/images/logoepayco.svg' ?>" >
             <div id="path_upload" hidden>
                 <?php esc_html_e($logo_url, 'text_domain'); ?>
             </div>
@@ -300,20 +300,19 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         foreach ($order->get_items('tax') as $item_id => $item) {
             $tax_label = trim(strtolower($item->get_label()));
-
-            if ($tax_label == 'iva') {
-                $iva += round($item->get_tax_total(), 2);
+            $tax_name = trim(strtolower($order->get_items_tax_classes()[0]));
+            if ($tax_label == 'iva' || $tax_name == 'iva' ) {
+                $iva = round($order->get_total_tax(), 2);
             }
 
-            if ($tax_label == 'ico') {
-                $ico += round($item->get_tax_total(), 2);
+            if ($tax_label == 'ico'|| $tax_name == 'ico') {
+                $ico = round($order->get_total_tax(), 2);
             }
         }
 
-        $base_tax = $order->get_subtotal() - $order->get_total_discount();
+        //$iva = $iva !== 0 ? $iva :$order->get_total_tax();
 
-        $iva = $iva !== 0 ? $iva : $order->get_total() - $base_tax;
-
+        $base_tax = ($iva !== 0) ? ($order->get_total() - $order->get_total_tax()): (($ico !== 0) ? ($order->get_total() - $order->get_total_tax()): $order->get_subtotal() );
 
         foreach ($order->get_items() as $product) {
             $clearData = str_replace('_', ' ', $this->string_sanitize($product['name']));

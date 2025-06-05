@@ -54,5 +54,11 @@ Yes. But it is advisable that you consider using it since it is revealing for br
 = 8.1.1 =
 * upload release
 
+= 8.2.1 =
+* upload release
+
+= 8.2.2 =
+* upload release
+
 == Additional Info ==
 **Contribute** [repository on github](https://github.com/epayco/Plugin_ePayco_WooCommerce)
