@@ -353,7 +353,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         echo sprintf(
             '
                     <script
-                       src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.js">
+                       src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js">
                     </script>
                     <script> var handler = ePayco.checkout.configure({
                         key: "%s",
@@ -477,7 +477,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             trim($this->settings['epayco_publickey']),
             trim($this->settings['epayco_privatekey'])
         );
-        wp_enqueue_script('epayco',  'https://epayco-checkout-testing.s3.amazonaws.com/checkout.js', array(), '8.2.2', null);
+        wp_enqueue_script('epayco',  'https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js', array(), '8.2.2', null);
         wc_enqueue_js(
             '
 		jQuery("#btn_epayco_new").click(function(){
