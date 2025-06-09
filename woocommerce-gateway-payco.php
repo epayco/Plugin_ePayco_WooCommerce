@@ -6,7 +6,7 @@
  *
  * Plugin Name: WooCommerce Epayco Gateway
  * Description: Plugin ePayco Gateway for WooCommerce.
- * Version: 8.2.0
+ * Version: 8.2.1
  * Author: ePayco
  * Author URI: http://epayco.co
  * Tested up to: 6.7
@@ -312,8 +312,8 @@ add_filter( 'wc_order_statuses', 'add_epayco_to_order_statuses' );
 
 function styling_admin_order_list() {
     global $pagenow, $post;
-    if( $pagenow != 'edit.php') return; // Exit
-    if( get_post_type($post->ID) != 'shop_order' ) return; // Exit
+    //if( $pagenow != 'edit.php') return; // Exit
+    //if( get_post_type($post->ID) != 'shop_order' ) return; // Exit
     // HERE we set your custom status
     $epayco_order = get_option('epayco_order_status');
     $testMode = $epayco_order == "yes" ? "true" : "false";
@@ -338,31 +338,31 @@ function styling_admin_order_list() {
     ?>
 
     <style>
-        .order-status.status-<?php esc_html_e( $order_status_failed, 'text_domain' );  ?> {
+        .order-status.status-<?php esc_html_e( $order_status_failed, 'woo-epayco-gateway' );  ?> {
             background: #eba3a3;
             color: #761919;
         }
-        .order-status.status-<?php esc_html_e( $order_status_on_hold, 'text_domain' ); ?> {
+        .order-status.status-<?php esc_html_e( $order_status_on_hold, 'woo-epayco-gateway' ); ?> {
             background: #f8dda7;
             color: #94660c;
         }
-        .order-status.status-<?php esc_html_e( $order_status_processing, 'text_domain' ); ?> {
+        .order-status.status-<?php esc_html_e( $order_status_processing, 'woo-epayco-gateway' ); ?> {
             background: #c8d7e1;
             color: #2e4453;
         }
-        .order-status.status-<?php esc_html_e( $order_status_processing_, 'text_domain' ); ?> {
+        .order-status.status-<?php esc_html_e( $order_status_processing_, 'woo-epayco-gateway' ); ?> {
             background: #c8d7e1;
             color: #2e4453;
         }
-        .order-status.status-<?php esc_html_e( $order_status_completed, 'text_domain' ); ?> {
+        .order-status.status-<?php esc_html_e( $order_status_completed, 'woo-epayco-gateway' ); ?> {
             background: #d7f8a7;
             color: #0c942b;
         }
-        .order-status.status-<?php esc_html_e( $order_status_completed_, 'text_domain' ); ?> {
+        .order-status.status-<?php esc_html_e( $order_status_completed_, 'woo-epayco-gateway' ); ?> {
             background: #d7f8a7;
             color: #0c942b;
         }
-        .order-status.status-<?php esc_html_e( $order_status_cancelled, 'text_domain' ); ?> {
+        .order-status.status-<?php esc_html_e( $order_status_cancelled, 'woo-epayco-gateway' ); ?> {
             background: #eba3a3;
             color: #761919;
         }
@@ -402,8 +402,12 @@ function my_custom_checkout_field_update_order_meta( $order_id ) {
 add_action( 'woocommerce_admin_order_data_after_payment_info', 'my_custom_checkout_field_display_admin_order_meta', 10, 1 );
 function my_custom_checkout_field_display_admin_order_meta( $order ){
      $order_id = method_exists( $order, 'get_id' ) ? $order->get_id() : $order->id;
-     if( null !== get_post_meta( $order_id, 'modo', true ) && null !== get_post_meta( $order_id, 'fecha', true )
-        && null !== get_post_meta( $order_id, 'franquicia', true ) && null !== get_post_meta( $order_id, 'autorizacion', true )
+     $ref_payco = $order->get_meta('refPayco')??get_post_meta( $order_id, 'refPayco', true );
+     $modo = $order->get_meta('modo')??get_post_meta( $order_id, 'modo', true );
+     $fecha = $order->get_meta('fecha')??get_post_meta( $order_id, 'fecha', true );
+     $franquicia = $order->get_meta('franquicia')??get_post_meta( $order_id, 'franquicia', true );
+     $autorizacion = $order->get_meta('autorizacion')??get_post_meta( $order_id, 'autorizacion', true );
+     if( null !== $ref_payco && null !== $fecha && null !== $franquicia && null !== $autorizacion
      ){
     echo '<br>
     <h3>Detalle de la transacción</h3>
@@ -411,19 +415,19 @@ function my_custom_checkout_field_display_admin_order_meta( $order ){
         <div class="order_data_column_container">
             <div class="order_data_column">
                 <div class="address">    
-                    <p><strong>'.__('Pago con ePayco').':</strong> ' . get_post_meta( $order_id, 'refPayco', true ) . '</p>
-                    <p><strong>'.__('Modo').':</strong> ' . get_post_meta( $order_id, 'modo', true ) . '</p>
+                    <p><strong>'.__('Pago con ePayco').':</strong> ' . $ref_payco . '</p>
+                    <p><strong>'.__('Modo').':</strong> ' . $modo . '</p>
                 </div>
             </div>
             <div class="order_data_column">
                 <div class="address">    
-                    <p><strong>'.__('Fecha y hora transacción').':</strong> ' . get_post_meta( $order_id, 'fecha', true ) . '</p>
-                    <p><strong>'.__('Franquicia/Medio de pago').':</strong> ' . get_post_meta( $order_id, 'franquicia', true ) . '</p>
+                    <p><strong>'.__('Fecha y hora transacción').':</strong> ' . $fecha . '</p>
+                    <p><strong>'.__('Franquicia/Medio de pago').':</strong> ' . $franquicia . '</p>
                 </div>
             </div>
             <div class="order_data_column">
                 <div class="address">    
-                    <p><strong>'.__('Código de autorización').':</strong> ' . get_post_meta( $order_id, 'autorizacion', true ) . '</p>
+                    <p><strong>'.__('Código de autorización').':</strong> ' . $autorizacion . '</p>
                 </div>
             </div>
         </div>
@@ -457,23 +461,25 @@ register_deactivation_hook(__FILE__, 'epayco_cron_job_deactivation');
 function payco_shop_order($postOrOrderObject) {
     $order = ($postOrOrderObject instanceof WP_Post) ? wc_get_order($postOrOrderObject->ID) : $postOrOrderObject;
     try {
+        $logger = new WC_Logger();
         $paymentsIds   = explode(',', $order->get_meta(WC_Gateway_Epayco::PAYMENTS_IDS, true));
         $lastPaymentId = trim(end($paymentsIds));
         $orderStatus = $order->get_status();
-
+        $logger->add('ePayco_shop_order', $lastPaymentId);
         if (!$lastPaymentId) {
             return false;
         }
         if($orderStatus == 'pending' || $orderStatus == 'on-hold'){
             $epayco = new WC_Gateway_Epayco();
             $token = $epayco->epyacoBerarToken();
-            if($token){
-                $headers = array(
-                    'Content-Type' => 'application/json',
-                    'Authorization' => "Bearer ".$token['token']
-                );
-                $path = "transaction/response.json?ref_payco=".$paymentsIds[0]."&&public_key=".$epayco->epayco_publickey;
-                $epayco_status = $epayco->epayco_realizar_llamada_api($path,[],$headers,false, 'GET');
+            if($token && !isset($token['error'])){
+                $headers = [
+                    'Content-Type'  => 'application/json',
+                    'Authorization' => 'Bearer '.$token['token'],
+                ];
+                $path = "payment/transaction";
+                $data = [ "referencePayco" => $paymentsIds[0]];
+                $epayco_status = $epayco->epayco_realizar_llamada_api($path,$data,$headers,);
                 if($epayco_status['success']){
                     if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
                         $epayco->epaycoUploadOrderStatus($epayco_status);
@@ -490,3 +496,50 @@ function payco_shop_order($postOrOrderObject) {
 
 add_action('add_meta_boxes_shop_order', 'payco_shop_order');
 add_action('add_meta_boxes_woocommerce_page_wc-orders', 'payco_shop_order');
+
+
+add_action('woocommerc_epayco_order_hook', 'woocommerce_epayco_cleanup_draft_orders');
+
+register_deactivation_hook(__FILE__, 'epayco_cron_inactive');
+function epayco_cron_inactive() {
+    wp_clear_scheduled_hook('bf_epayco_event');
+}
+// function that registers new custom schedule
+function bf_add_epayco_schedule( $schedules )
+{
+    $schedules[ 'every_five_minutes' ] = array(
+        'interval' => 300,
+        'display'  => 'Every 5 minutes',
+    );
+
+    return $schedules;
+}
+
+// function that schedules epayco event
+
+function bf_schedule_epayco_event()
+{
+    // the actual hook to register new epayco schedule
+
+    add_filter( 'cron_schedules', 'bf_add_epayco_schedule' );
+
+    // schedule epayco event
+
+    if( !wp_next_scheduled( 'bf_epayco_event' ) )
+    {
+        wp_schedule_event( time(), 'every_five_minutes', 'bf_epayco_event' );
+    }
+}
+add_action( 'init', 'bf_schedule_epayco_event' );
+
+// fire custom event
+
+function bf_do_epayco_on_schedule()
+{
+    if (class_exists('WC_Gateway_Epayco')) {
+        $ePayco = new WC_Gateway_Epayco();
+        $ePayco->woocommerc_epayco_cron_job_funcion();
+    }
+    
+}
+add_action( 'bf_epayco_event', 'bf_do_epayco_on_schedule' );
