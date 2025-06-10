@@ -480,14 +480,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             trim($this->settings['epayco_publickey']),
             trim($this->settings['epayco_privatekey'])
         );
-        wp_enqueue_script('epayco',  'https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js', array(), '8.2.2', null);
-        wc_enqueue_js(
-            '
-		jQuery("#btn_epayco_new").click(function(){
-            console.log("epayco")
-		});
-		'
-        );
         return '<form  method="post" id="appGateway">
 		        </form>';
     }
