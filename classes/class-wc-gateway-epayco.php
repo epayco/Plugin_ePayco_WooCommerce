@@ -359,7 +359,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     </script>
                     <script> var handler = ePayco.checkout.configure({
                         key: "%s",
-                        test: "%s"
+                        test: %s
                     })
                     var date = new Date().getTime();
                     var bntPagar = document.getElementById("btn_epayco");
