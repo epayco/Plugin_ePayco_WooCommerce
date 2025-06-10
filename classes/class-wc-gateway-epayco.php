@@ -355,7 +355,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         echo sprintf(
             '
                     <script
-                       src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod.js">
+                       src="https://epayco-checkout-testing.s3.us-east-1.amazonaws.com/checkout.preprod_v1.js">
                     </script>
                     <script> var handler = ePayco.checkout.configure({
                         key: "%s",
@@ -386,7 +386,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         test: "%s".toString(),
                         extra1: "%s",
                         extras_epayco:{extra5:"p19"},
-                        method_confirmation: "POST"
+                        method_confirmation: "POST",
+                        checkout_version:"1"
                     }
                     const apiKey = "%s";
                     const privateKey = "%s";
