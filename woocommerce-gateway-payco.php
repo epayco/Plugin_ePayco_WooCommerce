@@ -6,7 +6,7 @@
  *
  * Plugin Name: WooCommerce Epayco Gateway
  * Description: Plugin ePayco Gateway for WooCommerce.
- * Version: 8.2.1
+ * Version: 8.2.2
  * Author: ePayco
  * Author URI: http://epayco.co
  * Tested up to: 6.7
@@ -473,14 +473,10 @@ function payco_shop_order($postOrOrderObject) {
             $epayco = new WC_Gateway_Epayco();
             $token = $epayco->epyacoBerarToken();
             if($token && !isset($token['error'])){
-                $headers = [
-                    'Content-Type'  => 'application/json',
-                    'Authorization' => 'Bearer '.$token['token'],
-                ];
                 $path = "payment/transaction";
                 $data = [ "referencePayco" => $paymentsIds[0]];
-                $epayco_status = $epayco->epayco_realizar_llamada_api($path,$data,$headers,);
-                if($epayco_status['success']){
+                $epayco_status = $epayco->getEpaycoStatusOrder($path,$data, $token);
+                if ($epayco_status['success']) {
                     if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
                         $epayco->epaycoUploadOrderStatus($epayco_status);
                     }

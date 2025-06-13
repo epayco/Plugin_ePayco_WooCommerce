@@ -108,6 +108,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             $cron_data = $this->settings['cron_data'] == "yes" ? true : false;
             if ($cron_data) {
                 $this->getEpaycoORders();
+                $this->getWoocommercePendigsORders();
             }
         }
     }
@@ -122,6 +123,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
     public function delete_epayco_expired_draft_orders()
     {
         $this->getEpaycoORders();
+        $this->getWoocommercePendigsORders();
     }
 
 
@@ -298,20 +300,19 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         foreach ($order->get_items('tax') as $item_id => $item) {
             $tax_label = trim(strtolower($item->get_label()));
-
-            if ($tax_label == 'iva') {
-                $iva += round($item->get_tax_total(), 2);
+            $tax_name = trim(strtolower($order->get_items_tax_classes()[0]));
+            if ($tax_label == 'iva' || $tax_name == 'iva' ) {
+                $iva = round($order->get_total_tax(), 2);
             }
 
-            if ($tax_label == 'ico') {
-                $ico += round($item->get_tax_total(), 2);
+            if ($tax_label == 'ico'|| $tax_name == 'ico') {
+                $ico = round($order->get_total_tax(), 2);
             }
         }
 
-        $base_tax = $order->get_subtotal() - $order->get_total_discount();
+        //$iva = $iva !== 0 ? $iva :$order->get_total_tax();
 
-        $iva = $iva !== 0 ? $iva : $order->get_total() - $base_tax;
-
+        $base_tax = ($iva !== 0) ? ($order->get_total() - $order->get_total_tax()): (($ico !== 0) ? ($order->get_total() - $order->get_total_tax()): $order->get_subtotal() );
 
         foreach ($order->get_items() as $product) {
             $clearData = str_replace('_', ' ', $this->string_sanitize($product['name']));
@@ -358,7 +359,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     </script>
                     <script> var handler = ePayco.checkout.configure({
                         key: "%s",
-                        test: "%s"
+                        test: %s
                     })
                     var date = new Date().getTime();
                     var bntPagar = document.getElementById("btn_epayco");
@@ -385,7 +386,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         test: "%s".toString(),
                         extra1: "%s",
                         extras_epayco:{extra5:"p19"},
-                        method_confirmation: "POST"
+                        method_confirmation: "POST",
+                        checkout_version:"1"
                     }
                     const apiKey = "%s";
                     const privateKey = "%s";
@@ -477,14 +479,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             $order->get_id(),
             trim($this->settings['epayco_publickey']),
             trim($this->settings['epayco_privatekey'])
-        );
-        wp_enqueue_script('epayco',  'https://checkout.epayco.co/checkout.js', array(), '8.2.2', null);
-        wc_enqueue_js(
-            '
-		jQuery("#btn_epayco_new").click(function(){
-            console.log("epayco")
-		});
-		'
         );
         return '<form  method="post" id="appGateway">
 		        </form>';
@@ -886,7 +880,14 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $token = $this->epyacoBerarToken();
                 if ($token) {
                     foreach ($ref_payco_list as $ref_payco) {
-                        $this->getEpaycoStatusOrder($ref_payco, $token);
+                        $path = "payment/transaction";
+                        $data = [ "referencePayco" => $ref_payco];
+                        $epayco_status = $this->getEpaycoStatusOrder($path,$data, $token);
+                        if ($epayco_status['success']) {
+                            if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
+                                $this->epaycoUploadOrderStatus($epayco_status);
+                            }
+                        }
                     }
                 }
             }
@@ -897,22 +898,69 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         }
     }
 
-    public function getEpaycoStatusOrder($ref_payco, $token)
+    public function getWoocommercePendigsORders(){
+        try {
+            $orders = wc_get_orders([
+                'limit'        => -1, 
+                'status'       => 'pending', 
+                'payment_method' => 'epayco',
+                'orderby'      => 'date',
+                'order'        => 'DESC',
+            ]);
+            $token = $this->epyacoBerarToken();
+            foreach ($orders as $order) {
+                $orderId = $order->get_id();
+                if ($token) {
+                    $path = "transaction/detail";
+                    $data = [ "filter" => ["referenceClient" => $orderId]];
+                    $epayco_status = $this->getEpaycoStatusOrder($path,$data, $token);
+                    if ($epayco_status['success']) {
+                        if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
+                            foreach ($epayco_status['data'] as $epaycoData) {
+                                $refPayco = $epaycoData['referencePayco'];
+                            }
+                            $epaycoOrder = [
+                                'refPayco' => $refPayco
+                            ];
+                            $paymentsIdMetadata = $this->getPaymentsIdMeta($order);
+                            if (empty($paymentsIdMetadata)) {
+                                $this->setPaymentsIdData($order, implode(', ', $epaycoOrder));
+                            }
+                            foreach ($epaycoOrder as $paymentId) {
+                                $paymentDetailMetadata = $order->get_meta($paymentId);
+                                if (empty($paymentDetailMetadata)) {
+                                    $order->update_meta_data(self::PAYMENTS_IDS, $paymentId);
+                                    $order->save();
+                                }
+                            }
+                            $path = "payment/transaction";
+                            $data = [ "referencePayco" => $refPayco];
+                            $epayco_status = $this->getEpaycoStatusOrder($path,$data, $token);
+                            if ($epayco_status['success']) {
+                                if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
+                                    $this->epaycoUploadOrderStatus($epayco_status);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (\Exception $ex) {
+            $error_message = "Unable to update batch of orders on action got error: {$ex->getMessage()}";
+            self::$logger->add($this->id, $error_message);
+            throw new Exception($error_message);
+        }
+    }
+
+    public function getEpaycoStatusOrder($path,$data, $token)
     {
         if ($token) {
             $headers = [
                 'Content-Type'  => 'application/json',
                 'Authorization' => 'Bearer '.$token['token'],
             ];
-            $path = "payment/transaction";
-            $data = [ "referencePayco" => $ref_payco];
-
-            $epayco_status = $this->epayco_realizar_llamada_api($path, $data, $headers);
-            if ($epayco_status['success']) {
-                if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
-                    $this->epaycoUploadOrderStatus($epayco_status);
-                }
-            }
+            return $this->epayco_realizar_llamada_api($path, $data, $headers);
+            
         }
     }
 
