@@ -814,7 +814,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
     {
         $username = sanitize_text_field($validationData['epayco_publickey']);
         $password = sanitize_text_field($validationData['epayco_privatey']);
-        $response = wp_remote_post('https://eks-apify-service.epayco.io/login', array(
+        $response = wp_remote_post('https://apify.epayco.co/login', array(
             'headers' => array(
                 'Authorization' => 'Basic ' . base64_encode($username . ':' . $password),
             ),
