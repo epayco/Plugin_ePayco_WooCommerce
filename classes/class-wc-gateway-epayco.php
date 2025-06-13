@@ -779,7 +779,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
     public function getRefPayco($refPayco)
     {
-        $url = 'https://apify.epayco.co/validation/v1/reference/' . $refPayco;
+        $url = 'https://secure.epayco.co/validation/v1/reference/' . $refPayco;
         $response = wp_remote_get($url);
         $body = wp_remote_retrieve_body($response);
         $jsonData = @json_decode($body, true);
