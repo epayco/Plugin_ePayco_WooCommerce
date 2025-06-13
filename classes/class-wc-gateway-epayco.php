@@ -355,7 +355,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         echo sprintf(
             '
                     <script
-                       src="https://epayco-checkout-testing.s3.us-east-1.amazonaws.com/checkout.preprod_v1.js">
+                       src="https://checkout.epayco.co/checkout.js">
                     </script>
                     <script> var handler = ePayco.checkout.configure({
                         key: "%s",
@@ -410,7 +410,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         headers["privatekey"] = privatekey;
                         headers["apikey"] = apikey;
                         var payment =   function (){
-                            return  fetch("https://eks-cms-backend-platforms-service.epayco.io/checkout/payment/session", {
+                            return  fetch("https://cms.epayco.co/checkout/payment/session", {
                                 method: "POST",
                                 body: JSON.stringify(info),
                                 headers
@@ -779,7 +779,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
     public function getRefPayco($refPayco)
     {
-        $url = 'https://eks-checkout-service.epayco.io/validation/v1/reference/' . $refPayco;
+        $url = 'https://apify.epayco.co/validation/v1/reference/' . $refPayco;
         $response = wp_remote_get($url);
         $body = wp_remote_retrieve_body($response);
         $jsonData = @json_decode($body, true);
@@ -1063,7 +1063,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
     public function epayco_realizar_llamada_api($path, $data, $headers, $method = 'POST')
     {
-        $url = 'https://eks-apify-service.epayco.io/' . $path;
+        $url = 'https://apify.epayco.co/' . $path;
 
         $response = wp_remote_post($url, [
             'headers' => $headers,
