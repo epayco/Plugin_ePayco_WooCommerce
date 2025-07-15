@@ -312,8 +312,9 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         //$iva = $iva !== 0 ? $iva :$order->get_total_tax();
 
-        $base_tax = ($iva !== 0) ? ($order->get_total() - $order->get_total_tax()): (($ico !== 0) ? ($order->get_total() - $order->get_total_tax()): $order->get_subtotal() );
-
+        //$base_tax = ($iva !== 0) ? ($order->get_total() - $order->get_total_tax()): (($ico !== 0) ? ($order->get_total() - $order->get_total_tax()): $order->get_subtotal() );
+        $base_tax = $order->get_total() - $iva - $ico;
+            
         foreach ($order->get_items() as $product) {
             $clearData = str_replace('_', ' ', $this->string_sanitize($product['name']));
             $descripcionParts[] = $clearData;
