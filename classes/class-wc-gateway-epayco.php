@@ -497,7 +497,9 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         //openNewChekout();
                     }
                     bntPagar.addEventListener("click", openChekout);
-            	    //openChekout()
+                    setTimeout(function() {
+                        openChekout();
+                    }, 2000);
                 </script>
             </form>
         </center>
