@@ -630,11 +630,13 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     wp_safe_redirect(wc_get_checkout_url());
                     exit();
                 }
+
                 $jsonData = $this->getRefPayco($ref_payco);
                 if(is_null($jsonData)){
                     sleep(3);
                     $jsonData = $this->getRefPayco($ref_payco);
                 }
+
                 $validationData = $jsonData['data'];
                 $x_signature = trim($validationData['x_signature']);
                 $x_cod_transaction_state = (int)trim($validationData['x_cod_transaction_state']) ?
@@ -805,6 +807,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
     {
         $items_count  = WC()->cart->get_cart_contents_count();
 
+
         $order->update_meta_data('expiration_date', date('Y-m-d H:i:s', strtotime('+' . ($items_count * 60) . ' minutes')));
     }
 
@@ -824,6 +827,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         if ($data->token) {
             echo "success";
             exit();
+
         }
     }
 
@@ -1029,6 +1033,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 return 0;
         }
     }
+
 
     public function syncOrderStatus(\WC_Order $order): string
     {
