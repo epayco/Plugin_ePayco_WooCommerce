@@ -3,8 +3,8 @@ Contributors: ePayco Team
 Donate link: https://epayco.com/
 Tags: e-commerce, commerce, wordpress ecommerce, store, sales, sell, shop, shopping, cart, checkout, configurable, epayco
 Requires at least: 8.8.5
-Tested up to: 6.7
-Stable tag: 6.7
+Tested up to: 9.9
+Stable tag: 9.9
 Requires PHP: 7.4
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
