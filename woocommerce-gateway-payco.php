@@ -9,9 +9,9 @@
  * Version: 8.2.3
  * Author: ePayco
  * Author URI: http://epayco.co
- * Tested up to: 6.7
- * WC requires at least: 6.7
- * WC tested up to: 9.3
+ * Tested up to: 6.8.3
+ * WC requires at least: 8.3.0
+ * WC tested up to: 10.2.1
  * Text Domain: woo-epayco-gateway
  * Domain Path: /i18n/languages/
  * License: GNU General Public License v3.0
