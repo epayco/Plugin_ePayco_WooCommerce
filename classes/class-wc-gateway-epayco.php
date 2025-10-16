@@ -398,7 +398,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     $payload['sessionId'] = $sessionId;
                 }
             }
-            //$payload['sessionId'] = '68f0eca016cc2d39e91c4a62';
             $checkout =  base64_encode(json_encode([
                 "sessionId"=>$payload['sessionId'],
                 "external"=>$external
@@ -412,8 +411,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     let {
                         sessionId,
                         external
-                    } = params;
-                    
+                    } = params; 
                     var bntPagar = document.getElementById("btn_epayco");
                     var openNewChekout = function () {
                         const handlerNew = ePayco.checkout.configure({
@@ -421,7 +419,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                             external: external,
                         });
                         handlerNew.openNew();
-                        
                     }      
                     var openChekout = function () {
                         //bntPagar.style.pointerEvents = "none";
