@@ -360,7 +360,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             $payload  = array(
                 "name"=>$descripcion,
                 "description"=>$descripcion,
-                "invoice"=>(string)$order->get_id()."ddd",
+                "invoice"=>(string)$order->get_id(),
                 "currency"=>$currency,
                 "amount"=>(string)$order->get_total(),
                 "tax_base"=>(string)$base_tax,
