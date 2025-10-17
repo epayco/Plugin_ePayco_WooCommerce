@@ -360,7 +360,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             $payload  = array(
                 "name"=>$descripcion,
                 "description"=>$descripcion,
-                "invoice"=>(string)$order->get_id(),
+                "invoice"=>(string)$order->get_id()."ddd",
                 "currency"=>$currency,
                 "amount"=>(string)$order->get_total(),
                 "tax_base"=>(string)$base_tax,
@@ -386,7 +386,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             $checkout =  base64_encode(json_encode($payload));            
             echo sprintf(
                 '<script
-                    src="https://checkout.epayco.co/checkout.js">
+                    src="https://checkout.epayco.co/checkout-v2.js">
                 </script>
                 <script>
                     var handler = ePayco.checkout.configure({
