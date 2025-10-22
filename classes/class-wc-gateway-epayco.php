@@ -324,7 +324,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             $currency = strtolower(get_woocommerce_currency());
             $testMode = $this->settings['epayco_testmode'] == "yes" ? true : false;
             $basedCountry = WC()->countries->get_base_country();
-            $external = $this->settings['epayco_type_checkout'];
+            $external = $this->settings['epayco_type_checkout']  == "true" ? 'standard' : 'onepage';
             $redirect_url = get_site_url() . "/";
             $redirect_url = add_query_arg('wc-api', get_class($this), $redirect_url);
             $redirect_url = add_query_arg('order_id', $order_id, $redirect_url);
@@ -383,11 +383,12 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     "extra1" => (string)$order->get_id(),
                 ],
                 "extrasEpayco" => [
-                    "extra5" => "p19"
+                    "extra5" => "P19"
                 ],
                 "epaycoMethodsDisable" => [],
                 "method"=> "POST",
-                "checkout_version"=>"2"
+                "checkout_version"=>"2",
+                "autoClick" => false,
             );
             $path = "payment/session/create";
             $newToken['token'] =  $bearerToken;
@@ -400,25 +401,25 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             }
             $checkout =  base64_encode(json_encode([
                 "sessionId"=>$payload['sessionId'],
-                "external"=>$external
+                "external"=>$external,
+                "test"=>$testMode
             ]));            
             echo sprintf(
-                '<script
-                    src="https://epayco-checkout-testing.s3.us-east-1.amazonaws.com/checkout.preprod.js">
-                </script>
-                <script>
+                '<script>
                     const params = JSON.parse(atob("%s"));
                     let {
                         sessionId,
-                        external
+                        external,
+                        test
                     } = params; 
+                    const checkout = ePayco.checkout.configure({
+                        sessionId: sessionId,
+                        type: external,
+                        test: test
+                    });
                     var bntPagar = document.getElementById("btn_epayco");
                     var openNewChekout = function () {
-                        const handlerNew = ePayco.checkout.configure({
-                            sessionId: sessionId,
-                            external: external,
-                        });
-                        handlerNew.openNew();
+                        checkout.open();
                     }      
                     var openChekout = function () {
                         //bntPagar.style.pointerEvents = "none";
@@ -435,6 +436,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         ',
             $checkout
         );
+        wp_enqueue_script('epayco',  'https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod-v2.js', array(), '8.3.0', null);
         return '<form  method="post" id="appGateway">
 		        </form>';
         }
