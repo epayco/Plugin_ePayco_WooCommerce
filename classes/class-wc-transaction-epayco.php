@@ -131,7 +131,9 @@ class Epayco_Transaction_Handler {
                             exit;
                         }
                     }else{
-                        self::restore_stock($order->get_id());
+                        if($estado_cancelado !== 'cancelled'){
+                            self::restore_stock($order->get_id());
+                        }
                     }
                 }
 

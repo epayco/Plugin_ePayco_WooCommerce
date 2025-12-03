@@ -401,6 +401,42 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     $sessionId =  $epayco_status_session['data']['sessionId'];
                     $payload['sessionId'] = $sessionId;
                 }
+            }else{
+                $messageError = $epayco_status_session['textResponse'];
+                $errorMessage = "";
+                if (isset($epayco_status_session['data']['errors'])) {
+                    $errors = $epayco_status_session['data']['errors'];
+                    if(is_array($errors)){
+                        foreach ($errors as $error) {
+                            $errorMessage = $error['errorMessage'] . "\n";
+                        }
+                    }else{
+                        $errorMessage = $errors. "\n";
+                    }
+                } elseif (isset($epayco_status_session['data']['error']['errores'])) {
+                    $errores = $epayco_status_session['data']['error']['errores'];
+                    foreach ($errores as $error) {
+                        $errorMessage = $error['errorMessage'] . "\n";
+                    }
+                }
+                //$processReturnFailMessage = $messageError . " " . $errorMessage;
+                $processReturnFailMessage =  $errorMessage;
+                 echo sprintf(
+                '<div style="
+                        display: flex;
+                        align-items: center;
+                        flex-direction: column;
+                    ">
+                    <div>
+                    <img style="width: 80px;" src="https://multimedia-epayco-preprod.s3.us-east-1.amazonaws.com/plugins-sdks/warning.png" alt="" />
+                    </div>
+                    <div 
+                    style="text-align: center;font-size: large;font-weight: 900;">
+                        <p>"%s"</p>
+                    </div>
+                </div>',
+                    $processReturnFailMessage
+                );
             }
             $checkout =  base64_encode(json_encode([
                 "sessionId"=>$payload['sessionId'],
