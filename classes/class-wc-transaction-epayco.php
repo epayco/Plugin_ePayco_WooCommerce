@@ -108,7 +108,6 @@ class Epayco_Transaction_Handler {
         
             if (!EpaycoOrder::ifStockDiscount($order_id)) {
                 EpaycoOrder::updateStockDiscount($order_id, 1);
-                self::restore_stock($order_id, 'decrease');
                 // $order->add_order_note(__('Stock descontado - Pago aprobado', 'woo-epayco-gateway'));
                 $order->save();
             }
