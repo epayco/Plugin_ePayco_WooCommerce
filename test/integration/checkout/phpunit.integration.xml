@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="bootstrap.integration.php" colors="true" cacheResult="false">
+  <testsuites>
+    <testsuite name="Epayco Integration Tests">
+      <file>GetRefPaycoIntegrationTest.php</file>
+      <file>AuthSignatureIntegrationTest.php</file>
+      <file>HandleTransactionFunctionalTest.php</file>
+      <file>SuccessfulRequestIntegrationTest.php</file>
+    </testsuite>
+  </testsuites>
+</phpunit>

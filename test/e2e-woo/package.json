@@ -1,0 +1,14 @@
+{
+    "name": "woocommerce-e2e",
+    "devDependencies": {
+        "@playwright/test": "^1.42.1"
+    },
+    "scripts": {
+        "test": "playwright test npx playwright test --headed",
+        "test:payments": "EPAYCO_FLOW=${FLOW:-cash} playwright test --reporter=line --workers=1 --repeat-each=${TX_COUNT:-1}",
+        "test:cash": "FLOW=cash TX_COUNT=1 npm run test:payments",
+        "test:card": "FLOW=credit_card TX_COUNT=1 npm run test:payments",
+        "test:cash:2": "FLOW=cash TX_COUNT=2 npm run test:payments",
+        "test:card:2": "FLOW=credit_card TX_COUNT=2 npm run test:payments"
+    }
+}

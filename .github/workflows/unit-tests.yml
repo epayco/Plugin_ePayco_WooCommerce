@@ -1,0 +1,73 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [master, develop, green]
+  pull_request:
+    branches: [master, develop, green]
+
+jobs:
+  unit-tests:
+    name: PHPUnit (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.1', '8.2', '8.3']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: json, mbstring
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: test/unit/checkout/vendor
+          key: composer-php${{ matrix.php }}-${{ hashFiles('test/unit/checkout/composer.lock') }}
+          restore-keys: composer-php${{ matrix.php }}-
+
+      - name: Install Composer dependencies
+        working-directory: test/unit/checkout
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Create plugin classes symlink for bootstrap
+        run: |
+          mkdir -p test/wp-content/plugins/Plugin_ePayco_WooCommerce
+          ln -s ${{ github.workspace }}/classes test/wp-content/plugins/Plugin_ePayco_WooCommerce/classes
+
+      - name: Run unit tests
+        working-directory: test/unit/checkout
+        env:
+          # Credenciales — configurar como GitHub Secrets en el repositorio
+          EPAYCO_CUSTOMER_ID: ${{ secrets.EPAYCO_CUSTOMER_ID }}
+          EPAYCO_SECRET_KEY:  ${{ secrets.EPAYCO_SECRET_KEY }}
+          EPAYCO_PUBLIC_KEY:  ${{ secrets.EPAYCO_PUBLIC_KEY }}
+          EPAYCO_PRIVATE_KEY: ${{ secrets.EPAYCO_PRIVATE_KEY }}
+          X_SIGNATURE:        ${{ secrets.X_SIGNATURE }}
+          # Datos de transacción de prueba
+          X_COD_TRANSACTION_STATE:         ${{ vars.X_COD_TRANSACTION_STATE }}
+          X_REF_PAYCO:                     ${{ vars.X_REF_PAYCO }}
+          X_TRANSACTION_ID:                ${{ vars.X_TRANSACTION_ID }}
+          X_AMOUNT:                        ${{ vars.X_AMOUNT }}
+          X_CURRENCY_CODE:                 ${{ vars.X_CURRENCY_CODE }}
+          X_TEST_REQUEST:                  ${{ vars.X_TEST_REQUEST }}
+          X_APPROVAL_CODE:                 ${{ vars.X_APPROVAL_CODE }}
+          X_FRANCHISE:                     ${{ vars.X_FRANCHISE }}
+          X_FECHA_TRANSACCION:             ${{ vars.X_FECHA_TRANSACCION }}
+          X_CURRENCY:                      ${{ vars.X_CURRENCY }}
+          ID_ORDER:                        ${{ vars.ID_ORDER }}
+          # Configuración de comportamiento del gateway
+          EPAYCO_ENDORDER_STATE:           ${{ vars.EPAYCO_ENDORDER_STATE }}
+          EPAYCO_CANCELLED_ENDORDER_STATE: ${{ vars.EPAYCO_CANCELLED_ENDORDER_STATE }}
+          EPAYCO_REDUCE_STOCK_PENDING:     ${{ vars.EPAYCO_REDUCE_STOCK_PENDING }}
+          EPAYCO_TESTMODE:                 ${{ vars.EPAYCO_TESTMODE }}
+          EPAYCO_VALIDATION_URL:           ${{ vars.EPAYCO_VALIDATION_URL }}
+        run: composer test
