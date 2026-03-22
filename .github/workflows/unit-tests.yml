@@ -2,9 +2,9 @@ name: Unit Tests
 
 on:
   push:
-    branches: [master, develop, green, test]
+    branches: [develop, green, test]
   pull_request:
-    branches: [master, develop, green, test]
+    branches: [develop, green, test]
 
 jobs:
   unit-tests:
