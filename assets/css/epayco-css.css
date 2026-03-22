@@ -1,0 +1,145 @@
+tbody{
+}
+.epayco-table tr:not(:first-child) {
+	border-top: 1px solid #ededed;
+}
+.epayco-table tr th{
+	padding-left: 15px;
+	text-align: -webkit-right;
+}
+.epayco-table input[type="text"]{
+	padding: 8px 13px!important;
+	border-radius: 3px;
+	width: 100%!important;
+}
+.epayco-table .description{
+	color: #afaeae;
+}
+.epayco-table select{
+	padding: 8px 13px!important;
+	border-radius: 3px;
+	width: 100%!important;
+	height: 37px!important;
+}
+.epayco-required::before{
+	content: '* ';
+	font-size: 16px;
+	color: #F00;
+	font-weight: bold;
+}
+
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	padding-top: 100px;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgb(0,0,0);
+	background-color: rgba(0,0,0,0.4);
+	justify-content: center;
+	align-items: center;
+}
+
+/* Modal Content */
+.modal-content {
+	display: none;
+	background-color: #ffff;
+	padding: 20px;
+	border: 1px solid #888;
+	position: absolute;
+	border-radius: 8px;
+	left: 50%;
+	top: 35%;
+	transform: translate(-50%, -50%);
+}
+
+.modal-content p {
+	position: static;
+	font-family: 'Open Sans';
+	font-style: normal;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: 22px;
+	text-align: center;
+	color: #5C5B5C;
+	margin: 8px 0px;
+}
+/* The Close Button */
+.close {
+	color: #aaaaaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+	color: #000;
+	text-decoration: none;
+	cursor: pointer;
+}
+@media screen and (max-width: 425px) {
+	.modal-content {
+		width: 50% ;
+	}
+}
+@media screen and (max-width: 425px) {
+	.dropdown dt a{
+		width: 250px !important;
+	}
+}
+
+.desc { color:#6b6b6b;}
+.desc a {color:#0092dd;}
+.dropdown dd, .dropdown dt, .dropdown ul { margin:0px; padding:0px; }
+.dropdown dd { position:relative; }
+.dropdown a, .dropdown a:visited { color:#2c3338; text-decoration:none; outline:none;}
+.dropdown a:hover { color:#007cba;}
+.dropdown dt a:hover { color:#007cba; border: 1px solid #07cba;}
+.dropdown dt a {background:#ffffff  url("data:../images/arrow.png") no-repeat scroll right center; display:block; padding-right:20px;
+	border:1px solid #2c3338;width: 400px;}
+.dropdown dt a span {cursor:pointer; display:block; padding:5px;}
+.dropdown dd ul { background:#ffffff none repeat scroll 0 0; border:1px solid #d4ca9a; color:#C5C0B0; display:none;
+	left:0px; padding:5px 0px; position:absolute; top:2px; width:auto; min-width:170px; list-style:none;}
+.dropdown span.value { display:none;}
+.dropdown dd ul li a { padding:5px; display:block;}
+.dropdown dd ul li a:hover { background-color:#d0c9af;}
+
+.dropdown img.flag { border:none; vertical-align:middle; margin-left:10px; }
+.flagvisibility { display:none;}
+
+.loader {
+	  position: absolute;
+      border-radius: 8px;
+      left: 50%;
+      top: 35%;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      animation: rotate 1s linear infinite
+    }
+    .loader::before {
+      content: "";
+      box-sizing: border-box;
+      position: absolute;
+      inset: 0px;
+      border-radius: 50%;
+      border: 5px solid #FFF;
+      animation: prixClipFix 2s linear infinite ;
+    }
+
+    @keyframes rotate {
+      100%   {transform: rotate(360deg)}
+    }
+
+    @keyframes prixClipFix {
+        0%   {clip-path:polygon(50% 50%,0 0,0 0,0 0,0 0,0 0)}
+        25%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 0,100% 0,100% 0)}
+        50%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,100% 100%,100% 100%)}
+        75%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 100%)}
+        100% {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 0)}
+    }

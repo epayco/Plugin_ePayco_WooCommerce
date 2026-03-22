@@ -1,0 +1,18 @@
+{
+  "name": "epayco/woocommerce-integration-tests",
+  "description": "Integration tests for ePayco WooCommerce gateway",
+  "type": "project",
+  "require-dev": {
+    "phpunit/phpunit": "^9.6"
+  },
+  "scripts": {
+    "test": "phpunit -c phpunit.integration.xml",
+    "test:get-ref-payco": "RUN_INTEGRATION=1 phpunit -c phpunit.integration.xml --filter test_get_ref_payco_with_real_endpoint",
+    "test:auth-signature": "phpunit -c phpunit.integration.xml --filter test_auth_signature_matches_expected_value",
+    "test:handle-transaction:real": "RUN_WC_REAL_INTEGRATION=1 WP_LOAD_PATH=../../../../../../wp-load.php WORDPRESS_DB_HOST=127.0.0.1:3308 WORDPRESS_DB_NAME=wordpress WORDPRESS_DB_USER=root WORDPRESS_DB_PASSWORD=test phpunit -c phpunit.integration.xml --filter test_handle_transaction_with_shared_constants",
+    "test:successful-request": "RUN_WC_REAL_INTEGRATION=1 WP_LOAD_PATH=../../../../../../wp-load.php WORDPRESS_DB_HOST=127.0.0.1:3308 WORDPRESS_DB_NAME=wordpress WORDPRESS_DB_USER=root WORDPRESS_DB_PASSWORD=test phpunit -c phpunit.integration.xml --filter SuccessfulRequestIntegrationTest"
+  },
+  "config": {
+    "sort-packages": true
+  }
+}

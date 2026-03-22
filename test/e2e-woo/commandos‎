@@ -1,0 +1,25 @@
+BASE_URL=https://www-fallen-growing-chen.trycloudflare.com/ npx playwright test --reporter=line
+
+# Comando parametrizable por método de pago y número de transacciones
+BASE_URL=https://www-fallen-growing-chen.trycloudflare.com/ FLOW=cash TX_COUNT=1 npm run test:payments
+
+# Efectivo (1 transacción)
+BASE_URL=https://www-fallen-growing-chen.trycloudflare.com/ npm run test:cash
+
+# Tarjeta (1 transacción)
+BASE_URL=https://www-fallen-growing-chen.trycloudflare.com/ FLOW=credit_card CARD_STATE=pendiente TX_COUNT=1 npm run test:payments
+
+
+BASE_URL=https://www-fallen-growing-chen.trycloudflare.com/ FLOW=pse TX_COUNT=1 npm run test:payments
+
+# Efectivo (2 o más transacciones)
+BASE_URL=https://www-fallen-growing-chen.trycloudflare.com/ FLOW=cash TX_COUNT=2 npm run test:payments
+BASE_URL=https://www-fallen-growing-chen.trycloudflare.com/ FLOW=cash TX_COUNT=5 npm run test:payments
+
+# Tarjeta (2 o más transacciones)
+BASE_URL=https://www-fallen-growing-chen.trycloudflare.com/ FLOW=credit_card CARD_STATE=pendiente TX_COUNT=2 npm run test:payments
+BASE_URL=https://www-fallen-growing-chen.trycloudflare.com/ FLOW=credit_card CARD_STATE=fallida TX_COUNT=2 npm run test:payments
+
+Corre Playwright MCP headed en https://www-fallen-growing-chen.trycloudflare.com/, agrega camisa roja al carrito, ve a checkout, completa datos (correo ricardo.saldarriaga@epayco.com, celular 3184210294, cédula 1214723219), selecciona Checkout ePayco → Efectivo → Efecty, haz click en Finalizar, finaliza pago y entrégame URL final de order-received + screenshot solo si hay errores.
+
+Corre Playwright MCP headed en https://www-fallen-growing-chen.trycloudflare.com/, agrega camisa roja al carrito, ve a checkout, completa datos (correo ricardo.saldarriaga@epayco.com, celular 3184210294, cédula 1214723219), selecciona Checkout ePayco → tarjet de credito →  llenar con estos datos

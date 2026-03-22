@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="bootstrap.php" colors="true" cacheResult="false">
+  <testsuites>
+    <testsuite name="Epayco Plugin Unit Tests">
+      <file>WCGatewayEpaycoUnitTest.php</file>
+    </testsuite>
+  </testsuites>
+</phpunit>

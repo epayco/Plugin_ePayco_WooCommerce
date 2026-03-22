@@ -1,0 +1,21 @@
+{
+  "name": "epayco/woocommerce-unit-tests",
+  "description": "Standalone PHPUnit setup for Plugin_ePayco_WooCommerce unit tests",
+  "type": "project",
+  "require-dev": {
+    "phpunit/phpunit": "^9.6"
+  },
+  "scripts": {
+    "test": "phpunit -c phpunit.xml",
+    "test:filter": "phpunit -c phpunit.xml --filter",
+    "test:file": "phpunit -c phpunit.xml",
+    "test:auth-signature": "phpunit -c phpunit.xml --filter test_auth_signature_validation_uses_expected_hash",
+    "test:state-code": "phpunit -c phpunit.xml --filter test_state_code_mapping_returns_expected_values",
+    "test:order-confirmation": "phpunit -c phpunit.xml --filter test_order_confirmation_and_marks_stock",
+    "test:get-ref-payco": "phpunit -c phpunit.xml --filter test_get_ref_payco_returns_mapped_payload_from_api_response",
+    "test:integration": "phpunit -c integration/phpunit.integration.xml"
+  },
+  "config": {
+    "sort-packages": true
+  }
+}
