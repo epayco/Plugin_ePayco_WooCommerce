@@ -170,11 +170,11 @@ if (!class_exists('WC_Order')) {
 final class SuccessfulRequestIntegrationTest extends TestCase
 {
     private const X_COD_TRANSACTION_STATE = 1;
-    private const CUSTOMER_ID = '627579';
-    private const SECRET_KEY = '170e3e02b3aa6086c6c020a25b1a7ff2e7c52585';
+    private const CUSTOMER_ID = '';
+    private const SECRET_KEY = '';
     private const ID_ORDER = 42;
-    private const X_REF_PAYCO = '101767532';
-    private const X_APPROVAL_CODE = '48771874411906';
+    private const X_REF_PAYCO = '';
+    private const X_APPROVAL_CODE = '';
     private const X_FRANCHISE = 'GA';
     private const X_FECHA_TRANSACCION = '2026-03-04 11:22:28';
     private const X_AMOUNT = 38000;
