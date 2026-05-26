@@ -157,8 +157,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 <div id="path_upload" hidden>
                     <?php esc_html_e($logo_url, 'text_domain'); ?>
                 </div>
-                <div id="path_images" hidden>
-                    <?php echo EPAYCO_PLUGIN_URL . 'assets/images' ?>
+                <div id="path_plugin" hidden>
+                    <?php echo EPAYCO_PLUGIN_URL . 'assets/images/' ?>
                 </div>
                 <div id="path_validate" hidden>
                     <?php esc_html_e($validation_url, 'text_domain'); ?>
@@ -188,7 +188,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                             <form method="post" action="#">
                                 <label for="woocommerce_epayco_enabled">
                                 </label>
-                                <input type="button" class="button-primary woocommerce-save-button validar" value="Validar">
+                                <input type="button" id="validar" class="button-primary woocommerce-save-button validar" value="Validar">
                                 <p class="description">
                                     <?php esc_html_e('Validación de llaves PUBLIC_KEY y PRIVATE_KEY', 'woo-epayco-gateway'); ?>
                                 </p>
@@ -198,13 +198,14 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                             <div id="myModal" class="modal">
                                 <!-- Modal content -->
                                 <div class="modal-content">
-                                    <span class="close">&times;</span>
+                                    <span class="closeEpaycoModal">&times;</span>
                                     <center>
-                                        <img src="<?php echo EPAYCO_PLUGIN_URL . '/assets/images/logo_warning.png' ?>">
+                                        <img id="epaycoModalImg" src="<?php echo EPAYCO_PLUGIN_URL . '/assets/images/logo_warning.png' ?>">
                                     </center>
-                                    <p><strong><?php esc_html_e('Llaves de comercio inválidas', 'woo-epayco-gateway'); ?></strong> </p>
-                                    <p><?php esc_html_e('Las llaves Public Key, Private Key insertadas', 'woo-epayco-gateway'); ?><br><?php esc_html_e('del comercio son inválidas.', 'woo-epayco-gateway'); ?><br><?php esc_html_e('Consúltelas en el apartado de integraciones', 'woo-epayco-gateway'); ?> <br><?php esc_html_e('Llaves API en su Dashboard ePayco.', 'woo-epayco-gateway'); ?>,</p>
+                                    <p id="epaycoCredentialTittle"><strong><?php esc_html_e('Llaves de comercio inválidas', 'woo-epayco-gateway'); ?></strong> </p>
+                                    <p id="epaycoCredentialDescription"><?php esc_html_e('Las llaves Public Key, Private Key insertadas', 'woo-epayco-gateway'); ?><br><?php esc_html_e('del comercio son inválidas.', 'woo-epayco-gateway'); ?><br><?php esc_html_e('Consúltelas en el apartado de integraciones', 'woo-epayco-gateway'); ?> <br><?php esc_html_e('Llaves API en su Dashboard ePayco.', 'woo-epayco-gateway'); ?>,</p>
                                 </div>
+                                <span class="loader"></span>
                             </div>
 
                         </td>
@@ -316,11 +317,14 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             $base_tax = $order->get_total() - $iva - $ico;
 
             foreach ($order->get_items() as $product) {
-                $clearData = str_replace('_', ' ', $this->string_sanitize($product['name']));
-                $descripcionParts[] = $clearData;
+                $product_name = sanitize_text_field($product['name']);
+                $descripcionParts[] = $product_name;
             }
 
             $descripcion = implode(' - ', $descripcionParts);
+            if (empty($descripcion)) {
+                $descripcion = 'Orden #' . $order->get_id();
+            }
             $currency = strtolower(get_woocommerce_currency());
             $testMode = $this->settings['epayco_testmode'] == "yes" ? true : false;
             $basedCountry = WC()->countries->get_base_country();
@@ -395,8 +399,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 "uniqueTransactionPerBill"=> false,
             );
             $path = "payment/session/create";
-            $newToken['token'] =  $bearerToken;
-            $epayco_status_session = $this->getEpaycoSessionId($path,$payload, $newToken);
+            $newToken = ['token' => $bearerToken];
+            $epayco_status_session = $this->getEpaycoSessionId($path,$payload, $newToken);     
             if (is_array($epayco_status_session) && isset($epayco_status_session['success']) && $epayco_status_session['success']) {
                 if (isset($epayco_status_session['data']) && is_array($epayco_status_session['data'])) {
                     $sessionId =  $epayco_status_session['data']['sessionId'];
@@ -479,7 +483,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         ',
             $checkout
         );
-        wp_enqueue_script('epayco','https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod-v2.js', array(), '8.4.4', null);
+        wp_enqueue_script('epayco','https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod-v2.js', array(), '8.4.6', null);
         return '<form  method="post" id="appGateway">
 		        </form>';
         }
@@ -939,8 +943,25 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             ));
             $data = json_decode(wp_remote_retrieve_body($response));
             if ($data->token) {
-                echo "success";
-                exit();
+                $response = wp_remote_get("https://eks-rest-pagos-service.epayco.io/restpagos/validarllaves?public_key=" . trim($username));
+
+                if (is_wp_error($response)) {
+                    error_log('ePayco validation: ' . $response->get_error_message());
+                    if (class_exists('WC_Logger')) {
+                        $logger = wc_get_logger();
+                        $logger->info("checkout_error" . $response->get_error_message());
+                    }
+                    return wp_send_json("{success:false}");
+                }
+
+                $body = wp_remote_retrieve_body($response);
+                return wp_send_json($body);
+            } else {
+                if (class_exists('WC_Logger')) {
+                    $logger = wc_get_logger();
+                    $logger->info("checkout_error" . json_encode($data));
+                }
+                return wp_send_json("{success:false}");
             }
         }
 
@@ -1191,30 +1212,49 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         public function epayco_realizar_llamada_api($path, $data, $headers, $method = 'POST')
         {
-            $url = 'https://eks-apify-service.epayco.io/' . $path;
+            try {
+                $url = 'https://eks-apify-service.epayco.io/' . $path;
 
-            $response = wp_remote_post($url, [
-                'headers' => $headers,
-                'body'    => json_encode($data),
-                'timeout' => 15,
-            ]);
-
-            if (is_wp_error($response)) {
-                $error_message = $response->get_error_message();
-                self::$logger->add($this->id, "Error al hacer la llamada a la API de ePayco: " . $error_message);
-                error_log("Error al hacer la llamada a la API de ePayco: " . $error_message);
-                return false;
-            } else {
-                $response_body = wp_remote_retrieve_body($response);
-                $status_code = wp_remote_retrieve_response_code($response);
-                if ($status_code == 200) {
-                    $responseTransaction = json_decode($response_body, true);
-                    return $responseTransaction;
-                } else {
-                    self::$logger->add($this->id,"Error en la respuesta de la API de ePayco, código de estado: " . $status_code);
-                    error_log("Error en la respuesta de la API de ePayco, código de estado: " . $status_code);
-                    return false;
+                $body = '';
+                if (is_array($data) && !empty($data)) {
+                    $body = wp_json_encode($data);
+                } elseif (is_string($data) && !empty($data)) {
+                    $body = $data;
                 }
+
+                $args = [
+                    'headers' => $headers,
+                    'timeout' => 15,
+                    'method'  => strtoupper($method),
+                ];
+
+                if (!empty($body)) {
+                    $args['body'] = $body;
+                }
+
+                $response = wp_remote_request($url, $args);
+
+                if (is_wp_error($response)) {
+                    $error_message = $response->get_error_message();
+                    self::$logger->add($this->id, "Error al hacer la llamada a la API de ePayco: " . $error_message);
+                    error_log("Error al hacer la llamada a la API de ePayco: " . $error_message);
+                    return false;
+                } else {
+                    $response_body = wp_remote_retrieve_body($response);
+                    $status_code = wp_remote_retrieve_response_code($response);
+                    if ($status_code == 200) {
+                        $responseTransaction = json_decode($response_body, true);
+                        return $responseTransaction;
+                    } else {
+                        self::$logger->add($this->id,"Error en la respuesta de la API de ePayco, código de estado: " . $status_code);
+                        error_log("Error en la respuesta de la API de ePayco, código de estado: " . $status_code);
+                        return false;
+                    }
+                }
+            } catch (\Exception $e) {
+                self::$logger->add($this->id, "Error al hacer la llamada a la API de ePayco: " . $e->getMessage());
+                error_log("Error al hacer la llamada a la API de ePayco: " . $e->getMessage());
+                return false;
             }
         }
     }

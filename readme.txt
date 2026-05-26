@@ -117,5 +117,12 @@ Approve your account to go toâ€¯production and receive real payments.
 = 8.4.4 =
 * upload release
 
+= 8.4.5 =
+* upload release
+
+= 8.4.6 =
+* upload release
+
+
 == Additional Info ==
 Contribute to the repository on GitHub: [Visit the GitHub repository](https://github.com/epayco/Plugin_ePayco_WooCommerce)

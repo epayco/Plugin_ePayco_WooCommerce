@@ -79,7 +79,7 @@ class Epayco_Transaction_Handler {
     private static function handle_approved($order, $order_id, $current_state, $settings, $estado_final_exitoso,$franchise) {
         try{
             $logger = new WC_Logger();
-            
+    
             if (in_array($current_state, ['pending'])) {
                 $order->update_status('on-hold');
                 // $order->add_order_note(__('Pago recibido - Esperando confirmaci贸n', 'woo-epayco-gateway'));
@@ -96,7 +96,7 @@ class Epayco_Transaction_Handler {
 
                 
             if (!in_array($current_state, ['processing', 'completed', 'processing_test', 'completed_test','epayco-processing', 'epayco-completed','epayco_processing', 'epayco_completed'])) {
-          
+
                 $order->payment_complete($order->get_meta('refPayco'));
                 $order->update_status($estado_final_exitoso);
                 //$order->update_meta_data('epayco_meta_data_history', 1);
@@ -108,6 +108,7 @@ class Epayco_Transaction_Handler {
                     // $order->add_order_note(__('Stock descontado - Pago aprobado', 'woo-epayco-gateway'));
                     $order->save();
                 }
+                
             }else{
                 if (!EpaycoOrder::ifStockDiscount($order_id)) {
                     EpaycoOrder::updateStockDiscount($order_id, 1);
@@ -153,6 +154,10 @@ class Epayco_Transaction_Handler {
                             self::restore_stock($order->get_id());
                         }
                     }
+                }else{
+                    if ($settings['reduce_stock_pending'] !== "yes"){
+                        EpaycoOrder::updateStockDiscount($order->get_id(), 0);
+                    }
                 }
 
             }
@@ -165,6 +170,7 @@ class Epayco_Transaction_Handler {
 
     private static function handle_pending($order, $order_id, $current_state, $settings,$franchise) {
         try{
+            
             $logger = new WC_Logger();
             if (!EpaycoOrder::ifStockDiscount($order_id) && $settings['reduce_stock_pending'] != 'yes') {
                 EpaycoOrder::updateStockDiscount($order_id, 1);
@@ -181,20 +187,26 @@ class Epayco_Transaction_Handler {
                         self::restore_stock($order_id, "decrease");
                     }
             }else{
-                if ($current_state != 'on-hold') {
-                    $order->update_status('on-hold');
-                    //$order->update_meta_data('epayco_meta_data_history', 3);
-                    if ($settings['reduce_stock_pending'] !== "yes"){
-                        if (!EpaycoOrder::ifStockDiscount($order_id)) {
-                            EpaycoOrder::updateStockDiscount($order_id, 1);
-                            self::restore_stock($order_id, "decrease");
-                        }  
-                    }else{
-                        if (!EpaycoOrder::ifStockDiscount($order_id)) {
-                            EpaycoOrder::updateStockDiscount($order_id, 1);
-                            //self::restore_stock($order_id, "decrease");
-                        }  
+               
+                if ($settings['reduce_stock_pending'] === "yes"){
+                    if ($current_state != 'on-hold') {
+                        if($current_state == 'pending'){
+                            $order->update_status('on-hold');
+                            if (!EpaycoOrder::ifStockDiscount($order_id)) {
+                             EpaycoOrder::updateStockDiscount($order_id, 1);
+                            }  
+                        }
                     }
+                }else{
+                    if ($current_state != 'on-hold') {
+                        if($current_state == 'pending'){
+                            $order->update_status('on-hold');
+                            self::restore_stock($order_id);
+                        }else{
+                            $order->update_status('on-hold');
+                        }
+                    }
+                    EpaycoOrder::updateStockDiscount($order->get_id(), 0);
                 }
             }
 
