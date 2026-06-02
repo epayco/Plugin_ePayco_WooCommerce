@@ -317,11 +317,14 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             $base_tax = $order->get_total() - $iva - $ico;
 
             foreach ($order->get_items() as $product) {
-                $clearData = str_replace('_', ' ', $this->string_sanitize($product['name']));
-                $descripcionParts[] = $clearData;
+                $product_name = sanitize_text_field($product['name']);
+                $descripcionParts[] = $product_name;
             }
 
             $descripcion = implode(' - ', $descripcionParts);
+            if (empty($descripcion)) {
+                $descripcion = 'Orden #' . $order->get_id();
+            }
             $currency = strtolower(get_woocommerce_currency());
             $testMode = $this->settings['epayco_testmode'] == "yes" ? true : false;
             $basedCountry = WC()->countries->get_base_country();
@@ -396,7 +399,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 "uniqueTransactionPerBill"=> false,
             );
             $path = "payment/session/create";
-            $newToken['token'] =  $bearerToken;
+            $newToken = ['token' => $bearerToken];
             $epayco_status_session = $this->getEpaycoSessionId($path,$payload, $newToken);     
             if (is_array($epayco_status_session) && isset($epayco_status_session['success']) && $epayco_status_session['success']) {
                 if (isset($epayco_status_session['data']) && is_array($epayco_status_session['data'])) {
@@ -480,7 +483,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         ',
             $checkout
         );
-        wp_enqueue_script('epayco','https://checkout.epayco.co/checkout-v2.js', array(), '8.4.5', null);
+        wp_enqueue_script('epayco','https://checkout.epayco.co/checkout-v2.js', array(), '8.4.6', null);
         return '<form  method="post" id="appGateway">
 		        </form>';
         }
@@ -1209,30 +1212,49 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         public function epayco_realizar_llamada_api($path, $data, $headers, $method = 'POST')
         {
-            $url = 'https://apify.epayco.co/' . $path;
+            try {
+                $url = 'https://apify.epayco.co/' . $path;
 
-            $response = wp_remote_post($url, [
-                'headers' => $headers,
-                'body'    => json_encode($data),
-                'timeout' => 15,
-            ]);
-
-            if (is_wp_error($response)) {
-                $error_message = $response->get_error_message();
-                self::$logger->add($this->id, "Error al hacer la llamada a la API de ePayco: " . $error_message);
-                error_log("Error al hacer la llamada a la API de ePayco: " . $error_message);
-                return false;
-            } else {
-                $response_body = wp_remote_retrieve_body($response);
-                $status_code = wp_remote_retrieve_response_code($response);
-                if ($status_code == 200) {
-                    $responseTransaction = json_decode($response_body, true);
-                    return $responseTransaction;
-                } else {
-                    self::$logger->add($this->id,"Error en la respuesta de la API de ePayco, código de estado: " . $status_code);
-                    error_log("Error en la respuesta de la API de ePayco, código de estado: " . $status_code);
-                    return false;
+                $body = '';
+                if (is_array($data) && !empty($data)) {
+                    $body = wp_json_encode($data);
+                } elseif (is_string($data) && !empty($data)) {
+                    $body = $data;
                 }
+
+                $args = [
+                    'headers' => $headers,
+                    'timeout' => 15,
+                    'method'  => strtoupper($method),
+                ];
+
+                if (!empty($body)) {
+                    $args['body'] = $body;
+                }
+
+                $response = wp_remote_request($url, $args);
+
+                if (is_wp_error($response)) {
+                    $error_message = $response->get_error_message();
+                    self::$logger->add($this->id, "Error al hacer la llamada a la API de ePayco: " . $error_message);
+                    error_log("Error al hacer la llamada a la API de ePayco: " . $error_message);
+                    return false;
+                } else {
+                    $response_body = wp_remote_retrieve_body($response);
+                    $status_code = wp_remote_retrieve_response_code($response);
+                    if ($status_code == 200) {
+                        $responseTransaction = json_decode($response_body, true);
+                        return $responseTransaction;
+                    } else {
+                        self::$logger->add($this->id,"Error en la respuesta de la API de ePayco, código de estado: " . $status_code);
+                        error_log("Error en la respuesta de la API de ePayco, código de estado: " . $status_code);
+                        return false;
+                    }
+                }
+            } catch (\Exception $e) {
+                self::$logger->add($this->id, "Error al hacer la llamada a la API de ePayco: " . $e->getMessage());
+                error_log("Error al hacer la llamada a la API de ePayco: " . $e->getMessage());
+                return false;
             }
         }
     }
