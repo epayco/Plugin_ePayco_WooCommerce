@@ -450,7 +450,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             ]));            
             echo sprintf(
                 '<script
-                    src="https://checkout.epayco.co/checkout-green-v2.js">
+                    src="https://checkout.epayco.co/checkout-v2.js">
                 </script>
                 <script>
                     const params = JSON.parse(atob("%s"));
@@ -483,7 +483,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         ',
             $checkout
         );
-        wp_enqueue_script('epayco','https://checkout.epayco.co/checkout-green-v2.js', array(), '8.4.6', null);
+        wp_enqueue_script('epayco','https://checkout.epayco.co/checkout-v2.js', array(), '8.4.6', null);
         return '<form  method="post" id="appGateway">
 		        </form>';
         }
@@ -827,7 +827,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $jsonNewData = @json_decode($bodySecondrequest, true);
                 $validationData = [];
                 if(isset($jsonNewData)){
-                    $responseDataDetail = wp_remote_get('https://cms-green.epayco.co/transaction/'. $jsonNewData['ePaycoID']);
+                    $responseDataDetail = wp_remote_get('https://cms.epayco.co/transaction/'. $jsonNewData['ePaycoID']);
                     if (is_wp_error($response)) {
                         self::$logger->add($this->id, $responseDataDetail->get_error_message());
                         return false;
