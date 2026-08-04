@@ -26,7 +26,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         $this->id = 'epayco';
         //$this->version = '8.2.2';
-        $this->icon = apply_filters('woocommerce_' . $this->id . '_icon', EPAYCO_PLUGIN_URL . 'assets/images/paymentLogo.svg' );
+        $this->icon = apply_filters('woocommerce_' . $this->id . '_icon', EPAYCO_PLUGIN_URL . 'assets/images/paymentLogo.svg');
         $this->method_title         = __('ePayco Checkout Gateway', 'woo-epayco-gateway');
         $this->method_description   = __('Acepta tarjetas de credito, depositos y transferencias.', 'woo-epayco-gateway');
         //$this->order_button_text = __('Pay', 'epayco_woocommerce');
@@ -104,7 +104,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
     public function woocommerc_epayco_cron_job_funcion()
     {
-        if(isset($this->settings['cron_data'])){
+        if (isset($this->settings['cron_data'])) {
             $cron_data = $this->settings['cron_data'] == "yes" ? true : false;
             if ($cron_data) {
                 $this->getEpaycoORders();
@@ -153,7 +153,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         <div class="container-fluid">
             <div class="panel panel-default" style="">
-                <img src="<?php echo EPAYCO_PLUGIN_URL . '/assets/images/logoepayco.svg' ?>" >
+                <img src="<?php echo EPAYCO_PLUGIN_URL . '/assets/images/logoepayco.svg' ?>">
                 <div id="path_upload" hidden>
                     <?php esc_html_e($logo_url, 'text_domain'); ?>
                 </div>
@@ -302,11 +302,11 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             foreach ($order->get_items('tax') as $item_id => $item) {
                 $tax_label = trim(strtolower($item->get_label()));
                 $tax_name = trim(strtolower($order->get_items_tax_classes()[0]));
-                if ($tax_label == 'iva' || $tax_name == 'iva' ) {
+                if ($tax_label == 'iva' || $tax_name == 'iva') {
                     $iva = round($order->get_total_tax(), 2);
                 }
 
-                if ($tax_label == 'ico'|| $tax_name == 'ico') {
+                if ($tax_label == 'ico' || $tax_name == 'ico') {
                     $ico = round($order->get_total_tax(), 2);
                 }
             }
@@ -363,91 +363,109 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             $tokenResponse = $this->epyacoBerarToken();
             $bearerToken = ($tokenResponse && isset($tokenResponse['token'])) ? $tokenResponse['token'] : '';
             $payload  = array(
-                "name"=>substr($descripcion, 0, 30),
-                "description"=>substr($descripcion, 0, 240),
-                "invoice"=>(string)$order->get_id(),
-                "currency"=>$currency,
-                "amount"=>floatval($order->get_total()),
-                "taxBase"=>floatval($base_tax),
-                "tax"=>floatval($iva),
-                "taxIco"=>floatval($ico),
-                "country"=>$basedCountry,
-                "lang"=>$lang,
-                "confirmation"=>$confirm_url,
-                "response"=>$redirect_url,
+                "name" => substr($descripcion, 0, 30),
+                "description" => substr($descripcion, 0, 240),
+                "invoice" => (string)$order->get_id(),
+                "currency" => $currency,
+                "amount" => floatval($order->get_total()),
+                "taxBase" => floatval($base_tax),
+                "tax" => floatval($iva),
+                "taxIco" => floatval($ico),
+                "country" => $basedCountry,
+                "lang" => $lang,
+                "confirmation" => $confirm_url,
+                "response" => $redirect_url,
                 "billing" => [
                     "name" => $name_billing,
                     "address" => $address_billing,
                     "email" => $email_billing,
                     "mobilePhone" => $phone_billing
                 ],
-                "autoclick"=> true,
+                "autoclick" => true,
                 //"ip"=>$myIp,
-                "test"=>$testMode,
-                 "extras" => [
+                "test" => $testMode,
+                "extras" => [
                     "extra1" => (string)$order->get_id(),
                 ],
                 "extrasEpayco" => [
                     "extra5" => "P19"
                 ],
                 "epaycoMethodsDisable" => [],
-                "method"=> "POST",
-                "checkout_version"=>"2",
+                "method" => "POST",
+                "checkout_version" => "2",
                 "autoClick" => false,
-                "noRedirectOnClose"=> true,
-                "forceResponse"=>false,//mostrar detalle de orden
-                "uniqueTransactionPerBill"=> false,
+                "noRedirectOnClose" => true,
+                "forceResponse" => false, //mostrar detalle de orden
+                "uniqueTransactionPerBill" => false,
             );
             $path = "payment/session/create";
             $newToken = ['token' => $bearerToken];
-            $epayco_status_session = $this->getEpaycoSessionId($path,$payload, $newToken);     
+            $epayco_status_session = $this->getEpaycoSessionId($path, $payload, $newToken);
+
             if (is_array($epayco_status_session) && isset($epayco_status_session['success']) && $epayco_status_session['success']) {
                 if (isset($epayco_status_session['data']) && is_array($epayco_status_session['data'])) {
                     $sessionId =  $epayco_status_session['data']['sessionId'];
                     $payload['sessionId'] = $sessionId;
                 }
-            }else{
-                $messageError = (is_array($epayco_status_session) && isset($epayco_status_session['textResponse'])) ? $epayco_status_session['textResponse'] : '';
-                $errorMessage = "";
+            } else {
+                $messageError = '';
+                if (is_array($epayco_status_session) && isset($epayco_status_session['textResponse'])) {
+                    $messageError = $epayco_status_session['textResponse'];
+                } elseif (is_array($epayco_status_session) && isset($epayco_status_session['titleResponse'])) {
+                    $messageError = $epayco_status_session['titleResponse'];
+                }
+
+                $errorMessage = '';
                 if (isset($epayco_status_session['data']['errors'])) {
                     $errors = $epayco_status_session['data']['errors'];
-                    if(is_array($errors)){
+                    if (is_array($errors)) {
                         foreach ($errors as $error) {
-                            $errorMessage = $error['errorMessage'] . "\n";
+                            if (isset($error['errorMessage'])) {
+                                $errorMessage .= $error['errorMessage'] . "\n";
+                            }
                         }
-                    }else{
-                        $errorMessage = $errors. "\n";
+                    } else {
+                        $errorMessage .= $errors . "\n";
                     }
                 } elseif (isset($epayco_status_session['data']['error']['errores'])) {
                     $errores = $epayco_status_session['data']['error']['errores'];
-                    foreach ($errores as $error) {
-                        $errorMessage = $error['errorMessage'] . "\n";
+                    if (is_array($errores)) {
+                        foreach ($errores as $error) {
+                            if (isset($error['errorMessage'])) {
+                                $errorMessage .= $error['errorMessage'] . "\n";
+                            }
+                        }
+                    } else {
+                        $errorMessage .= $errores . "\n";
                     }
                 }
-                //$processReturnFailMessage = $messageError . " " . $errorMessage;
-                $processReturnFailMessage =  $errorMessage;
-                 echo sprintf(
-                '<div style="
-                        display: flex;
-                        align-items: center;
-                        flex-direction: column;
-                    ">
-                    <div>
-                    <img style="width: 80px;" src="https://multimedia-epayco-preprod.s3.us-east-1.amazonaws.com/plugins-sdks/warning.png" alt="" />
-                    </div>
-                    <div 
-                    style="text-align: center;font-size: large;font-weight: 900;">
-                        <p>"%s"</p>
-                    </div>
-                </div>',
+
+                $processReturnFailMessage = trim($errorMessage ?: $messageError ?: 'Ocurrió un error de pago.');
+
+                $processReturnFailMessage = nl2br(htmlspecialchars($processReturnFailMessage, ENT_QUOTES, 'UTF-8'));
+
+                echo sprintf(
+                    '<div style="
+                            display: flex;
+                            align-items: center;
+                            flex-direction: column;
+                        ">
+                        <div>
+                            <img style="width: 80px;" src="https://multimedia-epayco-preprod.s3.us-east-1.amazonaws.com/plugins-sdks/warning.png" alt="" />
+                        </div>
+                        <div 
+                        style="text-align: center;font-size: large;font-weight: 500;">
+                            <p>"%s"</p>
+                        </div>
+                    </div>',
                     $processReturnFailMessage
                 );
             }
             $checkout =  base64_encode(json_encode([
-                "sessionId"=>$payload['sessionId'],
-                "external"=>$external,
-                "test"=>$testMode
-            ]));            
+                "sessionId" => $payload['sessionId'],
+                "external" => $external,
+                "test" => $testMode
+            ]));
             echo sprintf(
                 '<script
                     src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod-v2.js">
@@ -481,10 +499,10 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             </form>
         </center>
         ',
-            $checkout
-        );
-        wp_enqueue_script('epayco','https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod-v2.js', array(), '8.4.6', null);
-        return '<form  method="post" id="appGateway">
+                $checkout
+            );
+            wp_enqueue_script('epayco', 'https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod-v2.js', array(), '8.4.6', null);
+            return '<form  method="post" id="appGateway">
 		        </form>';
         }
 
@@ -496,7 +514,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
          */
         public function getPaymentsIdMeta(WC_Order $order, bool $single = true, $key = null)
         {
-            if($key) return $order->get_meta($key, $single);
+            if ($key) return $order->get_meta($key, $single);
             return $order->get_meta(self::PAYMENTS_IDS, $single);
         }
 
@@ -510,17 +528,17 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         {
             try {
                 $logger = new WC_Logger();
-                if ( $order instanceof WC_Order ) {
-                    if($key){
-                        $order->update_meta_data( $key, $value );
-                    }else{
-                        $order->add_meta_data( self::PAYMENTS_IDS, $value );
+                if ($order instanceof WC_Order) {
+                    if ($key) {
+                        $order->update_meta_data($key, $value);
+                    } else {
+                        $order->add_meta_data(self::PAYMENTS_IDS, $value);
                     }
                     $order->save();
                 }
             } catch (\Exception $ex) {
                 $error_message = "Unable to update batch of orders on action got error: {$ex->getMessage()}";
-                $logger->add($this->id,$error_message);
+                $logger->add($this->id, $error_message);
             }
         }
 
@@ -614,7 +632,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $order_id = $order_id_rpl[0];
                 $order = new WC_Order($order_id);
                 $isConfirmation = sanitize_text_field($_GET['confirmation']) == 1;
-                
+
                 if ($isConfirmation) {
                     $x_signature = sanitize_text_field($_REQUEST['x_signature']);
                     $x_cod_transaction_state = sanitize_text_field($_REQUEST['x_cod_transaction_state']);
@@ -635,17 +653,17 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         $explode = explode('=', $order_id);
                         $ref_payco = $explode[1];
                     }
-                    if (!$ref_payco || $ref_payco=='undefined') {
+                    if (!$ref_payco || $ref_payco == 'undefined') {
                         wp_safe_redirect(wc_get_checkout_url());
                         exit();
                     }
                     $jsonData = $this->getRefPayco($ref_payco);
-                    if(is_null($jsonData)){
+                    if (is_null($jsonData)) {
                         sleep(3);
                         $jsonData = $this->getRefPayco($ref_payco);
                     }
 
-                    if(!$jsonData){
+                    if (!$jsonData) {
                         wp_safe_redirect(wc_get_checkout_url());
                         exit();
                     }
@@ -662,22 +680,22 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     $x_franchise = trim($validationData['x_franchise']);
                     $x_fecha_transaccion = trim($validationData['x_fecha_transaccion']);
                 }
-                
+
                 $epaycoOrder = [
                     'refPayco' => $x_ref_payco
                 ];
                 $paymentsIdMetadata = $this->getPaymentsIdMeta($order);
                 $paymentsHistoryIdMetadata = $this->getPaymentsIdMeta($order, true, 'epayco_meta_data_history');
                 $current_state = $order->get_status();
-                
+
                 if (empty($paymentsHistoryIdMetadata)) {
                     $this->setPaymentsIdData($order, $x_cod_transaction_state, 'epayco_meta_data_history');
-                }else{
+                } else {
                     $order->update_meta_data('epayco_meta_data_history', $x_cod_transaction_state);
                     $order->save();
                 }
-                
-                
+
+
                 if (empty($paymentsIdMetadata)) {
                     $this->setPaymentsIdData($order, $x_ref_payco);
                 } else {
@@ -698,7 +716,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $isTestTransaction = $x_test_request == 'TRUE' ? "yes" : "no";
                 update_option('epayco_order_status', $isTestTransaction);
                 $isTestMode = get_option('epayco_order_status') == "yes" ? "true" : "false";
-                $isTestPluginMode =$this->settings['epayco_testmode'];
+                $isTestPluginMode = $this->settings['epayco_testmode'];
                 if (floatval($order->get_total()) == floatval($x_amount)) {
                     if ("yes" == $isTestPluginMode) {
                         $validation = true;
@@ -717,10 +735,10 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 } else {
                     $validation = false;
                 }
-  
-                  if ($authSignature == $x_signature && $validation) {
+
+                if ($authSignature == $x_signature && $validation) {
                     // Additional verification: prevent processing if the order status is already final
-                    if (!in_array($current_state, ['processing', 'completed', 'processing_test', 'completed_test','epayco-processing', 'epayco-completed','epayco_processing', 'epayco_completed', 'refunded'])) {
+                    if (!in_array($current_state, ['processing', 'completed', 'processing_test', 'completed_test', 'epayco-processing', 'epayco-completed', 'epayco_processing', 'epayco_completed', 'refunded'])) {
                         Epayco_Transaction_Handler::handle_transaction($order, [
                             'x_cod_transaction_state' => $x_cod_transaction_state,
                             'x_ref_payco'             => $x_ref_payco,
@@ -740,7 +758,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     }
 
                     if (($current_state == 'on-hold' || $current_state == 'pending') && ((int)$x_cod_transaction_state == 2 || (int)$x_cod_transaction_state == 4) && EpaycoOrder::ifStockDiscount($order_id)) {
-                       
                     };
                 } else {
 
@@ -759,7 +776,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                                 $current_state == "epayco_cancelled" ||
                                 $current_state == "failed" ||
                                 $current_state == "epayco-cancelled" ||
-                                $current_state == "epayco-failed"||
+                                $current_state == "epayco-failed" ||
                                 $current_state == "pending"
                             ) {
                             } else {
@@ -800,7 +817,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 }
 
                 wp_redirect($redirect_url);
-            }catch (\Exception $ex) {
+            } catch (\Exception $ex) {
                 $error_message = "successful_request got error: {$ex->getMessage()}";
                 self::$logger->add($this->id, $error_message);
                 throw new Exception($error_message);
@@ -818,23 +835,23 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             $body = wp_remote_retrieve_body($response);
             $jsonData = @json_decode($body, true);
             if (isset($jsonData['status']) && !$jsonData['status']) {
-                $responseNewData = wp_remote_get('https://eks-ms-checkout-response-transaction-service.epayco.io/checkout/history?historyId='.$_GET['ref_payco']);
-                if($responseNewData === false or is_wp_error($responseNewData)){
+                $responseNewData = wp_remote_get('https://eks-ms-checkout-response-transaction-service.epayco.io/checkout/history?historyId=' . $_GET['ref_payco']);
+                if ($responseNewData === false or is_wp_error($responseNewData)) {
                     self::$logger->add($this->id, $responseNewData->get_error_message());
                     return false;
                 }
                 $bodySecondrequest = wp_remote_retrieve_body($responseNewData);
                 $jsonNewData = @json_decode($bodySecondrequest, true);
                 $validationData = [];
-                if(isset($jsonNewData)){
-                    $responseDataDetail = wp_remote_get('https://eks-cms-backend-platforms-service.epayco.io/transaction/'. $jsonNewData['ePaycoID']);
+                if (isset($jsonNewData)) {
+                    $responseDataDetail = wp_remote_get('https://eks-cms-backend-platforms-service.epayco.io/transaction/' . $jsonNewData['ePaycoID']);
                     if (is_wp_error($response)) {
                         self::$logger->add($this->id, $responseDataDetail->get_error_message());
                         return false;
                     }
                     $responseDataDetail = wp_remote_retrieve_body($responseDataDetail);
                     $jsonDataDetail = @json_decode($responseDataDetail, true);
-                    if($jsonDataDetail['success']){
+                    if ($jsonDataDetail['success']) {
                         $validationData = $jsonDataDetail['data']['transaction'];
                         $url_shop = $validationData['extra2'];
                         $id_order = $validationData['extra1'];
@@ -851,7 +868,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         $x_test_request = $validationData['testMode'];
                         $x_fecha_transaccion = $validationData['date'];
                         $x_approval_code = $validationData['autorizacion'];
-                    }else{
+                    } else {
                         switch ($jsonNewData['status']) {
                             case "Aprobada":
                                 $x_cod_transaction_state = 1;
@@ -859,12 +876,12 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                             case "Pendiente":
                             case "iniciada":
                                 $x_cod_transaction_state = 3;
-                            break;
+                                break;
                             default:
                                 $x_cod_transaction_state = 2;
                                 break;
                         }
-                        $url_shop = parse_url( $jsonNewData['data']['urlRedirect'], PHP_URL_HOST);
+                        $url_shop = parse_url($jsonNewData['data']['urlRedirect'], PHP_URL_HOST);
                         $id_order = $jsonNewData['storeReference'];
                         $ref_payco = $jsonNewData['ePaycoID'];
                         $confirmation = false;
@@ -873,14 +890,13 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         $x_signature = 'Authorized';
                         $x_currency_code = 'COP';
                         $x_franchise = $jsonNewData['franchise'];
-                        
                     }
-                }else{
-                     //error_log("shopify: ".json_encode($jsonNewData));
+                } else {
+                    //error_log("shopify: ".json_encode($jsonNewData));
                     //header("location: error.php?ref_payco=".$_GET['ref_payco']);
                     return false;
                 }
-            }else{
+            } else {
                 $validationData = $jsonData['data'];
                 $x_signature = trim($validationData['x_signature']);
                 $x_cod_transaction_state = (int)trim($validationData['x_cod_transaction_state']) ?
@@ -892,20 +908,20 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $x_test_request = trim($validationData['x_test_request']);
                 $x_approval_code = trim($validationData['x_approval_code']);
                 $x_franchise = trim($validationData['x_franchise']);
-                $x_fecha_transaccion = trim($validationData['x_fecha_transaccion']);   
+                $x_fecha_transaccion = trim($validationData['x_fecha_transaccion']);
             }
             return  $paylod = [
-                   'x_signature' => $x_signature,
-                   'x_cod_transaction_state' => $x_cod_transaction_state,
-                   'x_ref_payco' => $x_ref_payco,
-                   'x_transaction_id' => $x_transaction_id,
-                   'x_amount' => $x_amount,
-                   'x_currency_code' => $x_currency_code,
-                   'x_test_request' => $x_test_request,
-                   'x_approval_code' => $x_approval_code,
-                   'x_franchise' => $x_franchise,
-                   'x_fecha_transaccion' => $x_fecha_transaccion
-                ];
+                'x_signature' => $x_signature,
+                'x_cod_transaction_state' => $x_cod_transaction_state,
+                'x_ref_payco' => $x_ref_payco,
+                'x_transaction_id' => $x_transaction_id,
+                'x_amount' => $x_amount,
+                'x_currency_code' => $x_currency_code,
+                'x_test_request' => $x_test_request,
+                'x_approval_code' => $x_approval_code,
+                'x_franchise' => $x_franchise,
+                'x_fecha_transaccion' => $x_fecha_transaccion
+            ];
         }
 
         public function authSignature($x_ref_payco, $x_transaction_id, $x_amount, $x_currency_code)
@@ -1020,8 +1036,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     if ($token) {
                         foreach ($ref_payco_list as $ref_payco) {
                             $path = "payment/transaction";
-                            $data = [ "referencePayco" => $ref_payco];
-                            $epayco_status = $this->getEpaycoStatusOrder($path,$data, $token);
+                            $data = ["referencePayco" => $ref_payco];
+                            $epayco_status = $this->getEpaycoStatusOrder($path, $data, $token);
                             if ($epayco_status['success']) {
                                 if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
                                     $this->epaycoUploadOrderStatus($epayco_status);
@@ -1037,7 +1053,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             }
         }
 
-        public function getWoocommercePendigsORders(){
+        public function getWoocommercePendigsORders()
+        {
             try {
                 $orders = wc_get_orders([
                     'limit'        => -1,
@@ -1051,8 +1068,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     $orderId = $order->get_id();
                     if ($token) {
                         $path = "transaction/detail";
-                        $data = [ "filter" => ["referenceClient" => $orderId]];
-                        $epayco_status = $this->getEpaycoStatusOrder($path,$data, $token);
+                        $data = ["filter" => ["referenceClient" => $orderId]];
+                        $epayco_status = $this->getEpaycoStatusOrder($path, $data, $token);
                         if ($epayco_status['success']) {
                             if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
                                 foreach ($epayco_status['data'] as $epaycoData) {
@@ -1073,8 +1090,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                                     }
                                 }
                                 $path = "payment/transaction";
-                                $data = [ "referencePayco" => $refPayco];
-                                $epayco_status = $this->getEpaycoStatusOrder($path,$data, $token);
+                                $data = ["referencePayco" => $refPayco];
+                                $epayco_status = $this->getEpaycoStatusOrder($path, $data, $token);
                                 if ($epayco_status['success']) {
                                     if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
                                         $this->epaycoUploadOrderStatus($epayco_status);
@@ -1091,23 +1108,23 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             }
         }
 
-        public function getEpaycoSessionId($path,$data, $token)
+        public function getEpaycoSessionId($path, $data, $token)
         {
             if ($token) {
                 $headers = [
                     'Content-Type'  => 'application/json',
-                    'Authorization' => 'Bearer '.$token['token'],
+                    'Authorization' => 'Bearer ' . $token['token'],
                 ];
                 return $this->epayco_realizar_llamada_api($path, $data, $headers);
             }
         }
 
-        public function getEpaycoStatusOrder($path,$data, $token)
+        public function getEpaycoStatusOrder($path, $data, $token)
         {
             if ($token) {
                 $headers = [
                     'Content-Type'  => 'application/json',
-                    'Authorization' => 'Bearer '.$token['token'],
+                    'Authorization' => 'Bearer ' . $token['token'],
                 ];
                 return $this->epayco_realizar_llamada_api($path, $data, $headers);
             }
@@ -1115,7 +1132,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         public function epaycoUploadOrderStatus($epayco_status)
         {
-            $order_id = isset($epayco_status['data']['transaction']['extra1']) ?$epayco_status['data']['transaction']['extra1'] : null;
+            $order_id = isset($epayco_status['data']['transaction']['extra1']) ? $epayco_status['data']['transaction']['extra1'] : null;
             //$x_cod_transaction_state = isset($epayco_status['data']['x_cod_transaction_state']) ? $epayco_status['data']['x_cod_transaction_state'] : null;
             $status = isset($epayco_status['data']['transaction']['status']) ? $epayco_status['data']['transaction']['status'] : null;
             $ePaycoStatus = strtolower($status);
@@ -1123,7 +1140,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             $x_fecha_transaccion = isset($epayco_status['data']['transaction']['date']) ? $epayco_status['data']['transaction']['date'] : null;
             $x_franchise = isset($epayco_status['data']['transaction']['bank']) ? $epayco_status['data']['transaction']['bank'] : null;
             $x_approval_code = isset($epayco_status['data']['transaction']['autorizacion']) ? $epayco_status['data']['transaction']['autorizacion'] : null;
-            $x_cod_transaction_state =  isset($epayco_status['data']['transaction']['codeResponse']) ? $epayco_status['data']['transaction']['codeResponse'] :$this->get_epayco_estado_codigo_detallado($ePaycoStatus);
+            $x_cod_transaction_state =  isset($epayco_status['data']['transaction']['codeResponse']) ? $epayco_status['data']['transaction']['codeResponse'] : $this->get_epayco_estado_codigo_detallado($ePaycoStatus);
             $isTestMode = get_option('epayco_order_status') == "yes" ? "true" : "false";
             if ($order_id) {
                 $order = wc_get_order($order_id);
@@ -1145,7 +1162,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             }
         }
 
-        public function get_epayco_estado_codigo_detallado($estado_texto) {
+        public function get_epayco_estado_codigo_detallado($estado_texto)
+        {
             $estado_texto = strtolower(trim($estado_texto));
 
             switch ($estado_texto) {
@@ -1246,7 +1264,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         $responseTransaction = json_decode($response_body, true);
                         return $responseTransaction;
                     } else {
-                        self::$logger->add($this->id,"Error en la respuesta de la API de ePayco, código de estado: " . $status_code);
+                        self::$logger->add($this->id, "Error en la respuesta de la API de ePayco, código de estado: " . $status_code);
                         error_log("Error en la respuesta de la API de ePayco, código de estado: " . $status_code);
                         return false;
                     }
