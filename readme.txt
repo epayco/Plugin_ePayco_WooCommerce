@@ -4,7 +4,7 @@ Donate link: https://epayco.com/
 Tags: payments, checkout, woocommerce, epayco, gateway
 Requires at least: 5.5
 Tested up to: 6.8.3
-Stable tag: 8.4.1
+Stable tag: 8.4.7
 Requires PHP: 7.4
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -123,6 +123,8 @@ Approve your account to go toâ€¯production and receive real payments.
 = 8.4.6 =
 * upload release
 
+= 8.4.7 =
+* Security hardening for the public callback: strict validation of required parameters, signature verification before processing, and safe prepared queries for the plugin table.
 
 == Additional Info ==
 Contribute to the repository on GitHub: [Visit the GitHub repository](https://github.com/epayco/Plugin_ePayco_WooCommerce)

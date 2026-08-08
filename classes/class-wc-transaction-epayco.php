@@ -104,16 +104,20 @@ class Epayco_Transaction_Handler {
                 $order->save();
                 if (!EpaycoOrder::ifStockDiscount($order_id)) {
                     EpaycoOrder::updateStockDiscount($order_id, 1);
-                    self::restore_stock($order_id, 'decrease');
-                    // $order->add_order_note(__('Stock descontado - Pago aprobado', 'woo-epayco-gateway'));
+                    if ($settings['reduce_stock_pending'] !== "yes") {
+                        self::restore_stock($order_id, 'decrease');
+                        // $order->add_order_note(__('Stock descontado - Pago aprobado', 'woo-epayco-gateway'));
+                    }
                     $order->save();
                 }
                 
             }else{
                 if (!EpaycoOrder::ifStockDiscount($order_id)) {
                     EpaycoOrder::updateStockDiscount($order_id, 1);
-                    //self::restore_stock($order_id, 'decrease');
-                    // $order->add_order_note(__('Stock descontado - Pago aprobado', 'woo-epayco-gateway'));
+                    if ($settings['reduce_stock_pending'] !== "yes") {
+                        self::restore_stock($order_id, 'decrease');
+                        // $order->add_order_note(__('Stock descontado - Pago aprobado', 'woo-epayco-gateway'));
+                    }
                     $order->save();
                 }
             }
