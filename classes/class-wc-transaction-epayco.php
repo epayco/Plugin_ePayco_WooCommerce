@@ -79,17 +79,14 @@ class Epayco_Transaction_Handler {
     private static function handle_approved($order, $order_id, $current_state, $settings, $estado_final_exitoso,$franchise) {
         try{
             $logger = new WC_Logger();
+            $stockAlreadyDiscounted = EpaycoOrder::ifStockDiscount($order_id);
     
             if (in_array($current_state, ['pending'])) {
                 $order->update_status('on-hold');
                 // $order->add_order_note(__('Pago recibido - Esperando confirmaci贸n', 'woo-epayco-gateway'));
                 $order->save();
-                if ($settings['reduce_stock_pending'] !== "yes"){
-                   
-                    if (!EpaycoOrder::ifStockDiscount($order_id)) {
-                        EpaycoOrder::updateStockDiscount($order_id, 1);
-                        
-                    }
+                if ($settings['reduce_stock_pending'] !== "yes" && ! $stockAlreadyDiscounted) {
+                    EpaycoOrder::updateStockDiscount($order_id, 1);
                 }
                 return; 
             }
@@ -102,18 +99,22 @@ class Epayco_Transaction_Handler {
                 //$order->update_meta_data('epayco_meta_data_history', 1);
                 // $order->add_order_note(__('Pago aprobado - Pedido en procesamiento', 'woo-epayco-gateway'));
                 $order->save();
-                if (!EpaycoOrder::ifStockDiscount($order_id)) {
+                if (! $stockAlreadyDiscounted) {
                     EpaycoOrder::updateStockDiscount($order_id, 1);
-                    self::restore_stock($order_id, 'decrease');
-                    // $order->add_order_note(__('Stock descontado - Pago aprobado', 'woo-epayco-gateway'));
+                    if ($settings['reduce_stock_pending'] !== "yes") {
+                        self::restore_stock($order_id, 'decrease');
+                        // $order->add_order_note(__('Stock descontado - Pago aprobado', 'woo-epayco-gateway'));
+                    }
                     $order->save();
                 }
                 
             }else{
-                if (!EpaycoOrder::ifStockDiscount($order_id)) {
+                if (! $stockAlreadyDiscounted) {
                     EpaycoOrder::updateStockDiscount($order_id, 1);
-                    //self::restore_stock($order_id, 'decrease');
-                    // $order->add_order_note(__('Stock descontado - Pago aprobado', 'woo-epayco-gateway'));
+                    if ($settings['reduce_stock_pending'] !== "yes") {
+                        self::restore_stock($order_id, 'decrease');
+                        // $order->add_order_note(__('Stock descontado - Pago aprobado', 'woo-epayco-gateway'));
+                    }
                     $order->save();
                 }
             }
