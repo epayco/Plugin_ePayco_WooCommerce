@@ -453,7 +453,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     <img style="width: 80px;" src="https://multimedia-epayco-preprod.s3.us-east-1.amazonaws.com/plugins-sdks/warning.png" alt="" />
                     </div>
                     <div 
-                    style="text-align: center;font-size: large;font-weight: 900;">
+                    style="text-align: center;font-size: large;font-weight: 500;">
                         <p>"%s"</p>
                     </div>
                 </div>',
