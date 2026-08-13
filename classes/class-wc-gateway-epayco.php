@@ -959,7 +959,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             ));
             $data = json_decode(wp_remote_retrieve_body($response));
             if ($data->token) {
-                $response = wp_remote_get("https:/https://secure.payco.co/restpagos/validarllaves?public_key=" . trim($username));
+                $response = wp_remote_get("https://secure.payco.co/restpagos/validarllaves?public_key=" . trim($username));
 
                 if (is_wp_error($response)) {
                     error_log('ePayco validation: ' . $response->get_error_message());
