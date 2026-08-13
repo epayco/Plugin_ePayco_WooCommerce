@@ -468,7 +468,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             ]));
             echo sprintf(
                 '<script
-                    src="ttps://checkout.epayco.co/checkout-v2.js">
+                    src="https://checkout.epayco.co/checkout-v2.js">
                 </script>
                 <script>
                     const params = JSON.parse(atob("%s"));
@@ -501,7 +501,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         ',
                 $checkout
             );
-            wp_enqueue_script('epayco', 'ttps://checkout.epayco.co/checkout-v2.js', array(), '8.4.6', null);
+            wp_enqueue_script('epayco', 'https://checkout.epayco.co/checkout-v2.js', array(), '8.4.6', null);
             return '<form  method="post" id="appGateway">
 		        </form>';
         }
