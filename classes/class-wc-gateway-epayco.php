@@ -367,7 +367,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 "description" => substr($descripcion, 0, 240),
                 "invoice" => (string)$order->get_id(),
                 "currency" => $currency,
-                "amount" => '',
+                "amount" => floatval($order->get_total()),
                 "taxBase" => floatval($base_tax),
                 "tax" => floatval($iva),
                 "taxIco" => floatval($ico),
