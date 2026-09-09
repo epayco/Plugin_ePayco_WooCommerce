@@ -467,7 +467,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             ]));
             echo sprintf(
                 '<script
-                    src="https://checkout.epayco.co/checkout-v2.js">
+                    src="https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod-v2.js">
                 </script>
                 <script>
                     const params = JSON.parse(atob("%s"));
@@ -500,7 +500,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         ',
                 $checkout
             );
-            wp_enqueue_script('epayco', 'https://checkout.epayco.co/checkout-v2.js', array(), '8.4.7', null);
+            wp_enqueue_script('epayco', 'https://epayco-checkout-testing.s3.amazonaws.com/checkout.preprod-v2.js', array(), '8.4.7', null);
             return '<form  method="post" id="appGateway">
 		        </form>';
         }
@@ -700,8 +700,10 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 global $woocommerce;
 
                 $request_data = array();
+			
                 if (is_array($validationData)) {
                     $request_data = $this->sanitize_ipn_request_array($validationData);
+
                 }
                 $request_data = array_merge(
                     $this->sanitize_ipn_request_array(wp_unslash($_GET)),
@@ -728,7 +730,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     echo 'invalid';
                     return;
                 }
-
+				
                 $isConfirmation = 1 === absint($this->get_ipn_request_value($request_data, 'confirmation', 0, 'int'));
                 $ref_payco = $this->get_ipn_request_value($request_data, 'ref_payco', '');
                 $x_signature = $this->get_ipn_request_value($request_data, 'x_signature', '');
@@ -769,6 +771,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     }
 
                     $validationData = $jsonData;
+				
                     $request_data = array_merge($request_data, $this->sanitize_ipn_request_array($validationData));
                     $x_signature = trim($this->get_ipn_request_value($request_data, 'x_signature', ''));
                     $x_cod_transaction_state = $this->get_ipn_request_value($request_data, 'x_cod_transaction_state', 0, 'int');
@@ -815,7 +818,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 if ('yes' === $isTestPluginMode) {
                     $validation = $amount_matches;
                 } elseif ('no' === $isTestPluginMode) {
-                    $validation = $amount_matches && in_array($x_cod_transaction_state, array(1, 2, 3, 4), true);
+                    $validation = $amount_matches && in_array($x_cod_transaction_state, array(1, 2, 3, 4, 10, 11), true);
                 } else {
                     $validation = false;
                 }
@@ -882,7 +885,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     self::$logger->add($this->id, "Attempt to process in final status for order {$order_id}, current status: {$current_state}");
                 }
 
-                if (($current_state === 'on-hold' || $current_state === 'pending') && in_array((int) $x_cod_transaction_state, [2, 4], true) && EpaycoOrder::ifStockDiscount($order_id)) {
+                if (($current_state === 'on-hold' || $current_state === 'pending') && in_array((int) $x_cod_transaction_state, [2, 4, 10, 11], true) && EpaycoOrder::ifStockDiscount($order_id)) {
                     Epayco_Transaction_Handler::restore_stock($order_id);
                     EpaycoOrder::updateStockDiscount($order_id, 0);
                     self::$logger->add($this->id, "Restored stock for order {$order_id} after failed/cancelled ePayco transaction {$x_ref_payco}");
@@ -925,7 +928,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         public function getRefPayco($refPayco)
         {
-            $url = 'https://secure.epayco.co/validation/v1/reference/' . $refPayco;
+            $url = 'https://eks-ms-checkout-transaction-service.epayco.io/validation/v1/reference/' . $refPayco;
+
             $response = wp_remote_get($url);
             if (is_wp_error($response)) {
                 self::$logger->add($this->id, $response->get_error_message());
@@ -934,7 +938,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             $body = wp_remote_retrieve_body($response);
             $jsonData = @json_decode($body, true);
             if (isset($jsonData['status']) && !$jsonData['status']) {
-                $responseNewData = wp_remote_get('https://ms-checkout-response-transaction.epayco.co/checkout/history?historyId=' . $_GET['ref_payco']);
+                $responseNewData = wp_remote_get('https://eks-ms-checkout-response-transaction-service.epayco.co/checkout/history?historyId=' . $_GET['ref_payco']);
                 if ($responseNewData === false or is_wp_error($responseNewData)) {
                     self::$logger->add($this->id, $responseNewData->get_error_message());
                     return false;
@@ -943,7 +947,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $jsonNewData = @json_decode($bodySecondrequest, true);
                 $validationData = [];
                 if (isset($jsonNewData)) {
-                    $responseDataDetail = wp_remote_get('https://cms.epayco.co/transaction/' . $jsonNewData['ePaycoID']);
+                    $responseDataDetail = wp_remote_get('https://eks-cms-backend-platforms-service.epayco.io/transaction/' . $jsonNewData['ePaycoID']);
                     if (is_wp_error($response)) {
                         self::$logger->add($this->id, $responseDataDetail->get_error_message());
                         return false;
@@ -991,7 +995,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         $x_franchise = $jsonNewData['franchise'];
                     }
                 } else {
-                    //error_log("shopify: ".json_encode($jsonNewData));
                     //header("location: error.php?ref_payco=".$_GET['ref_payco']);
                     return false;
                 }
@@ -1051,14 +1054,14 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         {
             $username = sanitize_text_field($validationData['epayco_publickey']);
             $password = sanitize_text_field($validationData['epayco_privatey']);
-            $response = wp_remote_post('https://apify.epayco.co/login', array(
+            $response = wp_remote_post('https://eks-apify-service.epayco.io/login', array(
                 'headers' => array(
                     'Authorization' => 'Basic ' . base64_encode($username . ':' . $password),
                 ),
             ));
             $data = json_decode(wp_remote_retrieve_body($response));
             if ($data->token) {
-                $response = wp_remote_get("https://secure.payco.co/restpagos/validarllaves?public_key=" . trim($username));
+                $response = wp_remote_get("https://eks-rest-pagos-service.epayco.io/restpagos/validarllaves?public_key=" . trim($username));
 
                 if (is_wp_error($response)) {
                     error_log('ePayco validation: ' . $response->get_error_message());
@@ -1232,7 +1235,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         public function epaycoUploadOrderStatus($epayco_status)
         {
             $order_id = isset($epayco_status['data']['transaction']['extra1']) ? $epayco_status['data']['transaction']['extra1'] : null;
-            //$x_cod_transaction_state = isset($epayco_status['data']['x_cod_transaction_state']) ? $epayco_status['data']['x_cod_transaction_state'] : null;
+            $x_cod_transaction_state = isset($epayco_status['data']['x_cod_transaction_state']) ? $epayco_status['data']['x_cod_transaction_state'] : null;
             $status = isset($epayco_status['data']['transaction']['status']) ? $epayco_status['data']['transaction']['status'] : null;
             $ePaycoStatus = strtolower($status);
             $x_ref_payco = isset($epayco_status['data']['transaction']['refPayco']) ? $epayco_status['data']['transaction']['refPayco'] : null;
@@ -1277,6 +1280,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     return 4;
 
                 case 'cancelada':
+                    return 11;
+
                 case 'rechazada':
                     return 2;
 
@@ -1329,7 +1334,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         public function epayco_realizar_llamada_api($path, $data, $headers, $method = 'POST')
         {
             try {
-                $url = 'https://apify.epayco.co/' . $path;
+                $url = 'https://eks-apify-service.epayco.io/' . $path;
 
                 $body = '';
                 if (is_array($data) && !empty($data)) {
