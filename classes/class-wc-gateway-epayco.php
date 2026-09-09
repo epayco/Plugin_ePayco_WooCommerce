@@ -1235,7 +1235,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         public function epaycoUploadOrderStatus($epayco_status)
         {
             $order_id = isset($epayco_status['data']['transaction']['extra1']) ? $epayco_status['data']['transaction']['extra1'] : null;
-            $x_cod_transaction_state = isset($epayco_status['data']['x_cod_transaction_state']) ? $epayco_status['data']['x_cod_transaction_state'] : null;
+           // $x_cod_transaction_state = isset($epayco_status['data']['x_cod_transaction_state']) ? $epayco_status['data']['x_cod_transaction_state'] : null;
             $status = isset($epayco_status['data']['transaction']['status']) ? $epayco_status['data']['transaction']['status'] : null;
             $ePaycoStatus = strtolower($status);
             $x_ref_payco = isset($epayco_status['data']['transaction']['refPayco']) ? $epayco_status['data']['transaction']['refPayco'] : null;
