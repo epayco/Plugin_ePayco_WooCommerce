@@ -700,10 +700,9 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 global $woocommerce;
 
                 $request_data = array();
-			
+
                 if (is_array($validationData)) {
                     $request_data = $this->sanitize_ipn_request_array($validationData);
-
                 }
                 $request_data = array_merge(
                     $this->sanitize_ipn_request_array(wp_unslash($_GET)),
@@ -721,7 +720,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     return;
                 }
 
-                $order = wc_get_order($order_id);
+
                 if (! $order instanceof WC_Order) {
                     $this->log_security_event('ePayco callback rechazado porque la orden no existe.', array(
                         'order_id' => $order_id,
@@ -730,7 +729,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     echo 'invalid';
                     return;
                 }
-				
+
                 $isConfirmation = 1 === absint($this->get_ipn_request_value($request_data, 'confirmation', 0, 'int'));
                 $ref_payco = $this->get_ipn_request_value($request_data, 'ref_payco', '');
                 $x_signature = $this->get_ipn_request_value($request_data, 'x_signature', '');
@@ -771,7 +770,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     }
 
                     $validationData = $jsonData;
-				
+
                     $request_data = array_merge($request_data, $this->sanitize_ipn_request_array($validationData));
                     $x_signature = trim($this->get_ipn_request_value($request_data, 'x_signature', ''));
                     $x_cod_transaction_state = $this->get_ipn_request_value($request_data, 'x_cod_transaction_state', 0, 'int');
@@ -928,13 +927,38 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         public function getRefPayco($refPayco)
         {
+            sleep(3);
             $url = 'https://eks-ms-checkout-transaction-service.epayco.io/validation/v1/reference/' . $refPayco;
 
             $response = wp_remote_get($url);
+
+            // Obtener order_id sin importar si vino por GET o POST
+            $order_id = isset($_POST['order_id']) ? absint($_POST['order_id']) : (isset($_GET['order_id']) ? absint($_GET['order_id']) : 0);
+            $order = wc_get_order($order_id);
+
             if (is_wp_error($response)) {
                 self::$logger->add($this->id, $response->get_error_message());
+
+                if ($order) {
+                    $redirect_url = $order->get_checkout_order_received_url();
+                    return $redirect_url;
+                }
+
                 return false;
             }
+
+            $response_code = wp_remote_retrieve_response_code($response);
+            if ($response_code < 200 || $response_code >= 300) {
+                self::$logger->add($this->id, 'Error HTTP ' . $response_code . ' al consultar referencia ' . $refPayco);
+
+                if ($order) {
+                    $redirect_url = $order->get_checkout_order_received_url();
+                    return $redirect_url;
+                }
+
+                return false;
+            }
+
             $body = wp_remote_retrieve_body($response);
             $jsonData = @json_decode($body, true);
             if (isset($jsonData['status']) && !$jsonData['status']) {
@@ -948,7 +972,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $validationData = [];
                 if (isset($jsonNewData)) {
                     $responseDataDetail = wp_remote_get('https://eks-cms-backend-platforms-service.epayco.io/transaction/' . $jsonNewData['ePaycoID']);
-                    if (is_wp_error($response)) {
+                    if (is_wp_error($responseDataDetail)) {
                         self::$logger->add($this->id, $responseDataDetail->get_error_message());
                         return false;
                     }
@@ -1235,7 +1259,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         public function epaycoUploadOrderStatus($epayco_status)
         {
             $order_id = isset($epayco_status['data']['transaction']['extra1']) ? $epayco_status['data']['transaction']['extra1'] : null;
-           // $x_cod_transaction_state = isset($epayco_status['data']['x_cod_transaction_state']) ? $epayco_status['data']['x_cod_transaction_state'] : null;
+            // $x_cod_transaction_state = isset($epayco_status['data']['x_cod_transaction_state']) ? $epayco_status['data']['x_cod_transaction_state'] : null;
             $status = isset($epayco_status['data']['transaction']['status']) ? $epayco_status['data']['transaction']['status'] : null;
             $ePaycoStatus = strtolower($status);
             $x_ref_payco = isset($epayco_status['data']['transaction']['refPayco']) ? $epayco_status['data']['transaction']['refPayco'] : null;
