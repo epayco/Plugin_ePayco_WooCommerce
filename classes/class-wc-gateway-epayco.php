@@ -720,7 +720,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     return;
                 }
 
-
+                $order = wc_get_order($order_id);
                 if (! $order instanceof WC_Order) {
                     $this->log_security_event('ePayco callback rechazado porque la orden no existe.', array(
                         'order_id' => $order_id,
@@ -753,21 +753,27 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         return;
                     }
 
-                    $jsonData = $this->getRefPayco($ref_payco);
+                    $jsonData =  $this->getRefPayco($ref_payco);
                     if (is_null($jsonData)) {
                         sleep(3);
                         $jsonData = $this->getRefPayco($ref_payco);
                     }
 
                     if (!$jsonData) {
-                        $this->log_security_event('ePayco callback rechazado porque la validación remota falló.', array(
-                            'order_id' => $order_id,
-                            'ref_payco' => $ref_payco,
-                        ));
-                        status_header(400);
-                        echo 'invalid';
-                        return;
+                        $this->log_security_event('ePayco callback rechazado, el pago falló o fue cancelado' . $jsonData);
+
+
+                        // Si no existe la ref epayco, o la orden no es una instancia de woocomerce, se redirige nuevamente 
+                        // al cliente al checkout para volver a generar el pago 
+
+                        $redirect_url = $order->get_checkout_payment_url(true);
+
+                        wp_safe_redirect($redirect_url);
+                        exit;
                     }
+
+
+
 
                     $validationData = $jsonData;
 
@@ -800,9 +806,22 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         'order_id' => $order_id,
                         'x_ref_payco' => $x_ref_payco,
                     ));
-                    status_header(400);
-                    echo 'invalid';
-                    return;
+
+                    // Si no existe la ref epayco, o la orden no es una instancia de woocomerce, se redirige nuevamente 
+                    // al cliente al checkout para volver a generar el pago 
+                    if (empty($x_ref_payco)) {
+                        if ($order instanceof WC_Order) {
+                            $redirect_url = $order->get_checkout_payment_url(true);
+                            wp_safe_redirect($redirect_url);
+                            exit;
+                        }
+
+                        status_header(400);
+                        echo 'invalid';
+                        return;
+                    }
+
+                    return false;
                 }
 
                 $authSignature = $this->authSignature((string) $x_ref_payco, (string) $x_transaction_id, (string) $x_amount, (string) $x_currency_code);
@@ -927,42 +946,19 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         public function getRefPayco($refPayco)
         {
-            sleep(3);
+
             $url = 'https://eks-ms-checkout-transaction-service.epayco.io/validation/v1/reference/' . $refPayco;
-
             $response = wp_remote_get($url);
-
-            // Obtener order_id sin importar si vino por GET o POST
-            $order_id = isset($_POST['order_id']) ? absint($_POST['order_id']) : (isset($_GET['order_id']) ? absint($_GET['order_id']) : 0);
-            $order = wc_get_order($order_id);
 
             if (is_wp_error($response)) {
                 self::$logger->add($this->id, $response->get_error_message());
-
-                if ($order) {
-                    $redirect_url = $order->get_checkout_order_received_url();
-                    return $redirect_url;
-                }
-
-                return false;
-            }
-
-            $response_code = wp_remote_retrieve_response_code($response);
-            if ($response_code < 200 || $response_code >= 300) {
-                self::$logger->add($this->id, 'Error HTTP ' . $response_code . ' al consultar referencia ' . $refPayco);
-
-                if ($order) {
-                    $redirect_url = $order->get_checkout_order_received_url();
-                    return $redirect_url;
-                }
-
                 return false;
             }
 
             $body = wp_remote_retrieve_body($response);
             $jsonData = @json_decode($body, true);
             if (isset($jsonData['status']) && !$jsonData['status']) {
-                $responseNewData = wp_remote_get('https://eks-ms-checkout-response-transaction-service.epayco.co/checkout/history?historyId=' . $_GET['ref_payco']);
+                $responseNewData = wp_remote_get('https://eks-ms-checkout-response-transaction-service.epayco.io/checkout/history?historyId=' . $_GET['ref_payco']);
                 if ($responseNewData === false or is_wp_error($responseNewData)) {
                     self::$logger->add($this->id, $responseNewData->get_error_message());
                     return false;
