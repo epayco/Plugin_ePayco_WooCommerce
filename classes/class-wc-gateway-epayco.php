@@ -743,7 +743,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $x_franchise = trim($this->get_ipn_request_value($request_data, 'x_franchise', ''));
                 $x_fecha_transaccion = trim($this->get_ipn_request_value($request_data, 'x_fecha_transaccion', ''));
 
-                if (! $isConfirmation) {
+                if (!$isConfirmation) {
                     if (empty($ref_payco)) {
                         $this->log_security_event('ePayco callback rechazado por falta de ref_payco.', array(
                             'order_id' => $order_id,
@@ -753,27 +753,17 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         return;
                     }
 
-                    $jsonData =  $this->getRefPayco($ref_payco);
-                    if (is_null($jsonData)) {
-                        sleep(3);
-                        $jsonData = $this->getRefPayco($ref_payco);
-                    }
+                    $jsonData = $this->getRefPayco($ref_payco);
+					   $this->log_security_event('datos consultados' . json_encode($jsonData, JSON_PRETTY_PRINT));
+                    if (empty($jsonData)) {
+                        $this->log_security_event('ePayco no devolvió información para la referencia; se redirige al checkout.', array(
+                            'order_id' => $order_id,
+                            'ref_payco' => $ref_payco,
+                        ));
 
-                    if (!$jsonData) {
-                        $this->log_security_event('ePayco callback rechazado, el pago falló o fue cancelado' . $jsonData);
-
-
-                        // Si no existe la ref epayco, o la orden no es una instancia de woocomerce, se redirige nuevamente 
-                        // al cliente al checkout para volver a generar el pago 
-
-                        $redirect_url = $order->get_checkout_payment_url(true);
-
-                        wp_safe_redirect($redirect_url);
+                        wp_safe_redirect($order->get_checkout_payment_url(true));
                         exit;
                     }
-
-
-
 
                     $validationData = $jsonData;
 
@@ -807,21 +797,19 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         'x_ref_payco' => $x_ref_payco,
                     ));
 
-                    // Si no existe la ref epayco, o la orden no es una instancia de woocomerce, se redirige nuevamente 
-                    // al cliente al checkout para volver a generar el pago 
-                    if (empty($x_ref_payco)) {
-                        if ($order instanceof WC_Order) {
-                            $redirect_url = $order->get_checkout_payment_url(true);
-                            wp_safe_redirect($redirect_url);
-                            exit;
-                        }
-
-                        status_header(400);
-                        echo 'invalid';
-                        return;
+                    if (!$isConfirmation) {
+                        $redirect_url = $order->get_checkout_payment_url(true);
+                        $this->log_security_event('ePayco callback incompleto; se redirige al checkout.', array(
+                            'order_id' => $order_id,
+                            'x_ref_payco' => $x_ref_payco,
+                        ));
+                        wp_safe_redirect($redirect_url);
+                        exit;
                     }
 
-                    return false;
+                    status_header(400);
+                    echo 'invalid';
+                    return;
                 }
 
                 $authSignature = $this->authSignature((string) $x_ref_payco, (string) $x_transaction_id, (string) $x_amount, (string) $x_currency_code);
@@ -848,6 +836,12 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         'signature_verified' => $signature_verified,
                         'validation' => $validation,
                     ));
+
+                    if (!$isConfirmation) {
+                        wp_safe_redirect($order->get_checkout_payment_url(true));
+                        exit;
+                    }
+
                     status_header(400);
                     echo 'invalid';
                     return;
@@ -947,34 +941,54 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         public function getRefPayco($refPayco)
         {
 
-            $url = 'https://secure.epayco.co/validation/v1/reference/' . $refPayco;
-            $response = wp_remote_get($url);
+            $refPayco = sanitize_text_field($refPayco);
+            if ('' === $refPayco) {
+                return false;
+            }
 
+            $request_args = array('timeout' => 15);
+            $url = 'https://secure.epayco.co/validation/v1/reference/' . rawurlencode($refPayco);
+            $response = wp_remote_get($url, $request_args);
+			var_dump( $url,$response);
+	
+			    self::$logger->add($this->id,"informacion". print_r($response,true));	
+	die();
             if (is_wp_error($response)) {
-                self::$logger->add($this->id, $response->get_error_message());
+                self::$logger->add($this->id,"informacion". print_r($response,true));	
                 return false;
             }
 
             $body = wp_remote_retrieve_body($response);
             $jsonData = @json_decode($body, true);
+            if (! is_array($jsonData)) {
+                self::$logger->add($this->id, 'ePayco reference service returned an empty or invalid response.');
+                return false;
+            }
+
             if (isset($jsonData['status']) && !$jsonData['status']) {
-                $responseNewData = wp_remote_get('https://ms-checkout-response-transaction.epayco.co/checkout/history?historyId=' . $_GET['ref_payco']);
-                if ($responseNewData === false or is_wp_error($responseNewData)) {
+                $responseNewData = wp_remote_get(
+                    'https://ms-checkout-response-transaction.epayco.co/checkout/history?historyId=' . rawurlencode($refPayco),
+                    $request_args
+                );
+                if (is_wp_error($responseNewData)) {
                     self::$logger->add($this->id, $responseNewData->get_error_message());
                     return false;
                 }
                 $bodySecondrequest = wp_remote_retrieve_body($responseNewData);
                 $jsonNewData = @json_decode($bodySecondrequest, true);
                 $validationData = [];
-                if (isset($jsonNewData)) {
-                    $responseDataDetail = wp_remote_get('https://cms.epayco.co/transaction/' . $jsonNewData['ePaycoID']);
+                if (is_array($jsonNewData) && !empty($jsonNewData['ePaycoID'])) {
+                    $responseDataDetail = wp_remote_get(
+                        'https://cms.epayco.co/transaction/' . rawurlencode($jsonNewData['ePaycoID']),
+                        $request_args
+                    );
                     if (is_wp_error($responseDataDetail)) {
                         self::$logger->add($this->id, $responseDataDetail->get_error_message());
                         return false;
                     }
                     $responseDataDetail = wp_remote_retrieve_body($responseDataDetail);
                     $jsonDataDetail = @json_decode($responseDataDetail, true);
-                    if ($jsonDataDetail['success']) {
+                    if (is_array($jsonDataDetail) && !empty($jsonDataDetail['success']) && !empty($jsonDataDetail['data']['transaction'])) {
                         $validationData = $jsonDataDetail['data']['transaction'];
                         $url_shop = $validationData['extra2'];
                         $id_order = $validationData['extra1'];
