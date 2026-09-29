@@ -511,6 +511,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
          *
          * @return mixed
          */
+
+        //Es un simple lector de metas de la orden: Con $key → lee ese meta (por ejemplo epayco_meta_data_history). Sin $key → lee el meta PAYMENTS_IDS (la lista de ref_payco).
         public function getPaymentsIdMeta(WC_Order $order, bool $single = true, $key = null)
         {
             if ($key) return $order->get_meta($key, $single);
@@ -704,12 +706,14 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 if (is_array($validationData)) {
                     $request_data = $this->sanitize_ipn_request_array($validationData);
                 }
+                //Saneamiento de datos que llegan por metodo post o get 
                 $request_data = array_merge(
                     $this->sanitize_ipn_request_array(wp_unslash($_GET)),
                     $this->sanitize_ipn_request_array(wp_unslash($_POST)),
                     $request_data
                 );
 
+                //Obtener numero de orden si no marca error
                 $order_id = $this->get_ipn_request_value($request_data, 'order_id', 0, 'int');
                 if ($order_id <= 0) {
                     $this->log_security_event('ePayco callback rechazado por falta de order_id válido.', array(
@@ -720,6 +724,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     return;
                 }
 
+                //Valida que la orden sea una instancia de woocomerce 
                 $order = wc_get_order($order_id);
                 if (! $order instanceof WC_Order) {
                     $this->log_security_event('ePayco callback rechazado porque la orden no existe.', array(
@@ -730,6 +735,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     return;
                 }
 
+                //Obtiene los datos de la pasarela ya saneados. 
+                //Valor que indica que es confirmacion.
                 $isConfirmation = 1 === absint($this->get_ipn_request_value($request_data, 'confirmation', 0, 'int'));
                 $ref_payco = $this->get_ipn_request_value($request_data, 'ref_payco', '');
                 $x_signature = $this->get_ipn_request_value($request_data, 'x_signature', '');
@@ -743,7 +750,9 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $x_franchise = trim($this->get_ipn_request_value($request_data, 'x_franchise', ''));
                 $x_fecha_transaccion = trim($this->get_ipn_request_value($request_data, 'x_fecha_transaccion', ''));
 
-                if (! $isConfirmation) {
+                //si no es confirmacion, se ejecutara esta logica y hacer un redirect 
+                if (!$isConfirmation) {
+                    //Solicita una ref epayco, si no existe marca error 
                     if (empty($ref_payco)) {
                         $this->log_security_event('ePayco callback rechazado por falta de ref_payco.', array(
                             'order_id' => $order_id,
@@ -758,25 +767,16 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         sleep(3);
                         $jsonData = $this->getRefPayco($ref_payco);
                     }
-
+                    //si no hay datos, espera 3 segundos, vuelve a consultar y si no hay registra el log y redirige al checkout 
                     if (!$jsonData) {
                         $this->log_security_event('ePayco callback rechazado, el pago falló o fue cancelado' . $jsonData);
-
-
-                        // Si no existe la ref epayco, o la orden no es una instancia de woocomerce, se redirige nuevamente 
-                        // al cliente al checkout para volver a generar el pago 
-
                         $redirect_url = $order->get_checkout_payment_url(true);
-
                         wp_safe_redirect($redirect_url);
                         exit;
                     }
 
-
-
-
+                    //Su hay datos sobre escribe a la variable validationData 
                     $validationData = $jsonData;
-
                     $request_data = array_merge($request_data, $this->sanitize_ipn_request_array($validationData));
                     $x_signature = trim($this->get_ipn_request_value($request_data, 'x_signature', ''));
                     $x_cod_transaction_state = $this->get_ipn_request_value($request_data, 'x_cod_transaction_state', 0, 'int');
@@ -790,6 +790,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     $x_fecha_transaccion = trim($this->get_ipn_request_value($request_data, 'x_fecha_transaccion', ''));
                 }
 
+                //crear un array con datos obligatorios para poder realizar el proceso de confirmacion o de redireccion 
                 $required_fields = array(
                     'x_signature' => $x_signature,
                     'x_ref_payco' => $x_ref_payco,
@@ -801,14 +802,13 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     return '' === trim((string) $value);
                 });
 
+                //Valida que si halla datos si no registra el log y redirige al cliente a la pagina del checkout 
                 if ($x_transaction_id <= 0 || ! empty($missing_fields) || $x_cod_transaction_state <= 0 || empty($x_test_request)) {
                     $this->log_security_event('ePayco callback rechazado por campos obligatorios inválidos.', array(
                         'order_id' => $order_id,
                         'x_ref_payco' => $x_ref_payco,
                     ));
 
-                    // Si no existe la ref epayco, o la orden no es una instancia de woocomerce, se redirige nuevamente 
-                    // al cliente al checkout para volver a generar el pago 
                     if (empty($x_ref_payco)) {
                         if ($order instanceof WC_Order) {
                             $redirect_url = $order->get_checkout_payment_url(true);
@@ -824,24 +824,32 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     return false;
                 }
 
+                //verifica que la firma de seguridad sea valida
                 $authSignature = $this->authSignature((string) $x_ref_payco, (string) $x_transaction_id, (string) $x_amount, (string) $x_currency_code);
                 $signature_verified = hash_equals($authSignature, trim($x_signature));
 
                 $message = '';
                 $messageClass = '';
+                //se valida el tipo de integracion con la que se realizo la transaccion y como estaba configurado el plugin.
                 $isTestTransaction = 'TRUE' === strtoupper($x_test_request) ? 'yes' : 'no';
                 $isTestPluginMode = $this->settings['epayco_testmode'];
 
+                //se valida que el valor del pedido en la tienda sea el mismo que se registro en epayco. 
                 $amount_matches = floatval($order->get_total()) === floatval($x_amount);
+
                 if ('yes' === $isTestPluginMode) {
+                    //si esta en modo pruebas solo se valida que el monto conincida 
                     $validation = $amount_matches;
                 } elseif ('no' === $isTestPluginMode) {
+                    //si no esta en modo pruebas se valida el valor y si el estado corresponde a alguno de estos 
                     $validation = $amount_matches && in_array($x_cod_transaction_state, array(1, 2, 3, 4, 10, 11), true);
                 } else {
+                    //si no corresponde a ninguno la validacion es falsa
                     $validation = false;
                 }
 
                 if (! $signature_verified || ! $validation) {
+                    //si la firma de seguridad o la validacion es diferente o vacia se registra el log y se muestra el error 400  
                     $this->log_security_event('ePayco callback rechazado por firma o validación inválida.', array(
                         'order_id' => $order_id,
                         'x_ref_payco' => $x_ref_payco,
@@ -853,14 +861,20 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     return;
                 }
 
-                update_option('epayco_order_status', $isTestTransaction);
+                //guarda la opcion de modo de integracion global 
+                update_option('epayco_order_status', $isTestTransaction);                
                 $isTestMode = get_option('epayco_order_status') === 'yes' ? 'true' : 'false';
 
+                //recolectar los datos y los garda en un meta data para utilizarlos despues, se almanecan en esas variables para poder 
+                //utilizarlos en las ordenes, guarda el id de la orden y el estado actual. 
+                //toma el valor de epayco. 
                 $paymentsIdMetadata = $this->getPaymentsIdMeta($order);
+
                 $paymentsHistoryIdMetadata = $this->getPaymentsIdMeta($order, true, 'epayco_meta_data_history');
                 $current_state = $order->get_status();
 
                 if (empty($paymentsHistoryIdMetadata)) {
+    
                     $this->setPaymentsIdData($order, $x_cod_transaction_state, 'epayco_meta_data_history');
                 } else {
                     $order->update_meta_data('epayco_meta_data_history', $x_cod_transaction_state);
