@@ -862,28 +862,31 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 }
 
                 //guarda la opcion de modo de integracion global 
-                update_option('epayco_order_status', $isTestTransaction);                
+                update_option('epayco_order_status', $isTestTransaction);
                 $isTestMode = get_option('epayco_order_status') === 'yes' ? 'true' : 'false';
 
                 //recolectar los datos y los garda en un meta data para utilizarlos despues, se almanecan en esas variables para poder 
                 //utilizarlos en las ordenes, guarda el id de la orden y el estado actual. 
                 //toma el valor de epayco. 
-                $paymentsIdMetadata = $this->getPaymentsIdMeta($order);
+                $paymentsIdMetadata = $this->getPaymentsIdMeta($order); // lee PAYMENTS_IDS
 
-                $paymentsHistoryIdMetadata = $this->getPaymentsIdMeta($order, true, 'epayco_meta_data_history');
-                $current_state = $order->get_status();
+                $paymentsHistoryIdMetadata = $this->getPaymentsIdMeta($order, true, 'epayco_meta_data_history'); // lee el meta del estado
+                $current_state = $order->get_status(); //valor del pedido en wocomerce
 
                 if (empty($paymentsHistoryIdMetadata)) {
-    
+                    //si no existe el meta del estado de la orden lo crea con el que llega de epayco
                     $this->setPaymentsIdData($order, $x_cod_transaction_state, 'epayco_meta_data_history');
                 } else {
+                    //El meta ya existe (notificaciones posteriores)Lo actualiza con update_meta_data + save
                     $order->update_meta_data('epayco_meta_data_history', $x_cod_transaction_state);
                     $order->save();
                 }
 
                 if (empty($paymentsIdMetadata)) {
+                    //Sin $key, setPaymentsIdData hace add_meta_data(PAYMENTS_IDS, $x_ref_payco) y save(). Queda guardado un solo ref_payco, por ejemplo "123456".
                     $this->setPaymentsIdData($order, $x_ref_payco);
                 } else {
+                    //ya hay valores guardados Convierte el texto "123456, 123789" en el arreglo ['123456', '123789']. El explode separa por coma y array_map('trim', ...) quita los espacios sobrantes de cada elemento.
                     $existingPayments = array_map('trim', explode(',', $paymentsIdMetadata));
                     if (!in_array($x_ref_payco, $existingPayments, true)) {
                         $existingPayments[] = $x_ref_payco;
@@ -893,21 +896,29 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     }
                 }
 
+
+                //Este bloque es donde la función decide qué hacer con la orden y cómo responder. Todo lo anterior fue validación. Tiene cuatro partes:
                 $message = '';
                 $messageClass = '';
+                //Valida el modo de integracion de la trx y prepara variables de prueba 
                 $isTestTransaction = $x_test_request == 'TRUE' ? 'yes' : 'no';
                 update_option('epayco_order_status', $isTestTransaction);
                 $isTestMode = get_option('epayco_order_status') === 'yes' ? 'true' : 'false';
+                //una ves se calcula se pasa a handle
 
+                //si el estado obtenido de current_state es ya uno de los que se encuentran aca se muestra el loger 
                 if (!in_array($current_state, ['processing', 'completed', 'processing_test', 'completed_test', 'epayco-processing', 'epayco-completed', 'epayco_processing', 'epayco_completed', 'refunded'])) {
                     Epayco_Transaction_Handler::handle_transaction($order, [
+                        //datos de la transaccion
                         'x_cod_transaction_state' => $x_cod_transaction_state,
                         'x_ref_payco'             => $x_ref_payco,
                         'x_fecha_transaccion'     => $x_fecha_transaccion,
                         'x_franchise'             => $x_franchise,
                         'x_approval_code'         => $x_approval_code,
+                        //si viene el webhook =1 es confirmacion true, si o es false y es pporque es redirect
                         'is_confirmation'         => $isConfirmation,
                     ], [
+                        //configuracion del plugin.
                         'test_mode'               => $isTestMode,
                         'end_order_state'         => $this->settings['epayco_endorder_state'],
                         'cancel_order_state'      => $this->settings['epayco_cancelled_endorder_state'],
@@ -917,39 +928,56 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     self::$logger->add($this->id, "Attempt to process in final status for order {$order_id}, current status: {$current_state}");
                 }
 
+                //para cuando el estado inicial es pendiente,  y despues de ese pendiente el estado final de la trx  en epayco fue con esos estasos de no exito y se habia descontado el stock
+                //se restaura el stock 
                 if (($current_state === 'on-hold' || $current_state === 'pending') && in_array((int) $x_cod_transaction_state, [2, 4, 10, 11], true) && EpaycoOrder::ifStockDiscount($order_id)) {
                     Epayco_Transaction_Handler::restore_stock($order_id);
                     EpaycoOrder::updateStockDiscount($order_id, 0);
                     self::$logger->add($this->id, "Restored stock for order {$order_id} after failed/cancelled ePayco transaction {$x_ref_payco}");
                 }
 
+                // Al llegar aquí ya se hizo todo el trabajo de fondo: se validó la orden, la firma y el monto, se guardó la 
+                //metadata, se llamó a handle_transaction y se restauró stock si correspondía. 
+                // Solo falta contestarle a quien llamó, y esa respuesta depende de quién es:
+
+             //   Quién llamó	Qué necesita recibir
+
+
                 if (isset($_REQUEST['confirmation'])) {
+                    //El servidor de ePayco (webhook)	Un "recibido" (HTTP 200) y nada más
                     echo $x_cod_transaction_state;
                     exit();
                 } else {
+                  //  El navegador del cliente	Una página que le muestre el resultado
                     if ($this->get_option('epayco_url_response') == 0) {
+                      //  (página estándar de WooCommerce) $order->get_checkout_order_received_url()
                         $redirect_url = $order->get_checkout_order_received_url();
                     } else {
+                        //vacia el carrito 
                         $woocommerce->cart->empty_cart();
+                        //redirige a la pagina personalizada del cliete. la vuelve publica y le concatena la ref epayco. 
                         $redirect_url = get_permalink($this->get_option('epayco_url_response'));
                         $redirect_url = add_query_arg(['ref_payco' => $ref_payco], $redirect_url);
                     }
                 }
 
+                //arma un array con los datos de la trx que vienen por parte de epayco. 
                 $arguments = array();
                 foreach ($validationData as $key => $value) {
                     $arguments[$key] = $value;
                 }
 
+                //le agrega a la url los parametros y el cliente decide si los desea exponer o no.
                 unset($arguments["wc-api"]);
                 $arguments['msg'] = urlencode($message);
                 $arguments['type'] = $messageClass;
                 $response_data = $this->settings['response_data'] == "yes" ? true : false;
 
+                //realiza la redireccion con o sin datos. 
                 if ($response_data) {
                     $redirect_url = add_query_arg($arguments, $redirect_url);
                 }
-
+                //envia un cod estado 302  
                 wp_redirect($redirect_url);
             } catch (\Exception $ex) {
                 $error_message = "successful_request got error: {$ex->getMessage()}";
