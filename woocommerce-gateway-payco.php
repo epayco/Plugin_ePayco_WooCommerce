@@ -31,8 +31,13 @@ if ( ! defined( 'EPAYCO_PLUGIN_CLASS_PATH' ) ) {
 	define( 'EPAYCO_PLUGIN_CLASS_PATH', EPAYCO_PLUGIN_PATH . 'classes/' );
 }
 
-define( 'DAVIPAY_ROUTE_IMAGES_S3', "http://multimedia.epayco.io/plugins-sdks/",);
-define( 'CMS_ROUTE_IMAGES_S3', "https://cms.epayco.co/imagenes/");
+if ( ! defined( 'DAVIPAY_ROUTE_IMAGES_S3' ) ) {
+    define( 'DAVIPAY_ROUTE_IMAGES_S3', 'http://multimedia.epayco.io/plugins-sdks/' );
+}
+if ( ! defined( 'CMS_ROUTE_IMAGES_S3' ) ) {
+    define( 'CMS_ROUTE_IMAGES_S3', 'https://eks-cms-backend-platforms-service.epayco.io/imagenes/' );
+}
+
 
 
 add_action( 'plugins_loaded', 'woocommerce_gateway_epayco_init', 11 );
@@ -406,7 +411,7 @@ function my_custom_checkout_field_update_order_meta( $order_id ) {
 add_action( 'woocommerce_admin_order_data_after_payment_info', 'my_custom_checkout_field_display_admin_order_meta', 10, 1 );
 function my_custom_checkout_field_display_admin_order_meta( $order ){
      $order_id = method_exists( $order, 'get_id' ) ? $order->get_id() : $order->id;
-     $ref_payco = $order->get_meta('refPayco')??get_post_meta( $order_id, 'refPayco', true );
+     $ref_payco = $order->get_meta('refDavipay')??get_post_meta( $order_id, 'refPayco', true );
      $modo = $order->get_meta('modo')??get_post_meta( $order_id, 'modo', true );
      $fecha = $order->get_meta('fecha')??get_post_meta( $order_id, 'fecha', true );
      $franquicia = $order->get_meta('franquicia')??get_post_meta( $order_id, 'franquicia', true );
@@ -450,7 +455,6 @@ function add_custom_hiden_order_item_meta_data( $item, $cart_item_key, $values, 
     if( $meta_value = get_user_meta( $order->get_user_id(), 'billing_enumber', true ) )
         $item->update_meta_data( 'pa_billing-e-number', $meta_value );
 }
-
 
 function epayco_cron_job_deactivation() {
     wp_clear_scheduled_hook('woocommerc_epayco_cron_hook');

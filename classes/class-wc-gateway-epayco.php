@@ -14,7 +14,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
      * Settings
      */
     public static $_settings = array();
-    public const PAYMENTS_IDS = 'epayco_meta_data';
+    public const PAYMENTS_IDS = 'davipay_meta_data';
+    public const PAYMENTS_IDS_LEGACY = 'epayco_meta_data';
     /**
      * Constructor for the gateway.
      *
@@ -520,6 +521,15 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             return $order->get_meta(self::PAYMENTS_IDS, $single);
         }
 
+
+        private function get_meta_fallback($order, $new_key, $old_key)
+        {
+            $value = $order->get_meta($new_key);
+            if ($value === '' || $value === null) {
+                $value = $order->get_meta($old_key);
+            }
+            return $value;
+        }
         /**
          * @param WC_Order $order
          * @param mixed $value
@@ -543,6 +553,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $logger->add($this->id, $error_message);
             }
         }
+
+
 
         /**
          * Process the payment and return the result
@@ -859,14 +871,14 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 update_option('epayco_order_status', $isTestTransaction);
                 $isTestMode = get_option('epayco_order_status') === 'yes' ? 'true' : 'false';
 
-                $paymentsIdMetadata = $this->getPaymentsIdMeta($order);
-                $paymentsHistoryIdMetadata = $this->getPaymentsIdMeta($order, true, 'epayco_meta_data_history');
+                $paymentsIdMetadata = $this->get_meta_fallback($order, self::PAYMENTS_IDS, self::PAYMENTS_IDS_LEGACY);
+                $paymentsHistoryIdMetadata = $this->get_meta_fallback($order, 'davipay_meta_data_history', 'epayco_meta_data_history');
                 $current_state = $order->get_status();
 
                 if (empty($paymentsHistoryIdMetadata)) {
-                    $this->setPaymentsIdData($order, $x_cod_transaction_state, 'epayco_meta_data_history');
+                    $this->setPaymentsIdData($order, $x_cod_transaction_state, 'davipay_meta_data_history');
                 } else {
-                    $order->update_meta_data('epayco_meta_data_history', $x_cod_transaction_state);
+                    $order->update_meta_data('davipay_meta_data_history', $x_cod_transaction_state);
                     $order->save();
                 }
 
