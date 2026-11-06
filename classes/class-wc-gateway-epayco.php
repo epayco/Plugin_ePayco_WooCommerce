@@ -14,7 +14,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
      * Settings
      */
     public static $_settings = array();
-    public const PAYMENTS_IDS = 'davipay_meta_data';
+    public const PAYMENTS_IDS = 'epayco_meta_data';
     /**
      * Constructor for the gateway.
      *
@@ -860,13 +860,13 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $isTestMode = get_option('epayco_order_status') === 'yes' ? 'true' : 'false';
 
                 $paymentsIdMetadata = $this->getPaymentsIdMeta($order);
-                $paymentsHistoryIdMetadata = $this->getPaymentsIdMeta($order, true, 'davipay_meta_data_history');
+                $paymentsHistoryIdMetadata = $this->getPaymentsIdMeta($order, true, 'epayco_meta_data_history');
                 $current_state = $order->get_status();
 
                 if (empty($paymentsHistoryIdMetadata)) {
-                    $this->setPaymentsIdData($order, $x_cod_transaction_state, 'davipay_meta_data_history');
+                    $this->setPaymentsIdData($order, $x_cod_transaction_state, 'epayco_meta_data_history');
                 } else {
-                    $order->update_meta_data('davipay_meta_data_history', $x_cod_transaction_state);
+                    $order->update_meta_data('epayco_meta_data_history', $x_cod_transaction_state);
                     $order->save();
                 }
 
