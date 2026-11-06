@@ -2,7 +2,7 @@
 # This file is distributed under the GNU General Public License v3.0.
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Davipay Gateway 7.0.0\n"
+"Project-Id-Version: WooCommerce Davipay Gateway 8.4.8\n"
 "Report-Msgid-Bugs-To: https://wordpress."
 "org/support/plugin/Plugin_davipay_WooCommerce\n"
 "Last-Translator: \n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2024-01-29T22:36:59-05:00\n"
-"PO-Revision-Date: 2024-01-30 04:12+0000\n"
+"PO-Revision-Date: 2026-11-06 22:25+0000\n"
 "X-Generator: Loco https://localise.biz/\n"
 "X-Domain: woo-epayco-gateway\n"
 "Language: en_US\n"
@@ -27,6 +27,7 @@ msgid "Plugin Davipay Gateway for WooCommerce."
 msgstr "Plugin Davipay Gateway for WooCommerce."
 
 #. Author of the plugin
+#: assets/js/frontend/blocks.js:9
 msgid "Davipay"
 msgstr "Davipay"
 
@@ -54,15 +55,15 @@ msgid ""
 msgstr ""
 "This module allows you to accept secure payments through the Davipay payment "
 "platform. If the customer decides to pay by Davipay, the order status will "
-"change to"
+"change to "
 
 #: classes/class-wc-gateway-epayco.php:125
 msgid " Esperando Pago"
-msgstr "Waiting for payment"
+msgstr " Waiting for payment"
 
 #: classes/class-wc-gateway-epayco.php:126
 msgid ""
-"Cuando el pago sea Aceptado o Rechazado Davipay envía una confirmación a la "
+"Cuando el pago sea Aceptado o Rechazado, Davipay envía una confirmación a la "
 "tienda para cambiar el estado del pedido."
 msgstr ""
 "When the payment is Accepted or Rejected, Davipay sends a confirmation to the "
@@ -78,17 +79,23 @@ msgstr "PUBLIC_KEY and PRIVATE_KEY key validation"
 
 #: classes/class-wc-gateway-epayco.php:158
 msgid "Llaves de comercio inválidas"
-msgstr "Invalid keys"
+msgstr "Invalid merchant keys"
 
-#: classes/class-wc-gateway-epayco.php:159
-msgid ""
-"Las llaves Public Key, Private Key insertadas<br>del comercio son inválidas."
-"<br>Consúltelas en el apartado de integraciones <br>Llaves API en su "
-"Dashboard Davipay."
-msgstr ""
-"The Public Key, Private Key keys inserted from the merchant are invalid. "
-"Consult them in the integrations <br>API Keys section in your Davipay "
-"Dashboard."
+#: classes/class-wc-gateway-epayco.php:210
+msgid "Las llaves Public Key, Private Key insertadas"
+msgstr "The Public Key and Private Key entered"
+
+#: classes/class-wc-gateway-epayco.php:210
+msgid "del comercio son inválidas."
+msgstr "for the merchant are invalid."
+
+#: classes/class-wc-gateway-epayco.php:210
+msgid "Consúltelas en el apartado de integraciones"
+msgstr "You can find them in the Integrations section,"
+
+#: classes/class-wc-gateway-epayco.php:210
+msgid "Llaves API en su Dashboard Davipay."
+msgstr "API Keys, in your Davipay Dashboard."
 
 #: classes/class-wc-gateway-epayco.php:185
 msgid "Gateway Disabled"
@@ -225,7 +232,7 @@ msgstr "Processing"
 
 #: classes/class-wc-gateway-epayco.php:281
 msgid "Completado"
-msgstr "Complete"
+msgstr "Completed"
 
 #: classes/class-wc-gateway-epayco.php:285
 msgid "Estado Cancelado del Pedido"
@@ -249,7 +256,7 @@ msgstr "Davipay Payment Failed"
 
 #: classes/class-wc-gateway-epayco.php:292
 msgid "Cancelado"
-msgstr "Cancelled"
+msgstr "Canceled"
 
 #: classes/class-wc-gateway-epayco.php:293
 msgid "Fallido"
@@ -305,26 +312,44 @@ msgstr "Enable redirection mode with data"
 msgid ""
 "Al habilitar esta opción puede exponer información sensible de sus clientes, "
 "el uso de esta opción es bajo su responsabilidad, conozca esta información "
-"en el siguiente  <a href=\"https://docs.davipay.co/payments/checkout#scroll-"
+"en el siguiente  <a href=\"https://docs.epayco.co/payments/checkout#scroll-"
 "response-p\" target=\"_blank\">link.</a>"
 msgstr ""
-"By enabling this option you may expose sensitive information of your clients,"
-" the use of this option is under your responsibility, know this information "
-"in the following <a href=\"https://docs.davipay.co/payments/checkout#scroll-"
-"response -p\" target=\"_blank\">link.</a>"
+"Enabling this option may expose sensitive information about your customers. "
+"Use of this option is at your own responsibility. Learn more at the "
+"following <a href=\"https://docs.epayco.co/payments/checkout#scroll-"
+"response-p\" target=\"_blank\">link.</a>"
+
+#: classes/epayco-settings.php:134
+msgid "Rastreo de orden "
+msgstr "Order tracking "
+
+#: classes/epayco-settings.php:136
+msgid "Habilitar el rastreo de orden "
+msgstr "Enable order tracking "
+
+#: classes/epayco-settings.php:137
+msgid ""
+"Mantendremos tus pedidos actualizados cada hora. Recomendamos activar esta "
+"opción sólo en caso de fallos en la actualización automática de pedidos. "
+msgstr ""
+"We will keep your orders updated every hour. We recommend enabling this "
+"option only if automatic order updates are failing. "
 
 #: classes/class-wc-gateway-epayco.php:570
 msgid "Cargando métodos de pago"
 msgstr "Loading payment methods"
 
 #: classes/class-wc-gateway-epayco.php:571
-msgid ""
-"Si no se cargan automáticamente, haga clic en el botón. \\\"Pagar con "
-"Davipay\\\""
+msgid "Si no se cargan automáticamente, haga clic en el botón. Pagar con Davipay"
 msgstr ""
-"If they are not loaded automatically, click the \\\"Pay with Davipay\\\" "
-"button"
+"If they are not loaded automatically, click the \"Pay with Davipay\" button"
 
-#: assets/js/frontend/blocks.js:9
-msgid "Davipay"
-msgstr "Davipay"
+#: classes/class-wc-gateway-epayco.php:615
+#: classes/class-wc-gateway-epayco.php:621
+msgid "Solicitud inválida para el callback de Davipay."
+msgstr "Invalid request for the Davipay callback."
+
+#: classes/class-wc-gateway-epayco.php:628
+msgid "No se recibieron datos válidos para el callback de Davipay."
+msgstr "No valid data was received for the Davipay callback."
