@@ -6,7 +6,7 @@
         s=window.wp.htmlEntities,
         a=window.wc.wcSettings,
         l=(0,a.getSetting)("epayco_data",{}),
-        o=(0,t.__)("Epayco","woo-epayco-gateway"),
+        o=(0,t.__)("Davipay","woo-epayco-gateway"),
         c=(0,s.decodeEntities)(l.title)||o,
         w=()=>(0,s.decodeEntities)(l.description||""),
         y={

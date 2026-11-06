@@ -7,7 +7,7 @@ class Epayco_Transaction_Handler {
     public static function handle_transaction($order, $data, $settings) {
         $order_id = $order->get_id();
         $current_state = $order->get_status();
-        $modo = $settings['test_mode'] === "true" ? "pruebas" : "Producci贸n";
+        $modo = $settings['test_mode'] === "true" ? "pruebas" : "Producción";
 
         $existingRefPayco = $order->get_meta('refPayco');
         if (!empty($existingRefPayco) && $existingRefPayco === $data['x_ref_payco']) {

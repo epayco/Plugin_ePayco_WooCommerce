@@ -16,7 +16,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
   - Mejorada la gestión de stock durante reintentos de pago exitosos
   - Sincronización optimizada de estado de órdenes tras reintento exitoso
 
-- **23 de octubre de 2025** - Actualización para versión 2 del checkout de ePayco
+- **23 de octubre de 2025** - Actualización para versión 2 del checkout de Davipay
   - Actualizado el payload de configuración del checkout para incluir `checkout_version: "2"`
   - Implementada integración con el nuevo endpoint `payment/session/create` para crear sesiones de pago
   - Mejorada la configuración del checkout con soporte para `sessionId` dinámico
@@ -40,7 +40,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 ### Security
 
-- Implementado manejo seguro de tokens Bearer para autenticación con API ePayco
+- Implementado manejo seguro de tokens Bearer para autenticación con API Davipay
 - Mejorada la validación de respuestas de la API antes de procesar datos de sesión
 
 ## [Previous Versions]
@@ -49,8 +49,8 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.h
 
 #### Funcionalidades Base
 
-- Funcionalidades base del plugin ePayco para WooCommerce
-- Integración con API de ePayco para procesamiento de pagos
+- Funcionalidades base del plugin Davipay para WooCommerce
+- Integración con API de Davipay para procesamiento de pagos
 - Gestión automática de órdenes y estados de pago
 - Sistema de validación de firmas para seguridad de transacciones
 
