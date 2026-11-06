@@ -96,7 +96,7 @@ class Epayco_Transaction_Handler {
 
                 $order->payment_complete($order->get_meta('refPayco'));
                 $order->update_status($estado_final_exitoso);
-                //$order->update_meta_data('epayco_meta_data_history', 1);
+                //$order->update_meta_data('davipay_meta_data_history', 1);
                 // $order->add_order_note(__('Pago aprobado - Pedido en procesamiento', 'woo-epayco-gateway'));
                 $order->save();
                 if (! $stockAlreadyDiscounted) {
@@ -142,7 +142,7 @@ class Epayco_Transaction_Handler {
                 'epayco_completed'
             ])) {
                 $order->update_status($estado_cancelado);
-                //$order->update_meta_data('epayco_meta_data_history', 2);
+                //$order->update_meta_data('davipay_meta_data_history', 2);
                 if ($settings['reduce_stock_pending'] === "yes" && in_array($current_state, ['pending', 'on-hold'])) {
                     if($current_state == 'pending'){
                         if (!$isConfirmation) {
@@ -182,7 +182,7 @@ class Epayco_Transaction_Handler {
             ) {
                // self::restore_stock($order_id, 'decrease'); 
                 $order->update_status('on-hold');
-                //$order->update_meta_data('epayco_meta_data_history', 3);
+                //$order->update_meta_data('davipay_meta_data_history', 3);
                  if (!EpaycoOrder::ifStockDiscount($order_id)) {
                         EpaycoOrder::updateStockDiscount($order_id, 1);
                         self::restore_stock($order_id, "decrease");
