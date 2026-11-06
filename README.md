@@ -1,72 +1,73 @@
-## ePayco plugin para WooCommerce
+## Davipay plugin para WooCommerce
 
-**Si usted tiene alguna pregunta o problema, no dude en ponerse en contacto con nuestro soporte técnico: desarrollo@epayco.com.**
+**Si usted tiene alguna pregunta o problema, no dude en ponerse en contacto con nuestro soporte técnico: desarrollo@davipay.com.**
 
 ** Se recomienda emplear la última versión disponible. **
 
 ## Versiones
-* [epayco plugin WooCommerce v8.4.7](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.4.7).
-* [epayco plugin WooCommerce v8.4.6](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.4.6).
-* [epayco plugin WooCommerce v8.4.5](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.4.5).
-* [epayco plugin WooCommerce v8.4.4](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.4.4).
-* [epayco plugin WooCommerce v8.4.3](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.4.3).
-* [epayco plugin WooCommerce v8.4.2](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.4.2).
-* [epayco plugin WooCommerce v8.4.1](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.4.1).
-* [epayco plugin WooCommerce v8.4.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.4.0).
-* [epayco plugin WooCommerce v8.3.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.3.0).
-* [epayco plugin WooCommerce v8.2.3](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.2.3).
-* [epayco plugin WooCommerce v8.2.2](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.2.2).
-* [epayco plugin WooCommerce v8.2.1](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.2.1).
-* [epayco plugin WooCommerce v8.2.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.2.0).
-* [epayco plugin WooCommerce v8.1.1](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.1.1).
-* [epayco plugin WooCommerce v8.1.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.1.0).
-* [epayco plugin WooCommerce v8.0.3](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.0.3).
-* [epayco plugin WooCommerce v8.0.2](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.0.2).
-* [epayco plugin WooCommerce v8.0.1](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.0.1).
-* [epayco plugin WooCommerce v8.0.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v8.0.0).
-* [epayco plugin WooCommerce v7.1.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v7.1.0).
-* [epayco plugin WooCommerce v7.0.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v7.0.0).
-* [epayco plugin WooCommerce v6.7.6](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v6.7.6).
-* [epayco plugin WooCommerce v6.7.5](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v6.7.5).
-* [epayco plugin WooCommerce v6.7.4](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v6.7.4).
-* [epayco plugin WooCommerce v6.7.3](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v6.7.3).
-* [epayco plugin WooCommerce v6.7.2](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v6.7.2).
-* [epayco plugin WooCommerce v6.7.1](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v6.7.1).
-* [epayco plugin WooCommerce v6.7.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v6.7.0).
-* [epayco plugin WooCommerce v6.6.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V6.6.0).
-* [epayco plugin WooCommerce v6.5.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V6.5.0).
-* [epayco plugin WooCommerce v6.4.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V6.4.0).
-* [epayco plugin WooCommerce v6.3.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V6.3.0).
-* [epayco plugin WooCommerce v6.2.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V6.2.0).
-* [epayco plugin WooCommerce v6.1.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V6.1.0).
-* [epayco plugin WooCommerce v6.0.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V6.0.0).
-* [epayco plugin WooCommerce v5.5.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.5.0).
-* [epayco plugin WooCommerce v5.4.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.4.0).
-* [epayco plugin WooCommerce v5.3.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.3.0).
-* [epayco plugin WooCommerce v5.2.0](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v5.2.0).
-* [ePayco plugin WooCommerce v5.2.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.2.x).
-* [ePayco plugin WooCommerce v5.1.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.1.X).
-* [ePayco plugin WooCommerce v5.0.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V5.0.X).
-* [ePayco plugin WooCommerce v4.9.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.9.x).
-* [ePayco plugin WooCommerce v4.8.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.8.X).
-* [ePayco plugin WooCommerce v4.7.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V.4.7).
-* [ePayco plugin WooCommerce v4.6.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.6.x).
-* [ePayco plugin WooCommerce v4.5.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.5.x).
-* [ePayco plugin WooCommerce v4.4.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.4.x).
-* [ePayco plugin WooCommerce v4.3.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.3.x).
-* [ePayco plugin WooCommerce v4.2.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.2.x).
-* [ePayco plugin WooCommerce v4.0.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/V4.0.x).
-* [ePayco plugin WooCommerce v3.9.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v3.9.x).
-* [ePayco plugin WooCommerce v3.8.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/3.8.x).
-* [ePayco plugin WooCommerce v3.7.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/3.7.0).
-* [ePayco plugin WooCommerce v3.6.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/3.6.5).
-* [ePayco plugin WooCommerce v3.5.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/3.5.3).
-* [ePayco plugin WooCommerce v3.4.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/3.4.2).
-* [ePayco plugin WooCommerce v3.2.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/3.2.1).
-* [ePayco plugin WooCommerce v3.0.4.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/3.0.4.x).
-* [ePayco plugin WooCommerce v2.6.4.x](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/2.6.4.x).
-* [ePayco plugin WooCommerce v2.6](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/2.6).
-* [ePayco plugin WooCommerce v2.5](https://github.com/epayco/Plugin_ePayco_WooCommerce/releases/tag/v2.5.x).
+* [davipay plugin WooCommerce v8.4.8](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.4.8).
+* [davipay plugin WooCommerce v8.4.7](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.4.7).
+* [davipay plugin WooCommerce v8.4.6](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.4.6).
+* [davipay plugin WooCommerce v8.4.5](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.4.5).
+* [davipay plugin WooCommerce v8.4.4](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.4.4).
+* [davipay plugin WooCommerce v8.4.3](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.4.3).
+* [davipay plugin WooCommerce v8.4.2](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.4.2).
+* [davipay plugin WooCommerce v8.4.1](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.4.1).
+* [davipay plugin WooCommerce v8.4.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.4.0).
+* [davipay plugin WooCommerce v8.3.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.3.0).
+* [davipay plugin WooCommerce v8.2.3](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.2.3).
+* [davipay plugin WooCommerce v8.2.2](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.2.2).
+* [davipay plugin WooCommerce v8.2.1](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.2.1).
+* [davipay plugin WooCommerce v8.2.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.2.0).
+* [davipay plugin WooCommerce v8.1.1](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.1.1).
+* [davipay plugin WooCommerce v8.1.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.1.0).
+* [davipay plugin WooCommerce v8.0.3](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.0.3).
+* [davipay plugin WooCommerce v8.0.2](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.0.2).
+* [davipay plugin WooCommerce v8.0.1](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.0.1).
+* [davipay plugin WooCommerce v8.0.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.0.0).
+* [davipay plugin WooCommerce v7.1.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v7.1.0).
+* [davipay plugin WooCommerce v7.0.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v7.0.0).
+* [davipay plugin WooCommerce v6.7.6](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v6.7.6).
+* [davipay plugin WooCommerce v6.7.5](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v6.7.5).
+* [davipay plugin WooCommerce v6.7.4](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v6.7.4).
+* [davipay plugin WooCommerce v6.7.3](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v6.7.3).
+* [davipay plugin WooCommerce v6.7.2](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v6.7.2).
+* [davipay plugin WooCommerce v6.7.1](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v6.7.1).
+* [davipay plugin WooCommerce v6.7.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v6.7.0).
+* [davipay plugin WooCommerce v6.6.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V6.6.0).
+* [davipay plugin WooCommerce v6.5.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V6.5.0).
+* [davipay plugin WooCommerce v6.4.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V6.4.0).
+* [davipay plugin WooCommerce v6.3.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V6.3.0).
+* [davipay plugin WooCommerce v6.2.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V6.2.0).
+* [davipay plugin WooCommerce v6.1.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V6.1.0).
+* [davipay plugin WooCommerce v6.0.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V6.0.0).
+* [davipay plugin WooCommerce v5.5.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V5.5.0).
+* [davipay plugin WooCommerce v5.4.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V5.4.0).
+* [davipay plugin WooCommerce v5.3.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V5.3.0).
+* [davipay plugin WooCommerce v5.2.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v5.2.0).
+* [davipay plugin WooCommerce v5.2.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V5.2.x).
+* [davipay plugin WooCommerce v5.1.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V5.1.X).
+* [davipay plugin WooCommerce v5.0.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V5.0.X).
+* [davipay plugin WooCommerce v4.9.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V4.9.x).
+* [davipay plugin WooCommerce v4.8.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V4.8.X).
+* [davipay plugin WooCommerce v4.7.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V.4.7).
+* [davipay plugin WooCommerce v4.6.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V4.6.x).
+* [davipay plugin WooCommerce v4.5.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V4.5.x).
+* [davipay plugin WooCommerce v4.4.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V4.4.x).
+* [davipay plugin WooCommerce v4.3.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V4.3.x).
+* [davipay plugin WooCommerce v4.2.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V4.2.x).
+* [davipay plugin WooCommerce v4.0.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/V4.0.x).
+* [davipay plugin WooCommerce v3.9.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v3.9.x).
+* [davipay plugin WooCommerce v3.8.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/3.8.x).
+* [davipay plugin WooCommerce v3.7.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/3.7.0).
+* [davipay plugin WooCommerce v3.6.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/3.6.5).
+* [davipay plugin WooCommerce v3.5.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/3.5.3).
+* [davipay plugin WooCommerce v3.4.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/3.4.2).
+* [davipay plugin WooCommerce v3.2.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/3.2.1).
+* [davipay plugin WooCommerce v3.0.4.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/3.0.4.x).
+* [davipay plugin WooCommerce v2.6.4.x](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/2.6.4.x).
+* [davipay plugin WooCommerce v2.6](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/2.6).
+* [davipay plugin WooCommerce v2.5](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v2.5.x).
 
 
 ## Tabla de contenido
@@ -78,34 +79,34 @@
 
 ## Requisitos
 
-* Tener una cuenta activa en [ePayco](https://pagaycobra.com).
+* Tener una cuenta activa en [Davipay](https://pagaycobra.com).
 * Tener instalado WordPress y WooCommerce.
 * Acceso a las carpetas donde se encuetra instalado WordPress y WooCommerce.
 * Acceso al admin de WordPress.
 
 ## Instalación
 
-1. [Descarga el plugin.](https://github.com/epayco/Plugin_ePayco_WooCommerce#versiones)
+1. [Descarga el plugin.](https://github.com/davipay/Plugin_Davipay_WooCommerce#versiones)
 2. Ingresa al administrador de tu wordPress.
 3. Ingresa a Plugins / Añadir-Nuevo / Subir-Plugin. 
 4. Busca el plugin descargado en tu equipo y súbelo como cualquier otro archivo.
 5. Después de instalar el .zip lo puedes ver en la lista de plugins instalados , puedes activarlo o desactivarlo.
-6. Para configurar el plugin debes ir a: WooCommerce / Ajustes / Finalizar Compra y Ubica la pestaña ePayco.
-7. Configura el plugin ingresando el **P_CUST_ID_CLIENTE**, **PUBLIC_KEY** y **P_KEY**, los puedes ver en tu [panel de clientes](https://dashboard.epayco.co/login).
+6. Para configurar el plugin debes ir a: WooCommerce / Ajustes / Finalizar Compra y Ubica la pestaña Davipay.
+7. Configura el plugin ingresando el **P_CUST_ID_CLIENTE**, **PUBLIC_KEY** y **P_KEY**, los puedes ver en tu [panel de clientes](https://dashboard.davipay.co/login).
 8. Selecciona o crea una página de respuesta donde el usuario será devuelto después de finalizar la compra.
 9. Realiza una o varias compras para comprobar que todo esté bien.
-10. Si todo está bien recuerda cambiar la variable Modo Prueba a NO y empieza a recibir pagos de forma instantánea y segura con ePayco.
+10. Si todo está bien recuerda cambiar la variable Modo Prueba a NO y empieza a recibir pagos de forma instantánea y segura con Davipay.
 
 ### Nota sobre la actualización manual de órdenes
 
-Si deseas actualizar manualmente todas las órdenes para sincronizar su estado con **ePayco**, sigue estos pasos:
+Si deseas actualizar manualmente todas las órdenes para sincronizar su estado con **Davipay**, sigue estos pasos:
 
 1. Ve a **WooCommerce → Estado → Acciones programadas**.
-2. Filtra por **ePayco**.
+2. Filtra por **Davipay**.
 3. Selecciona la opción de estado.
 4. Haz clic en **Ejecutar**.
 
-Esto sincronizará los estados de las órdenes con el estado actual en tu dashboard de ePayco.
+Esto sincronizará los estados de las órdenes con el estado actual en tu dashboard de Davipay.
 
 **Importante:** Estas actualizaciones también se ejecutan automáticamente por defecto, pero puedes realizarlas manualmente si lo prefieres o según la configuración 
 personalizada de tu tienda.
@@ -121,5 +122,3 @@ personalizada de tu tienda.
 <img src="ImgTutorialWooCommerce/tuto-6.png" width="400px"/>
 <img src="ImgTutorialWooCommerce/tuto-7.png" width="400px"/>
 <img src="ImgTutorialWooCommerce/tuto-8.png" width="400px"/>
-
-

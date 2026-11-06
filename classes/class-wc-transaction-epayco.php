@@ -7,9 +7,10 @@ class Epayco_Transaction_Handler {
     public static function handle_transaction($order, $data, $settings) {
         $order_id = $order->get_id();
         $current_state = $order->get_status();
-        $modo = $settings['test_mode'] === "true" ? "pruebas" : "Producci贸n";
+        $modo = $settings['test_mode'] === "true" ? "pruebas" : "Producción";
 
-        $existingRefPayco = $order->get_meta('refPayco');
+        $ref = $order->get_meta('refDavipay') ?: $order->get_meta('refPayco');
+        $existingRefPayco = $ref;
         if (!empty($existingRefPayco) && $existingRefPayco === $data['x_ref_payco']) {
           
             //return;
@@ -48,7 +49,7 @@ class Epayco_Transaction_Handler {
     }
 
     private static function save_epayco_metadata($order, $modo, $data) {
-        $order->update_meta_data('refPayco', esc_attr($data['x_ref_payco']));
+        $order->update_meta_data('refDavipay', esc_attr($data['x_ref_payco']));
         $order->update_meta_data('modo', esc_attr($modo));
         $order->update_meta_data('fecha', esc_attr($data['x_fecha_transaccion']));
         $order->update_meta_data('franquicia', esc_attr($data['x_franchise']));
@@ -94,7 +95,8 @@ class Epayco_Transaction_Handler {
                 
             if (!in_array($current_state, ['processing', 'completed', 'processing_test', 'completed_test','epayco-processing', 'epayco-completed','epayco_processing', 'epayco_completed'])) {
 
-                $order->payment_complete($order->get_meta('refPayco'));
+                $ref = $order->get_meta('refDavipay') ?: $order->get_meta('refPayco');
+                $order->payment_complete($ref);
                 $order->update_status($estado_final_exitoso);
                 //$order->update_meta_data('epayco_meta_data_history', 1);
                 // $order->add_order_note(__('Pago aprobado - Pedido en procesamiento', 'woo-epayco-gateway'));
