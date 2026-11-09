@@ -13,7 +13,7 @@
             loader.style.display = "block";
             modal.style.display = "block";
             var url_validate = $("#path_validate")[0].innerHTML.trim();
-            var url_plugin = $("#path_plugin")[0].innerHTML.trim();
+            var url_davipay_s3 = $("#path_davipay_s3")[0].innerHTML.trim();
             const epayco_publickey = $("input:text[name=woocommerce_epayco_epayco_publickey]").val().replace(/\s/g,"");
             const epayco_privatey = $("input:text[name=woocommerce_epayco_epayco_privatekey]").val().replace(/\s/g,"");
             if (epayco_publickey !== "" &&
@@ -36,13 +36,13 @@
                                     //document.getElementById("woocommerce_woo-epaycosubscription_shop_icon").value=data.logo;
                                     //alert("validacion exitosa!");
                                     updateEpaycoModal(
-                                         url_plugin+"check.png",
+                                         url_davipay_s3+"admin/credentials/logos/check/logo-credentials-check.png",
                                         "Llaves validadas correctamente",
-                                        "Las llaves API fueron verificadas exitosamente.<br>Ya puedes usar ePayco con normalidad."
+                                        "Las llaves API fueron verificadas exitosamente.<br>Ya puedes usar Davipay con normalidad."
                                     );
                                 }else{
                                     updateEpaycoModal(
-                                         url_plugin+"check.png",
+                                         url_davipay_s3+"admin/credentials/logos/check/logo-credentials-check.png",
                                         "Comercio inactivo.",
                                         "Por favor contacte con soporte!"
                                     );
@@ -51,7 +51,7 @@
                                 //modalContent.style.display = "none";
                             } else {
                                 updateEpaycoModal(
-                                    url_plugin+"logo_warning.png",
+                                    url_davipay_s3+"admin/credentials/logos/warning/logo-credentials-warning.png",
                                     "Oups!, Se proceso un error interno.",
                                     "Por favor contacte con soporte!"
                                 );
@@ -67,7 +67,7 @@
                 });
             }else{
                 updateEpaycoModal(
-                    url_plugin+"logo_warnibg.png",
+                    url_davipay_s3+"admin/credentials/logos/warning/logo-credentials-warning.png",
                     "Por favor, configure las credenciales",
                     "!"
                 );  
