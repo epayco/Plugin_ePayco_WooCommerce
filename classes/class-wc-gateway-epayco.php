@@ -152,6 +152,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         $validation_url = add_query_arg('wc-api', get_class($this) . "Validation", $validation_url);
         $logo_url = get_site_url() . "/";
         $logo_url = add_query_arg('wc-api', get_class($this) . "ChangeLogo", $logo_url);
+		$locale= determine_locale();
+		$validate_label = ( strpos( $locale, 'es' ) === 0 ) ? 'Validar' : 'Validate';
 ?>
 
 
@@ -192,7 +194,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                             <form method="post" action="#">
                                 <label for="woocommerce_epayco_enabled">
                                 </label>
-                                <input type="button" id="validar" class="button-primary woocommerce-save-button validar" value="Validar">
+               
+						<input type="button" id="validar" class="button-primary woocommerce-save-button validar" value="<?php echo esc_attr( $validate_label ); ?>">
                                 <p class="description">
                                     <?php esc_html_e('Validación de llaves PUBLIC_KEY y PRIVATE_KEY', 'woo-epayco-gateway'); ?>
                                 </p>
@@ -727,7 +730,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
                 $order_id = $this->get_ipn_request_value($request_data, 'order_id', 0, 'int');
                 if ($order_id <= 0) {
-                    $this->log_security_event('Davipay callback rechazado por falta de order_id válido.', array(
+                    $this->log_security_event('Davipay callback rejected: missing valid order_id.', array(
                         'ref_payco' => $this->get_ipn_request_value($request_data, 'x_ref_payco', ''),
                     ));
                     status_header(400);
@@ -737,7 +740,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
                 $order = wc_get_order($order_id);
                 if (! $order instanceof WC_Order) {
-                    $this->log_security_event('Davipay callback rechazado porque la orden no existe.', array(
+                    $this->log_security_event('Davipay callback rejected: order does not exist.', array(
                         'order_id' => $order_id,
                     ));
                     status_header(400);
@@ -760,7 +763,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
                 if (! $isConfirmation) {
                     if (empty($ref_payco)) {
-                        $this->log_security_event('Davipay callback rechazado por falta de ref_payco.', array(
+                        $this->log_security_event('Davipay callback rejected: missing ref_payco.', array(
                             'order_id' => $order_id,
                         ));
                         status_header(400);
@@ -775,14 +778,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     }
 
                     if (!$jsonData) {
-                        $this->log_security_event('Davipay callback rechazado, el pago falló o fue cancelado' . $jsonData);
-
-
-                        // Si no existe la ref Davipay, o la orden no es una instancia de woocomerce, se redirige nuevamente 
-                        // al cliente al checkout para volver a generar el pago 
-
+                        $this->log_security_event('Davipay callback rejected: payment failed or was cancelled.' . $jsonData);
                         $redirect_url = $order->get_checkout_payment_url(true);
-
                         wp_safe_redirect($redirect_url);
                         exit;
                     }
@@ -817,7 +814,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 });
 
                 if ($x_transaction_id <= 0 || ! empty($missing_fields) || $x_cod_transaction_state <= 0 || empty($x_test_request)) {
-                    $this->log_security_event('Davipay callback rechazado por campos obligatorios inválidos.', array(
+                    $this->log_security_event('Davipay callback rejected: invalid required fields.', array(
                         'order_id' => $order_id,
                         'x_ref_payco' => $x_ref_payco,
                     ));
@@ -857,7 +854,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 }
 
                 if (! $signature_verified || ! $validation) {
-                    $this->log_security_event('Davipay callback rechazado por firma o validación inválida.', array(
+                    $this->log_security_event('Davipay callback rejected: invalid signature or validation.', array(
                         'order_id' => $order_id,
                         'x_ref_payco' => $x_ref_payco,
                         'signature_verified' => $signature_verified,
@@ -1392,8 +1389,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
                 if (is_wp_error($response)) {
                     $error_message = $response->get_error_message();
-                    self::$logger->add($this->id, "Error al hacer la llamada a la API de Davipay: " . $error_message);
-                    error_log("Error al hacer la llamada a la API de Davipay: " . $error_message);
+                    self::$logger->add($this->id, "Error when making the call to the Davipay API: " . $error_message);
+                    error_log("Error when making the call to the Davipay API: " . $error_message);
                     return false;
                 } else {
                     $response_body = wp_remote_retrieve_body($response);
@@ -1402,15 +1399,16 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         $responseTransaction = json_decode($response_body, true);
                         return $responseTransaction;
                     } else {
-                        self::$logger->add($this->id, "Error en la respuesta de la API de Davipay, código de estado: " . $status_code);
-                        error_log("Error en la respuesta de la API de Davipay, código de estado: " . $status_code);
+                        self::$logger->add($this->id, "Error in the Davipay API response, status code: " . $status_code);
+                        error_log("Error in the Davipay API response, status code: " . $status_code);
                         return false;
                     }
                 }
             } catch (\Exception $e) {
-                self::$logger->add($this->id, "Error al hacer la llamada a la API de Davipay: " . $e->getMessage());
-                error_log("Error al hacer la llamada a la API de Davipay: " . $e->getMessage());
+                self::$logger->add($this->id, "Error when making the call to the Davipay API: " . $e->getMessage());
+                error_log("Error when making the call to the Davipay API: " . $e->getMessage());
                 return false;
             }
         }
     }
+                    
