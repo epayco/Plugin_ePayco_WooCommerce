@@ -117,9 +117,17 @@ function woocommerce_gateway_epayco_block_support() {
 add_action( 'woocommerce_blocks_loaded', 'woocommerce_gateway_epayco_block_support' );
 
 function epayco_woocommerce_addon_settings_link( $links ) {
-    array_push( $links, '<a href="admin.php?page=wc-settings&tab=checkout&section=epayco">' . __( 'Configuración' ) . '</a>' );
+    $locale = determine_locale(); // idioma del usuario en el admin (en_US, es_CO, etc.)
+
+    // Inglés (cualquier variante) -> "Settings"; español (cualquier variante) -> "Configuración"
+    $label = ( strpos( $locale, 'es' ) === 0 ) ? 'Configuración' : 'Settings';
+
+    $settings_url = admin_url( 'admin.php?page=wc-settings&tab=checkout&section=epayco' );
+    array_push( $links, '<a href="' . esc_url( $settings_url ) . '">' . esc_html( $label ) . '</a>' );
+
     return $links;
 }
+
 
 add_filter( "plugin_action_links_".plugin_basename( __FILE__ ),'epayco_woocommerce_addon_settings_link' );
 function epayco_update_db_check()
