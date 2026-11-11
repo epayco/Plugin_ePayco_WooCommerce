@@ -1,82 +1,80 @@
 # Changelog
 
-Todos los cambios notables de este proyecto serán documentados en este archivo.
+All notable changes to this project will be documented in this file.
 
-El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-es/1.0.0/),
-y este proyecto adhiere a [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
 ### Changed
 
-- **12 de febrero de 2026** - Se elimina valor de ip en creación de ssesion de checkout
-
-- **26 de enero de 2026** - Evitar pagos duplicados, reducir stock de los productos cuando se realiza un reintento de pago y este es exitoso
-  - Implementado sistema de validación de pagos duplicados
-  - Mejorada la gestión de stock durante reintentos de pago exitosos
-  - Sincronización optimizada de estado de órdenes tras reintento exitoso
-
-- **23 de octubre de 2025** - Actualización para versión 2 del checkout de ePayco
-  - Actualizado el payload de configuración del checkout para incluir `checkout_version: "2"`
-  - Implementada integración con el nuevo endpoint `payment/session/create` para crear sesiones de pago
-  - Mejorada la configuración del checkout con soporte para `sessionId` dinámico
-  - Actualizada la configuración JavaScript del checkout para usar el nuevo sistema de sesiones
-  - Corregida la configuración de `autoClick` a `false` para mejor control del flujo de pago
+- **February 12, 2026** - IP value removed from checkout session creation
+- **January 26, 2026** - Prevent duplicate payments, reduce product stock when a payment retry is successful
+  - Implemented duplicate payment validation system
+  - Improved stock management during successful payment retries
+  - Optimized order status synchronization after a successful retry
+- **October 23, 2025** - Update for Davipay checkout version 2
+  - Updated checkout configuration payload to include `checkout_version: "2"`
+  - Implemented integration with the new `payment/session/create` endpoint to create payment sessions
+  - Improved checkout configuration supporting dynamic `sessionId`
+  - Updated JavaScript checkout configuration to use the new session system
+  - Fixed `autoClick` setting to `false` for better control over the payment flow
 
 ### Added
 
-- **Nuevos campos en el payload del checkout:**
-  - `checkout_version`: "2" - Especifica la versión del checkout a utilizar
-  - `sessionId`: Campo dinámico obtenido de la respuesta de `payment/session/create`
-  - `autoClick`: false - Control mejorado del flujo de apertura del checkout
+- **New fields in the checkout payload:**
+  - `checkout_version`: "2" - Specifies the checkout version to use
+  - `sessionId`: Dynamic field obtained from the `payment/session/create` response
+  - `autoClick`: false - Improved control over the checkout opening flow
 
 ### Technical Details
 
-- Modificado `classes/class-wc-gateway-epayco.php`:
-  - Actualizada la función `generate_epayco_form()` para incluir llamada a `getEpaycoSessionId()`
-  - Implementada lógica para obtener `sessionId` desde la respuesta de la API
-  - Mejorada la configuración del objeto checkout JavaScript con parámetros de sesión
-  - Actualizada la estructura del payload para compatibilidad con checkout v2
+- Modified `classes/class-wc-gateway-epayco.php`:
+  - Updated the `generate_epayco_form()` function to include a call to `getEpaycoSessionId()`
+  - Implemented logic to obtain `sessionId` from the API response
+  - Improved JavaScript checkout object configuration with session parameters
+  - Updated payload structure for v2 checkout compatibility
 
 ### Security
 
-- Implementado manejo seguro de tokens Bearer para autenticación con API ePayco
-- Mejorada la validación de respuestas de la API antes de procesar datos de sesión
+- Implemented secure handling of Bearer tokens for Davipay API authentication
+- Improved API response validation prior to processing session data
 
 ## [Previous Versions]
 
-### [1.1.0] - Versiones anteriores
+### [1.1.0] - Previous versions
 
-#### Funcionalidades Base
+#### Core Functionality
 
-- Funcionalidades base del plugin ePayco para WooCommerce
-- Integración con API de ePayco para procesamiento de pagos
-- Gestión automática de órdenes y estados de pago
-- Sistema de validación de firmas para seguridad de transacciones
+- Core functionality of the Davipay plugin for WooCommerce
+- Davipay API integration for payment processing
+- Automated order and payment status management
+- Signature validation system for transaction security
 
-#### Características Principales
+#### Key Features
 
-- Soporte para múltiples métodos de pago (tarjetas de crédito, débito, PSE, etc.)
-- Manejo automático de stock y restauración en caso de fallos
-- Sistema de cron jobs para sincronización de estados
-- Configuración de URLs de confirmación y respuesta personalizables
-- Soporte para modo de pruebas y producción
-- Validación de llaves públicas y privadas
-- Manejo de múltiples monedas (COP, USD)
+- Support for multiple payment methods (credit cards, debit cards, PSE, etc.)
+- Automatic stock management and restoration in case of failures
+- Cron job system for status synchronization
+- Customizable confirmation and response URL configurations
+- Support for test and production modes
+- Public and private key validation
+- Multi-currency support (COP, USD)
 
-#### Implementación Técnica
+#### Technical Implementation
 
-- Clase principal `WC_Gateway_Epayco` extendiendo `WC_Payment_Gateway`
-- Sistema de logs integrado para debugging
-- Manejo de excepciones y errores robusto
-- Validación de firmas SHA256 para seguridad
-- API REST endpoints para confirmación y validación de pagos
-- Sistema de metadata para tracking de transacciones
+- Main class `WC_Gateway_Epayco` extending `WC_Payment_Gateway`
+- Integrated logging system for debugging
+- Robust exception and error handling
+- SHA256 signature validation for security
+- REST API endpoints for payment confirmation and validation
+- Metadata system for transaction tracking
 
-#### Características de Seguridad
+#### Security Features
 
-- Validación de firmas digitales
-- Manejo seguro de credenciales
-- Sanitización de datos de entrada
-- Protección contra acceso directo a archivos
-- Validación de IPs y datos de transacción
+- Digital signature validation
+- Secure credential management
+- Input data sanitization
+- Protection against direct file access
+- IP and transaction data validation

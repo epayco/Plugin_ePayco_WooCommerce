@@ -1,10 +1,10 @@
-# Copyright (C) 2024 ePayco
+# Copyright (C) 2024 Davipay
 # This file is distributed under the GNU General Public License v3.0.
 msgid ""
 msgstr ""
-"Project-Id-Version: WooCommerce Epayco Gateway 7.0.0\n"
+"Project-Id-Version: WooCommerce Davipay Gateway 7.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress."
-"org/support/plugin/Plugin_ePayco_WooCommerce\n"
+"org/support/plugin/Plugin_Davipay_WooCommerce\n"
 "Last-Translator: \n"
 "Language-Team: English (United States)\n"
 "MIME-Version: 1.0\n"
@@ -20,23 +20,23 @@ msgstr ""
 "X-Loco-Version: 2.6.6; wp-6.4.2"
 
 #. Plugin Name of the plugin
-msgid "WooCommerce Epayco Gateway"
+msgid "WooCommerce Davipay Gateway"
 msgstr ""
 
 #. Description of the plugin
-msgid "Plugin ePayco Gateway for WooCommerce."
+msgid "Plugin Davipay Gateway for WooCommerce."
 msgstr ""
 
 #. Author of the plugin
-msgid "ePayco"
+msgid "Davipay"
 msgstr ""
 
 #. Author URI of the plugin
-msgid "http://epayco.co"
+msgid "http://davipay.co"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:26
-msgid "ePayco Checkout Gateway"
+msgid "Davipay Checkout Gateway"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:27
@@ -44,13 +44,13 @@ msgid "Acepta tarjetas de credito, depositos y transferencias."
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:120
-msgid "Configuración Epayco"
+msgid "Configuración Davipay"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:124
 msgid ""
 "Este módulo le permite aceptar pagos seguros por la plataforma de pagos "
-"ePayco.Si el cliente decide pagar por ePayco, el estado del pedido cambiará "
+"Davipay.Si el cliente decide pagar por Davipay, el estado del pedido cambiará "
 "a "
 msgstr ""
 
@@ -60,7 +60,7 @@ msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:126
 msgid ""
-"Cuando el pago sea Aceptado o Rechazado ePayco envía una confirmación a la "
+"Cuando el pago sea Aceptado o Rechazado Davipay envía una confirmación a la "
 "tienda para cambiar el estado del pedido."
 msgstr ""
 
@@ -80,7 +80,7 @@ msgstr ""
 msgid ""
 "Las llaves Public Key, Private Key insertadas<br>del comercio son inválidas."
 "<br>Consúltelas en el apartado de integraciones <br>Llaves API en su "
-"Dashboard ePayco."
+"Dashboard Davipay."
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:185
@@ -88,7 +88,7 @@ msgid "Gateway Disabled"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:189
-msgid "Servired/Epayco only support "
+msgid "Servired/Davipay only support "
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:207
@@ -96,7 +96,7 @@ msgid "Habilitar/Deshabilitar"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:209
-msgid "Habilitar ePayco"
+msgid "Habilitar Davipay"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:213
@@ -108,7 +108,7 @@ msgid "Corresponde al título que el usuario ve durante el Checkout."
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:216
-msgid "Checkout ePayco (Tarjetas de crédito,debito,efectivo)"
+msgid "Checkout Davipay (Tarjetas de crédito,debito,efectivo)"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:220
@@ -120,7 +120,7 @@ msgid "Corresponde a la descripción que verá el usuario durante el Checkout"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:223
-msgid "Checkout ePayco (Tarjetas de crédito,débito,efectivo)"
+msgid "Checkout Davipay (Tarjetas de crédito,débito,efectivo)"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:226
@@ -129,7 +129,7 @@ msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:228
 msgid ""
-"ID de cliente que lo identifica en ePayco. Lo puede encontrar en su panel de "
+"ID de cliente que lo identifica en Davipay. Lo puede encontrar en su panel de "
 "clientes en la opción configuración"
 msgstr ""
 
@@ -139,7 +139,7 @@ msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:236
 msgid ""
-"LLave para firmar la información enviada y recibida de ePayco. Lo puede "
+"LLave para firmar la información enviada y recibida de Davipay. Lo puede "
 "encontrar en su panel de clientes en la opción configuración"
 msgstr ""
 
@@ -150,7 +150,7 @@ msgstr ""
 #: classes/class-wc-gateway-epayco.php:244
 #: classes/class-wc-gateway-epayco.php:252
 msgid ""
-"LLave para autenticar y consumir los servicios de ePayco, Proporcionado en "
+"LLave para autenticar y consumir los servicios de Davipay, Proporcionado en "
 "su panel de clientes en la opción configuración"
 msgstr ""
 
@@ -181,7 +181,7 @@ msgstr ""
 #: classes/class-wc-gateway-epayco.php:269
 msgid ""
 "(Onpage Checkout, el usuario al pagar permanece en el sitio) ó (Standard "
-"Checkout, el usario al pagar es redireccionado a la pasarela de ePayco)"
+"Checkout, el usario al pagar es redireccionado a la pasarela de Davipay)"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:273
@@ -195,11 +195,11 @@ msgid ""
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:278
-msgid "ePayco Procesando Pago"
+msgid "Davipay Procesando Pago"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:279
-msgid "ePayco Pago Completado"
+msgid "Davipay Pago Completado"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:280
@@ -221,11 +221,11 @@ msgid ""
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:290
-msgid "ePayco Pago Cancelado"
+msgid "Davipay Pago Cancelado"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:291
-msgid "ePayco Pago Fallido"
+msgid "Davipay Pago Fallido"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:292
@@ -255,7 +255,7 @@ msgid "Página de Confirmación"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:307
-msgid "Url de la tienda donde ePayco confirma el pago"
+msgid "Url de la tienda donde Davipay confirma el pago"
 msgstr ""
 
 #: classes/class-wc-gateway-epayco.php:311
@@ -286,7 +286,7 @@ msgstr ""
 msgid ""
 "Al habilitar esta opción puede exponer información sensible de sus clientes, "
 "el uso de esta opción es bajo su responsabilidad, conozca esta información "
-"en el siguiente  <a href=\"https://docs.epayco.co/payments/checkout#scroll-"
+"en el siguiente  <a href=\"https://docs.davipay.co/payments/checkout#scroll-"
 "response-p\" target=\"_blank\">link.</a>"
 msgstr ""
 
@@ -297,9 +297,9 @@ msgstr ""
 #: classes/class-wc-gateway-epayco.php:571
 msgid ""
 "Si no se cargan automáticamente, haga clic en el botón \\\"Pagar con "
-"ePayco\\\""
+"Davipay\\\""
 msgstr ""
 
 #: assets/js/frontend/blocks.js:9
-msgid "Epayco"
+msgid "Davipay"
 msgstr ""

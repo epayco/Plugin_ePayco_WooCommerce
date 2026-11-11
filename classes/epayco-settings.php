@@ -7,26 +7,26 @@ return apply_filters(
         'enabled'          => array(
             'title'   => __('Habilitar/Deshabilitar', 'woo-epayco-gateway'),
             'type'    => 'checkbox',
-            'label'   => __('Habilitar ePayco', 'woo-epayco-gateway'),
+            'label'   => __('Habilitar Davipay', 'woo-epayco-gateway'),
             'default' => 'yes',
         ),
         'title'            => array(
             'title'       => __('<span class="epayco-required">Título</span>', 'woo-epayco-gateway'),
             'type'        => 'text',
             'description' => __('Corresponde al título que el usuario ve durante el Checkout.', 'woo-epayco-gateway'),
-            'default'     => __('Checkout ePayco (Tarjetas de crédito,debito,efectivo)', 'woo-epayco-gateway'),
+            'default'     => __('Checkout Davipay (Tarjetas de crédito,debito,efectivo)', 'woo-epayco-gateway'),
             'desc_tip'    => true,
         ),
         'description'      => array(
             'title'       => __('<span class="epayco-required">Descripción</span>', 'woo-epayco-gateway'),
             'type'        => 'textarea',
             'description' => __('Corresponde a la descripción que verá el usuario durante el Checkout', 'woo-epayco-gateway'),
-            'default'     => __('Checkout ePayco (Tarjetas de crédito,débito,efectivo)', 'woo-epayco-gateway'),
+            'default'     => __('Checkout Davipay (Tarjetas de crédito,débito,efectivo)', 'woo-epayco-gateway'),
         ),
         'epayco_customerid' => array(
             'title'       => __('<span class="epayco-required">P_CUST_ID_CLIENTE</span>', 'woo-epayco-gateway'),
             'type'        => 'text',
-            'description' => __('ID de cliente que lo identifica en ePayco. Lo puede encontrar en su panel de clientes en la opción configuración', 'woo-epayco-gateway'),
+            'description' => __('ID de cliente que lo identifica en Davipay. Lo puede encontrar en su panel de clientes en la opción configuración', 'woo-epayco-gateway'),
             'default' => '',
             //'desc_tip' => true,
             'placeholder' => '',
@@ -34,7 +34,7 @@ return apply_filters(
         'epayco_secretkey' => array(
             'title'       => __('<span class="epayco-required">P_KEY</span>', 'woo-epayco-gateway'),
             'type'        => 'text',
-            'description' => __('LLave para firmar la información enviada y recibida de ePayco. Lo puede encontrar en su panel de clientes en la opción configuración', 'woo-epayco-gateway'),
+            'description' => __('LLave para firmar la información enviada y recibida de Davipay. Lo puede encontrar en su panel de clientes en la opción configuración', 'woo-epayco-gateway'),
             'default' => '',
             //'desc_tip' => true,
             'placeholder' => '',
@@ -42,7 +42,7 @@ return apply_filters(
         'epayco_publickey' => array(
             'title'       => __('<span class="epayco-required">PUBLIC_KEY</span>', 'woo-epayco-gateway'),
             'type'        => 'text',
-            'description' => __('LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración', 'woo-epayco-gateway'),
+            'description' => __('LLave para autenticar y consumir los servicios de Davipay, Proporcionado en su panel de clientes en la opción configuración', 'woo-epayco-gateway'),
             'default' => '',
             //'desc_tip' => true,
             'placeholder' => '',
@@ -50,7 +50,7 @@ return apply_filters(
         'epayco_privatekey' => array(
             'title'       => __('<span class="epayco-required">PRIVATE_KEY</span>', 'woo-epayco-gateway'),
             'type'        => 'text',
-            'description' => __('LLave para autenticar y consumir los servicios de ePayco, Proporcionado en su panel de clientes en la opción configuración', 'woo-epayco-gateway'),
+            'description' => __('LLave para autenticar y consumir los servicios de Davipay, Proporcionado en su panel de clientes en la opción configuración', 'woo-epayco-gateway'),
             'default' => '',
             //'desc_tip' => true,
             'placeholder' => '',
@@ -67,7 +67,7 @@ return apply_filters(
             'type'        => 'select',
             'css' => 'line-height: inherit',
             'label' => __('Seleccione un tipo de Checkout:', 'woo-epayco-gateway'),
-            'description' => __('(Onpage Checkout, el usuario al pagar permanece en el sitio) ó (Standard Checkout, el usario al pagar es redireccionado a la pasarela de ePayco)', 'woo-epayco-gateway'),
+            'description' => __('(Onpage Checkout, el usuario al pagar permanece en el sitio) ó (Standard Checkout, el usario al pagar es redireccionado a la pasarela de Davipay)', 'woo-epayco-gateway'),
             'options' => array('false' => "Onpage Checkout", "true" => "Standard Checkout"),
         ),
         'epayco_endorder_state'     => array(
@@ -76,8 +76,8 @@ return apply_filters(
             'css' => 'line-height: inherit',
             'description' => __('Seleccione el estado del pedido que se aplicará a la hora de aceptar y confirmar el pago de la orden', 'woo-epayco-gateway'),
             'options' => array(
-                'epayco-processing' => __('ePayco Procesando Pago', 'woo-epayco-gateway'),
-                "epayco-completed" => __('ePayco Pago Completado', 'woo-epayco-gateway'),
+                'epayco-processing' => __('Davipay Procesando Pago', 'woo-epayco-gateway'),
+                "epayco-completed" => __('Davipay Pago Completado', 'woo-epayco-gateway'),
                 'processing' => __('Procesando', 'woo-epayco-gateway'),
                 "completed" => __('Completado', 'woo-epayco-gateway')
             ),
@@ -88,8 +88,8 @@ return apply_filters(
             'css' => 'line-height: inherit',
             'description' => __('Seleccione el estado del pedido que se aplicará cuando la transacciónes Cancelada o Rechazada', 'woo-epayco-gateway'),
             'options' => array(
-                'epayco-cancelled' => __('ePayco Pago Cancelado', 'woo-epayco-gateway'),
-                "epayco-failed" => __('ePayco Pago Fallido', 'woo-epayco-gateway'),
+                'epayco-cancelled' => __('Davipay Pago Cancelado', 'woo-epayco-gateway'),
+                "epayco-failed" => __('Davipay Pago Fallido', 'woo-epayco-gateway'),
                 'cancelled' => __('Cancelado', 'woo-epayco-gateway'),
                 "failed" => __('Fallido', 'woo-epayco-gateway')
             ),
@@ -105,7 +105,7 @@ return apply_filters(
             'title'       => __('Página de Confirmación', 'woo-epayco-gateway'),
             'type'        => 'select',
             'css' => 'line-height: inherit',
-            'description' => __('Url de la tienda donde ePayco confirma el pago', 'woo-epayco-gateway'),
+            'description' => __('Url de la tienda donde Davipay confirma el pago', 'woo-epayco-gateway'),
             'options'       => $this->get_pages(__('Seleccionar pagina', 'woo-epayco-gateway')),
         ),
         'epayco_reduce_stock_pending'    => array(
