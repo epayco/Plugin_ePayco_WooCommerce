@@ -1,24 +1,24 @@
 <?php
 /**
- * WooCommerce Epayco Gateway
+ * WooCommerce Davipay Gateway
  *
- * @package WooCommerce Epayco Gateway
+ * @package WooCommerce Davipay Gateway
  *
- * Plugin Name: WooCommerce Epayco Gateway
- * Description: Plugin ePayco Gateway for WooCommerce.
- * Version: 8.4.6
- * Author: ePayco
- * Author URI: http://epayco.co
+ * Plugin Name: WooCommerce Davipay Gateway
+ * Description: Plugin Davipay Gateway for WooCommerce.
+ * Version: 9.0.0
+ * Author: Davipay
+ * Author URI: http://davipay.co
  * Tested up to: 6.8.3
  * WC requires at least: 8.4.0
  * WC tested up to: 10.2.1
  * Text Domain: woo-epayco-gateway
- * Domain Path: /i18n/languages/
+ * Domain Path: /languages/
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
  */
 
-define( 'EPAYCO_WOOCOMMERCE_VERSION', '5.3.0' );
+define( 'EPAYCO_WOOCOMMERCE_VERSION', '9.0.0' );
 define( 'EPAYCO_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 if ( ! defined( 'EPAYCO_PLUGIN_PATH' ) ) {
 	define( 'EPAYCO_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
@@ -30,6 +30,15 @@ if ( ! defined( 'EPAYCO_PLUGIN_DATA_URL' ) ) {
 if ( ! defined( 'EPAYCO_PLUGIN_CLASS_PATH' ) ) {
 	define( 'EPAYCO_PLUGIN_CLASS_PATH', EPAYCO_PLUGIN_PATH . 'classes/' );
 }
+
+if ( ! defined( 'DAVIPAY_ROUTE_IMAGES_S3' ) ) {
+    define( 'DAVIPAY_ROUTE_IMAGES_S3', 'http://multimedia.epayco.io/plugins-sdks/' );
+}
+if ( ! defined( 'CMS_ROUTE_IMAGES_S3' ) ) {
+    define( 'CMS_ROUTE_IMAGES_S3', 'https://cms.epayco.co/imagenes/' );
+}
+
+
 
 add_action( 'plugins_loaded', 'woocommerce_gateway_epayco_init', 11 );
 
@@ -108,9 +117,14 @@ function woocommerce_gateway_epayco_block_support() {
 add_action( 'woocommerce_blocks_loaded', 'woocommerce_gateway_epayco_block_support' );
 
 function epayco_woocommerce_addon_settings_link( $links ) {
-    array_push( $links, '<a href="admin.php?page=wc-settings&tab=checkout&section=epayco">' . __( 'Configuración' ) . '</a>' );
+    $locale = determine_locale(); 
+    $label = ( strpos( $locale, 'es' ) === 0 ) ? 'Configuración' : 'Settings';
+    $settings_url = admin_url( 'admin.php?page=wc-settings&tab=checkout&section=epayco' );
+    array_push( $links, '<a href="' . esc_url( $settings_url ) . '">' . esc_html( $label ) . '</a>' );
+
     return $links;
 }
+
 
 add_filter( "plugin_action_links_".plugin_basename( __FILE__ ),'epayco_woocommerce_addon_settings_link' );
 function epayco_update_db_check()
@@ -121,75 +135,75 @@ function epayco_update_db_check()
 add_action('plugins_loaded', 'epayco_update_db_check');
 function register_epayco_order_status() {
     register_post_status( 'wc-epayco-failed', array(
-        'label'                     => 'ePayco Pago Fallido',
+        'label'                     => 'Davipay Pago Fallido',
         'public'                    => true,
         'show_in_admin_status_list' => true,
         'show_in_admin_all_list'    => true,
         'exclude_from_search'       => false,
-        'label_count'               => _n_noop( 'ePayco Pago Fallido <span class="count">(%s)</span>', 'ePayco Pago Fallido <span class="count">(%s)</span>' )
+        'label_count'               => _n_noop( 'Davipay Pago Fallido <span class="count">(%s)</span>', 'Davipay Pago Fallido <span class="count">(%s)</span>' )
     ));
 
     register_post_status( 'wc-epayco_failed', array(
-        'label'                     => 'ePayco Pago Fallido Prueba',
+        'label'                     => 'Davipay Pago Fallido Prueba',
         'public'                    => true,
         'show_in_admin_status_list' => true,
         'show_in_admin_all_list'    => true,
         'exclude_from_search'       => false,
-        'label_count'               => _n_noop( 'ePayco Pago Fallido Prueba <span class="count">(%s)</span>', 'ePayco Pago Fallido Prueba <span class="count">(%s)</span>' )
+        'label_count'               => _n_noop( 'Davipay Pago Fallido Prueba <span class="count">(%s)</span>', 'Davipay Pago Fallido Prueba <span class="count">(%s)</span>' )
     ));
 
     register_post_status( 'wc-epayco-cancelled', array(
-        'label'                     => 'ePayco Pago Cancelado',
+        'label'                     => 'Davipay Pago Cancelado',
         'public'                    => true,
         'show_in_admin_status_list' => true,
         'show_in_admin_all_list'    => true,
         'exclude_from_search'       => false,
-        'label_count'               => _n_noop( 'ePayco Pago Cancelado <span class="count">(%s)</span>', 'ePayco Pago Cancelado <span class="count">(%s)</span>' )
+        'label_count'               => _n_noop( 'Davipay Pago Cancelado <span class="count">(%s)</span>', 'Davipay Pago Cancelado <span class="count">(%s)</span>' )
     ));
 
     register_post_status( 'wc-epayco_cancelled', array(
-        'label'                     => 'ePayco Pago Cancelado Prueba',
+        'label'                     => 'Davipay Pago Cancelado Prueba',
         'public'                    => true,
         'show_in_admin_status_list' => true,
         'show_in_admin_all_list'    => true,
         'exclude_from_search'       => false,
-        'label_count'               => _n_noop( 'ePayco Pago Cancelado Prueba <span class="count">(%s)</span>', 'ePayco Pago Cancelado Prueba <span class="count">(%s)</span>' )
+        'label_count'               => _n_noop( 'Davipay Pago Cancelado Prueba <span class="count">(%s)</span>', 'Davipay Pago Cancelado Prueba <span class="count">(%s)</span>' )
     ));
 
     register_post_status( 'wc-epayco-on-hold', array(
-        'label'                     => 'ePayco Pago Pendiente',
+        'label'                     => 'Davipay Pago Pendiente',
         'public'                    => true,
         'show_in_admin_status_list' => true,
         'show_in_admin_all_list'    => true,
         'exclude_from_search'       => false,
-        'label_count'               => _n_noop( 'ePayco Pago Pendiente <span class="count">(%s)</span>', 'ePayco Pago Pendiente <span class="count">(%s)</span>' )
+        'label_count'               => _n_noop( 'Davipay Pago Pendiente <span class="count">(%s)</span>', 'Davipay Pago Pendiente <span class="count">(%s)</span>' )
     ));
 
     register_post_status( 'wc-epayco_on_hold', array(
-        'label'                     => 'ePayco Pago Pendiente Prueba',
+        'label'                     => 'Davipay Pago Pendiente Prueba',
         'public'                    => true,
         'show_in_admin_status_list' => true,
         'show_in_admin_all_list'    => true,
         'exclude_from_search'       => false,
-        'label_count'               => _n_noop( 'ePayco Pago Pendiente Prueba <span class="count">(%s)</span>', 'ePayco Pago Pendiente Prueba <span class="count">(%s)</span>' )
+        'label_count'               => _n_noop( 'Davipay Pago Pendiente Prueba <span class="count">(%s)</span>', 'Davipay Pago Pendiente Prueba <span class="count">(%s)</span>' )
     ));
 
     register_post_status( 'wc-epayco-processing', array(
-        'label'                     => 'ePayco Procesando Pago',
+        'label'                     => 'Davipay Procesando Pago',
         'public'                    => true,
         'show_in_admin_status_list' => true,
         'show_in_admin_all_list'    => true,
         'exclude_from_search'       => false,
-        'label_count'               => _n_noop( 'ePayco Procesando Pago <span class="count">(%s)</span>', 'ePayco Procesando Pago <span class="count">(%s)</span>' )
+        'label_count'               => _n_noop( 'Davipay Procesando Pago <span class="count">(%s)</span>', 'Davipay Procesando Pago <span class="count">(%s)</span>' )
     ));
 
     register_post_status( 'wc-epayco_processing', array(
-        'label'                     => 'ePayco Procesando Pago Prueba',
+        'label'                     => 'Davipay Procesando Pago Prueba',
         'public'                    => true,
         'show_in_admin_status_list' => true,
         'show_in_admin_all_list'    => true,
         'exclude_from_search'       => false,
-        'label_count'               => _n_noop( 'ePayco Procesando Pago Prueba<span class="count">(%s)</span>', 'ePayco Procesando Pago Prueba<span class="count">(%s)</span>' )
+        'label_count'               => _n_noop( 'Davipay Procesando Pago Prueba<span class="count">(%s)</span>', 'Davipay Procesando Pago Prueba<span class="count">(%s)</span>' )
     ));
 
     register_post_status( 'wc-processing', array(
@@ -211,21 +225,21 @@ function register_epayco_order_status() {
     ));
 
     register_post_status( 'wc-epayco-completed', array(
-        'label'                     => 'ePayco Pago Completado',
+        'label'                     => 'Davipay Pago Completado',
         'public'                    => true,
         'show_in_admin_status_list' => true,
         'show_in_admin_all_list'    => true,
         'exclude_from_search'       => false,
-        'label_count'               => _n_noop( 'ePayco Pago Completado <span class="count">(%s)</span>', 'ePayco Pago Completado <span class="count">(%s)</span>' )
+        'label_count'               => _n_noop( 'Davipay Pago Completado <span class="count">(%s)</span>', 'Davipay Pago Completado <span class="count">(%s)</span>' )
     ));
 
     register_post_status( 'wc-epayco_completed', array(
-        'label'                     => 'ePayco Pago Completado Prueba',
+        'label'                     => 'Davipay Pago Completado Prueba',
         'public'                    => true,
         'show_in_admin_status_list' => true,
         'show_in_admin_all_list'    => true,
         'exclude_from_search'       => false,
-        'label_count'               => _n_noop( 'ePayco Pago Completado Prueba <span class="count">(%s)</span>', 'ePayco Pago Completado Prueba <span class="count">(%s)</span>' )
+        'label_count'               => _n_noop( 'Davipay Pago Completado Prueba <span class="count">(%s)</span>', 'Davipay Pago Completado Prueba <span class="count">(%s)</span>' )
     ));
 
     register_post_status( 'wc-completed', array(
@@ -256,33 +270,33 @@ function add_epayco_to_order_statuses( $order_statuses ) {
         $new_order_statuses[ $key ] = $status;
         if ( 'wc-cancelled' === $key ) {
             if($testMode=="true"){
-                $new_order_statuses['wc-epayco_cancelled'] = 'ePayco Pago Cancelado Prueba';
+                $new_order_statuses['wc-epayco_cancelled'] = 'Davipay Pago Cancelado Prueba';
             }else{
-                $new_order_statuses['wc-epayco-cancelled'] = 'ePayco Pago Cancelado';
+                $new_order_statuses['wc-epayco-cancelled'] = 'Davipay Pago Cancelado';
             }
         }
 
         if ( 'wc-failed' === $key ) {
             if($testMode=="true"){
-                $new_order_statuses['wc-epayco_failed'] = 'ePayco Pago Fallido Prueba';
+                $new_order_statuses['wc-epayco_failed'] = 'Davipay Pago Fallido Prueba';
             }else{
-                $new_order_statuses['wc-epayco-failed'] = 'ePayco Pago Fallido';
+                $new_order_statuses['wc-epayco-failed'] = 'Davipay Pago Fallido';
             }
         }
 
         if ( 'wc-on-hold' === $key ) {
             if($testMode=="true"){
-                $new_order_statuses['wc-epayco_on_hold'] = 'ePayco Pago Pendiente Prueba';
+                $new_order_statuses['wc-epayco_on_hold'] = 'Davipay Pago Pendiente Prueba';
             }else{
-                $new_order_statuses['wc-epayco-on-hold'] = 'ePayco Pago Pendiente';
+                $new_order_statuses['wc-epayco-on-hold'] = 'Davipay Pago Pendiente';
             }
         }
 
         if ( 'wc-processing' === $key ) {
             if($testMode=="true"){
-                $new_order_statuses['wc-epayco_processing'] = 'ePayco Pago Procesando Prueba';
+                $new_order_statuses['wc-epayco_processing'] = 'Davipay Pago Procesando Prueba';
             }else{
-                $new_order_statuses['wc-epayco-processing'] = 'ePayco Pago Procesando';
+                $new_order_statuses['wc-epayco-processing'] = 'Davipay Pago Procesando';
             }
         }else {
             if($testMode=="true"){
@@ -294,9 +308,9 @@ function add_epayco_to_order_statuses( $order_statuses ) {
 
         if ( 'wc-completed' === $key ) {
             if($testMode=="true"){
-                $new_order_statuses['wc-epayco_completed'] = 'ePayco Pago Completado Prueba';
+                $new_order_statuses['wc-epayco_completed'] = 'Davipay Pago Completado Prueba';
             }else{
-                $new_order_statuses['wc-epayco-completed'] = 'ePayco Pago Completado';
+                $new_order_statuses['wc-epayco-completed'] = 'Davipay Pago Completado';
             }
         }else{
             if($testMode=="true"){
@@ -402,7 +416,7 @@ function my_custom_checkout_field_update_order_meta( $order_id ) {
 add_action( 'woocommerce_admin_order_data_after_payment_info', 'my_custom_checkout_field_display_admin_order_meta', 10, 1 );
 function my_custom_checkout_field_display_admin_order_meta( $order ){
      $order_id = method_exists( $order, 'get_id' ) ? $order->get_id() : $order->id;
-     $ref_payco = $order->get_meta('refPayco')??get_post_meta( $order_id, 'refPayco', true );
+     $ref_payco = $order->get_meta('refDavipay')??get_post_meta( $order_id, 'refPayco', true );
      $modo = $order->get_meta('modo')??get_post_meta( $order_id, 'modo', true );
      $fecha = $order->get_meta('fecha')??get_post_meta( $order_id, 'fecha', true );
      $franquicia = $order->get_meta('franquicia')??get_post_meta( $order_id, 'franquicia', true );
@@ -415,7 +429,7 @@ function my_custom_checkout_field_display_admin_order_meta( $order ){
         <div class="order_data_column_container">
             <div class="order_data_column">
                 <div class="address">    
-                    <p><strong>'.__('Pago con ePayco').':</strong> ' . $ref_payco . '</p>
+                    <p><strong>'.__('Pago con Davipay').':</strong> ' . $ref_payco . '</p>
                     <p><strong>'.__('Modo').':</strong> ' . $modo . '</p>
                 </div>
             </div>
@@ -447,13 +461,12 @@ function add_custom_hiden_order_item_meta_data( $item, $cart_item_key, $values, 
         $item->update_meta_data( 'pa_billing-e-number', $meta_value );
 }
 
-
 function epayco_cron_job_deactivation() {
     wp_clear_scheduled_hook('woocommerc_epayco_cron_hook');
-    as_unschedule_action( 'woocommerce_epayco_cleanup_draft_orders' );
-    $timestamp = wp_next_scheduled('woocommerce_epayco_cleanup_draft_orders');
+    as_unschedule_action( 'woocommerce_davipay_cleanup_draft_orders' );
+    $timestamp = wp_next_scheduled('woocommerce_davipay_cleanup_draft_orders');
     if ($timestamp) {
-        wp_unschedule_event($timestamp, 'woocommerce_epayco_cleanup_draft_orders');
+        wp_unschedule_event($timestamp, 'woocommerce_davipay_cleanup_draft_orders');
     }
 }
 register_deactivation_hook(__FILE__, 'epayco_cron_job_deactivation');
@@ -465,7 +478,7 @@ function payco_shop_order($postOrOrderObject) {
         $paymentsIds   = explode(',', $order->get_meta(WC_Gateway_Epayco::PAYMENTS_IDS, true));
         $lastPaymentId = trim(end($paymentsIds));
         $orderStatus = $order->get_status();
-        $logger->add('ePayco_shop_order', $lastPaymentId);
+        $logger->add('Davipay_shop_order', $lastPaymentId);
         if (!$lastPaymentId) {
             return false;
         }
@@ -494,7 +507,7 @@ add_action('add_meta_boxes_shop_order', 'payco_shop_order');
 add_action('add_meta_boxes_woocommerce_page_wc-orders', 'payco_shop_order');
 
 
-add_action('woocommerc_epayco_order_hook', 'woocommerce_epayco_cleanup_draft_orders');
+add_action('woocommerc_epayco_order_hook', 'woocommerce_davipay_cleanup_draft_orders');
 
 register_deactivation_hook(__FILE__, 'epayco_cron_inactive');
 function epayco_cron_inactive() {

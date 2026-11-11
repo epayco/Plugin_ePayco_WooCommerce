@@ -35,7 +35,9 @@ class EpaycoOrder{
     {
         global $wpdb;
         $table_name = $wpdb->prefix . "epayco_order";
-        $results = $wpdb->get_row( "SELECT * FROM $table_name WHERE order_id = $orderId" );
+        $order_id = absint($orderId);
+        $query = $wpdb->prepare("SELECT * FROM {$table_name} WHERE order_id = %d", $order_id);
+        $results = $wpdb->get_row($query);
         if ($results)
             return true;
         return false;
@@ -49,7 +51,9 @@ class EpaycoOrder{
     {
         global $wpdb;
         $table_name = $wpdb->prefix . "epayco_order";
-        $result = $wpdb->get_row( "SELECT * FROM $table_name WHERE order_id = $orderId" );
+        $order_id = absint($orderId);
+        $query = $wpdb->prepare("SELECT * FROM {$table_name} WHERE order_id = %d", $order_id);
+        $result = $wpdb->get_row($query);
         if (is_null($result))
             return false;
         return intval($result->order_stock_discount) != 0 ? true : false;
