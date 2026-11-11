@@ -450,20 +450,20 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $processReturnFailMessage = trim($errorMessage ?: $messageError ?: 'Ocurrió un error de pago.');
 
                 $processReturnFailMessage = nl2br(htmlspecialchars($processReturnFailMessage, ENT_QUOTES, 'UTF-8'));
-                echo sprintf(
+                  echo sprintf(
                     '<div style="
                         display: flex;
                         align-items: center;
                         flex-direction: column;
                     ">
-                    <div>
-                    <img style="width: 80px;" src="http://multimedia.epayco.io/plugins-sdks/admin/credentials/logos/warning/logo-credentials-warning.png" alt="" />
-                    </div>
-                    <div 
-                    style="text-align: center;font-size: large;font-weight: 500;">
-                        <p>"%s"</p>
-                    </div>
-                </div>',
+                        <div>
+                            <img style="width: 80px;" src="%s" alt="" />
+                        </div>
+                        <div style="text-align: center;font-size: large;font-weight: 500;">
+                            <p>"%s"</p>
+                        </div>
+                    </div>',
+                    esc_url(DAVIPAY_ROUTE_IMAGES_S3 . 'admin/credentials/logos/warning/logo-credentials-warning.png'),
                     $processReturnFailMessage
                 );
             }
