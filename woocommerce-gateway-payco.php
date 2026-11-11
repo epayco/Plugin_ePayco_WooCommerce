@@ -18,7 +18,7 @@
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
  */
 
-define( 'EPAYCO_WOOCOMMERCE_VERSION', '8.4.8' );
+define( 'EPAYCO_WOOCOMMERCE_VERSION', '9.0.0' );
 define( 'EPAYCO_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 if ( ! defined( 'EPAYCO_PLUGIN_PATH' ) ) {
 	define( 'EPAYCO_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
@@ -35,7 +35,7 @@ if ( ! defined( 'DAVIPAY_ROUTE_IMAGES_S3' ) ) {
     define( 'DAVIPAY_ROUTE_IMAGES_S3', 'http://multimedia.epayco.io/plugins-sdks/' );
 }
 if ( ! defined( 'CMS_ROUTE_IMAGES_S3' ) ) {
-    define( 'CMS_ROUTE_IMAGES_S3', 'https://eks-cms-backend-platforms-service.epayco.io/imagenes/' );
+    define( 'CMS_ROUTE_IMAGES_S3', 'https://cms.epayco.co/imagenes/' );
 }
 
 

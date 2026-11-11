@@ -4,7 +4,7 @@ Donate link: https://davipay.com/
 Tags: payments, checkout, woocommerce, davipay, gateway
 Requires at least: 5.5
 Tested up to: 6.8.3
-Stable tag: 8.4.8
+Stable tag: 9.0.0
 Requires PHP: 7.4
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -127,6 +127,8 @@ Approve your account to go to production and receive real payments.
 * Security hardening for the public callback: strict validation of required parameters, signature verification before processing, and safe prepared queries for the plugin table.
 
 = 8.4.8 =
+
+= 9.0.0 =
 
 == Additional Info ==
 Contribute to the repository on GitHub: [Visit the GitHub repository](https://github.com/davipay/Plugin_Davipay_WooCommerce)

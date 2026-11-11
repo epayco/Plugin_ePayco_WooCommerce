@@ -5,6 +5,7 @@
 ** Se recomienda emplear la última versión disponible. **
 
 ## Versiones
+* [davipay plugin WooCommerce v9.0.0](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v9.0.0).
 * [davipay plugin WooCommerce v8.4.8](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.4.8).
 * [davipay plugin WooCommerce v8.4.7](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.4.7).
 * [davipay plugin WooCommerce v8.4.6](https://github.com/davipay/Plugin_Davipay_WooCommerce/releases/tag/v8.4.6).
