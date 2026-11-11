@@ -32,7 +32,7 @@ if ( ! defined( 'EPAYCO_PLUGIN_CLASS_PATH' ) ) {
 }
 
 if ( ! defined( 'DAVIPAY_ROUTE_IMAGES_S3' ) ) {
-    define( 'DAVIPAY_ROUTE_IMAGES_S3', 'http://multimedia.epayco.co/plugins-sdks/' );
+    define( 'DAVIPAY_ROUTE_IMAGES_S3', 'http://multimedia.epayco.io/plugins-sdks/' );
 }
 if ( ! defined( 'CMS_ROUTE_IMAGES_S3' ) ) {
     define( 'CMS_ROUTE_IMAGES_S3', 'https://cms.epayco.co/imagenes/' );
