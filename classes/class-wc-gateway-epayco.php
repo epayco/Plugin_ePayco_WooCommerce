@@ -457,7 +457,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         flex-direction: column;
                     ">
                     <div>
-                    <img style="width: 80px;" src="http://multimedia.epayco.io/plugins-sdks/admin/credentials/logos/warning/logo-credentials-warning.png" alt="" />
+                    <img style="width: 80px;" src="http://multimedia.epayco.co/plugins-sdks/admin/credentials/logos/warning/logo-credentials-warning.png" alt="" />
                     </div>
                     <div 
                     style="text-align: center;font-size: large;font-weight: 500;">
