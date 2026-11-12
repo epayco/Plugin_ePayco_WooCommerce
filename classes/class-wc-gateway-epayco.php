@@ -152,8 +152,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         $validation_url = add_query_arg('wc-api', get_class($this) . "Validation", $validation_url);
         $logo_url = get_site_url() . "/";
         $logo_url = add_query_arg('wc-api', get_class($this) . "ChangeLogo", $logo_url);
-		$locale= determine_locale();
-		$validate_label = ( strpos( $locale, 'es' ) === 0 ) ? 'Validar' : 'Validate';
+        $locale = determine_locale();
+        $validate_label = (strpos($locale, 'es') === 0) ? 'Validar' : 'Validate';
 ?>
 
 
@@ -194,8 +194,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                             <form method="post" action="#">
                                 <label for="woocommerce_epayco_enabled">
                                 </label>
-               
-						<input type="button" id="validar" class="button-primary woocommerce-save-button validar" value="<?php echo esc_attr( $validate_label ); ?>">
+
+                                <input type="button" id="validar" class="button-primary woocommerce-save-button validar" value="<?php echo esc_attr($validate_label); ?>">
                                 <p class="description">
                                     <?php esc_html_e('Validación de llaves PUBLIC_KEY y PRIVATE_KEY', 'woo-epayco-gateway'); ?>
                                 </p>
@@ -450,7 +450,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $processReturnFailMessage = trim($errorMessage ?: $messageError ?: 'Ocurrió un error de pago.');
 
                 $processReturnFailMessage = nl2br(htmlspecialchars($processReturnFailMessage, ENT_QUOTES, 'UTF-8'));
-                  echo sprintf(
+                echo sprintf(
                     '<div style="
                         display: flex;
                         align-items: center;
@@ -813,7 +813,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     return '' === trim((string) $value);
                 });
 
-                if ($x_transaction_id <= 0 || ! empty($missing_fields) || $x_cod_transaction_state <= 0 || empty($x_test_request)) {
+                if (! empty($missing_fields) || $x_cod_transaction_state <= 0 || empty($x_test_request)) {
                     $this->log_security_event('Davipay callback rejected: invalid required fields.', array(
                         'order_id' => $order_id,
                         'x_ref_payco' => $x_ref_payco,
@@ -958,74 +958,40 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         public function getRefPayco($refPayco)
         {
-
             $url = 'https://secure.epayco.co/validation/v1/reference/' . $refPayco;
             $response = wp_remote_get($url);
-
             if (is_wp_error($response)) {
                 self::$logger->add($this->id, $response->get_error_message());
                 return false;
             }
-
             $body = wp_remote_retrieve_body($response);
             $jsonData = @json_decode($body, true);
             if (isset($jsonData['status']) && !$jsonData['status']) {
-                $responseNewData = wp_remote_get('https://ms-checkout-response-transaction.epayco.co/checkout/history?historyId=' . $_GET['ref_payco']);
+
+            
+                $responseNewData = wp_remote_get(
+                'https://apiflow.epayco.co/api/v2/checkout/response/checkout/history?historyId=' . $_GET['ref_payco']
+                );
+
                 if ($responseNewData === false or is_wp_error($responseNewData)) {
                     self::$logger->add($this->id, $responseNewData->get_error_message());
                     return false;
                 }
                 $bodySecondrequest = wp_remote_retrieve_body($responseNewData);
                 $jsonNewData = @json_decode($bodySecondrequest, true);
+                self::$logger->add(
+                    $this->id,
+                    'HTTP ' . $httpCode . ' | Respuesta gateway: ' . print_r($jsonData, true)
+                );
+                self::$logger->add(
+                    $this->id,
+                    'jsonNewData: ' . print_r($jsonNewData, true)
+                );
+          
                 $validationData = [];
                 if (isset($jsonNewData)) {
-                    $responseDataDetail = wp_remote_get('https://cms.epayco.co/transaction/' . $jsonNewData['ePaycoID']);
-                    if (is_wp_error($responseDataDetail)) {
-                        self::$logger->add($this->id, $responseDataDetail->get_error_message());
-                        return false;
-                    }
-                    $responseDataDetail = wp_remote_retrieve_body($responseDataDetail);
-                    $jsonDataDetail = @json_decode($responseDataDetail, true);
-                    if ($jsonDataDetail['success']) {
-                        $validationData = $jsonDataDetail['data']['transaction'];
-                        $url_shop = $validationData['extra2'];
-                        $id_order = $validationData['extra1'];
-                        $confirmation = false;
-                        $x_cod_transaction_state = (int)trim($validationData['codTransactionState']);
-                        $payment_id = $validationData['extra1'];
-                        $ref_payco = $_GET['ref_payco'];
-                        $x_ref_payco = $validationData['refPayco'];
-                        $x_transaction_id = $validationData['transactionId'];
-                        $x_signature = trim($validationData['signature']);
-                        $x_amount = $validationData['amount'];
-                        $x_currency_code = $validationData['currency'];
-                        $x_franchise = $validationData['franchise'];
-                        $x_test_request = $validationData['testMode'];
-                        $x_fecha_transaccion = $validationData['date'];
-                        $x_approval_code = $validationData['autorizacion'];
-                    } else {
-                        switch ($jsonNewData['status']) {
-                            case "Aprobada":
-                                $x_cod_transaction_state = 1;
-                                break;
-                            case "Pendiente":
-                            case "iniciada":
-                                $x_cod_transaction_state = 3;
-                                break;
-                            default:
-                                $x_cod_transaction_state = 2;
-                                break;
-                        }
-                        $url_shop = parse_url($jsonNewData['data']['urlRedirect'], PHP_URL_HOST);
-                        $id_order = $jsonNewData['storeReference'];
-                        $ref_payco = $jsonNewData['ePaycoID'];
-                        $confirmation = false;
-                        $payment_id = '';
-                        $x_amount = $jsonNewData['total'];
-                        $x_signature = 'Authorized';
-                        $x_currency_code = 'COP';
-                        $x_franchise = $jsonNewData['franchise'];
-                    }
+                    $responseDataDetail =  $jsonNewData['ePaycoID'];
+                    // aqui revisar que datos trae 
                 } else {
                     //header("location: error.php?ref_payco=".$_GET['ref_payco']);
                     return false;
@@ -1411,4 +1377,3 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             }
         }
     }
-                    
