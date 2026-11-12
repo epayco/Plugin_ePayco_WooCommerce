@@ -6,7 +6,7 @@
  *
  * Plugin Name: WooCommerce Davipay Gateway
  * Description: Plugin Davipay Gateway for WooCommerce.
- * Version: 8.4.8
+ * Version: 9.0.0
  * Author: Davipay
  * Author URI: http://davipay.co
  * Tested up to: 6.8.3
@@ -18,7 +18,7 @@
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
  */
 
-define( 'EPAYCO_WOOCOMMERCE_VERSION', '8.4.8' );
+define( 'EPAYCO_WOOCOMMERCE_VERSION', '9.0.0' );
 define( 'EPAYCO_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 if ( ! defined( 'EPAYCO_PLUGIN_PATH' ) ) {
 	define( 'EPAYCO_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
