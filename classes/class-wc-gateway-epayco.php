@@ -18,6 +18,10 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
     public const PAYMENTS_IDS_LEGACY = 'epayco_meta_data';
     public const APPLIED_REF_PAYCO = 'davipay_applied_ref_payco';
     public const APIFLOW_STATE_CODES = array('Aceptada' => 1, 'Rechazada' => 2, 'Pendiente' => 3, 'Fallida' => 4);
+    public const PENDING_SYNC_BATCH_SIZE = 20;
+    public const APIFY_TOKEN_TRANSIENT = 'davipay_apify_token';
+    public const APIFY_TOKEN_TTL = 600;
+    protected $apifyStatusCode = 0;
     /**
      * Constructor for the gateway.
      *
@@ -775,6 +779,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $x_approval_code = trim($this->get_ipn_request_value($request_data, 'x_approval_code', ''));
                 $x_franchise = trim($this->get_ipn_request_value($request_data, 'x_franchise', ''));
                 $x_fecha_transaccion = trim($this->get_ipn_request_value($request_data, 'x_fecha_transaccion', ''));
+                $x_id_invoice = trim($this->get_ipn_request_value($request_data, 'x_id_invoice', '')); 
 
                 $payco_reference = $isConfirmation ? $x_ref_payco : $ref_payco;
                 $posted_transaction_state = $x_cod_transaction_state;
@@ -794,7 +799,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     sleep(3);
                     $jsonData = $isConfirmation ? $this->getTransactionFromApiflow($payco_reference) : $this->getRefPayco($payco_reference);
                 }
-
+     
                 if (!$jsonData) {
                     $this->log_security_event('Davipay callback rejected: payment failed or was cancelled.' . $jsonData);
                     if ($isConfirmation) {
@@ -885,7 +890,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $authSignature = $this->authSignature((string) $x_ref_payco, (string) $x_transaction_id, (string) $x_amount, (string) $x_currency_code);
                 $signature_verified = hash_equals($authSignature, trim($x_signature));
 
-                $payco_order_id = $this->get_ipn_request_value($request_data, 'x_extra1', 0, 'int');
+                $payco_order_id = $this->get_ipn_request_value($request_data, 'x_id_invoice', 0, 'int');
                 if ($payco_order_id !== $order_id) {
                     $this->log_security_event('Davipay callback rejected: transaction is not bound to this order.', array(
                         'order_id' => $order_id,
@@ -995,7 +1000,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 }
 
                 if (isset($_REQUEST['confirmation'])) {
-                    echo $x_cod_transaction_state;
+                    http_response_code(200);
+                    echo json_encode(['success' => false, 'message' => $x_cod_transaction_state]);
                     exit();
                 } else {
                     if ($this->get_option('epayco_url_response') == 0) {
@@ -1031,13 +1037,25 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         public function getTransactionFromApiflow($refPayco)
         {
-            $response = wp_remote_get('https://apiflow.epayco.io/payment/api/v1/transactions/' . rawurlencode($refPayco), array('timeout' => 15));
-
+            $tokenResponse = $this->epyacoBerarToken();
+            $bearerToken = ($tokenResponse && isset($tokenResponse['token'])) ? $tokenResponse['token'] : '';
+            $response = wp_remote_get(
+                'https://apiflow.epayco.io/payment/api/v1/transactions/' . rawurlencode($refPayco),
+                array(
+                    'timeout' => 15,
+                    'headers' => array(
+                        'Authorization' => 'Bearer ' . $bearerToken,
+                        'Content-Type'  => 'application/json',
+                        'Accept'        => 'application/json'
+                    )
+                )
+            );
+     
             if (is_wp_error($response) || 200 !== (int) wp_remote_retrieve_response_code($response)) {
                 self::$logger->add($this->id, 'Davipay transaction lookup failed for ref_payco ' . $refPayco);
                 return false;
             }
-
+   
             $body = json_decode(wp_remote_retrieve_body($response), true);
             $data = is_array($body) && !empty($body['success']) && isset($body['data']) ? $body['data'] : null;
 
@@ -1057,6 +1075,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 'x_franchise' => (string) ($data['franchise'] ?? ''),
                 'x_fecha_transaccion' => (string) ($data['date'] ?? ''),
                 'x_extra1' => (string) ($data['extras']['extra1'] ?? ''),
+                'x_id_invoice' => (string) ($data['invoice'] ?? ''),
             );
         }
 
@@ -1100,6 +1119,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                         $ref_payco = $refPayco;
                         $x_ref_payco = $validationData['refPayco'];
                         $x_transaction_id = $validationData['transactionId'];
+                        $x_id_invoice = trim($validationData['transactionId']);
                         $x_signature = trim($validationData['signature']);
                         $x_amount = $validationData['amount'];
                         $x_currency_code = $validationData['currency'];
@@ -1147,6 +1167,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $x_approval_code = trim($validationData['x_approval_code']);
                 $x_franchise = trim($validationData['x_franchise']);
                 $x_fecha_transaccion = trim($validationData['x_fecha_transaccion']);
+                $x_id_invoice = trim($validationData['x_id_invoice']);
             }
             return  $paylod = [
                 'x_signature' => $x_signature,
@@ -1158,7 +1179,8 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 'x_test_request' => $x_test_request,
                 'x_approval_code' => $x_approval_code,
                 'x_franchise' => $x_franchise,
-                'x_fecha_transaccion' => $x_fecha_transaccion
+                'x_fecha_transaccion' => $x_fecha_transaccion,
+                'x_id_invoice' => $x_id_invoice
             ];
         }
 
@@ -1270,7 +1292,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     }
                 }
                 if (is_array($ref_payco_list) && !empty($ref_payco_list)) {
-                    $token = $this->epyacoBerarToken();
+                    $token = $this->getApifyToken();
                     if ($token) {
                         foreach ($ref_payco_list as $ref_payco) {
                             $path = "payment/transaction";
@@ -1295,13 +1317,13 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         {
             try {
                 $orders = wc_get_orders([
-                    'limit'        => -1,
+                    'limit'        => self::PENDING_SYNC_BATCH_SIZE,
                     'status'       => 'pending',
                     'payment_method' => 'epayco',
                     'orderby'      => 'date',
-                    'order'        => 'DESC',
+                    'order'        => 'ASC',
                 ]);
-                $token = $this->epyacoBerarToken();
+                $token = $this->getApifyToken();
                 foreach ($orders as $order) {
                     $orderId = $order->get_id();
                     if ($token) {
@@ -1359,13 +1381,50 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         public function getEpaycoStatusOrder($path, $data, $token)
         {
-            if ($token) {
-                $headers = [
-                    'Content-Type'  => 'application/json',
-                    'Authorization' => 'Bearer ' . $token['token'],
-                ];
-                return $this->epayco_realizar_llamada_api($path, $data, $headers);
+            if (!$token) {
+                return false;
             }
+
+            $response = $this->requestEpaycoStatus($path, $data, $token);
+            if (false === $response && in_array($this->apifyStatusCode, [401, 403], true)) {
+                $fresh = $this->getApifyToken(true);
+                if ($fresh) {
+                    return $this->requestEpaycoStatus($path, $data, $fresh);
+                }
+            }
+
+            return $response;
+        }
+
+        private function requestEpaycoStatus($path, $data, $token)
+        {
+            $headers = [
+                'Content-Type'  => 'application/json',
+                'Authorization' => 'Bearer ' . $token['token'],
+            ];
+
+            return $this->epayco_realizar_llamada_api($path, $data, $headers);
+        }
+
+        private function getApifyToken($forceRefresh = false)
+        {
+            if (!$forceRefresh) {
+                $cached = get_transient(self::APIFY_TOKEN_TRANSIENT);
+                if (is_array($cached) && !empty($cached['token'])) {
+                    return $cached;
+                }
+            }
+
+            delete_transient(self::APIFY_TOKEN_TRANSIENT);
+            $login = $this->epyacoBerarToken();
+            if (!is_array($login) || empty($login['token'])) {
+                return false;
+            }
+
+            $token = ['token' => $login['token']];
+            set_transient(self::APIFY_TOKEN_TRANSIENT, $token, self::APIFY_TOKEN_TTL);
+
+            return $token;
         }
 
         public function epaycoUploadOrderStatus($epayco_status)
@@ -1499,6 +1558,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 } else {
                     $response_body = wp_remote_retrieve_body($response);
                     $status_code = wp_remote_retrieve_response_code($response);
+                    $this->apifyStatusCode = (int) $status_code;
                     if ($status_code == 200) {
                         $responseTransaction = json_decode($response_body, true);
                         return $responseTransaction;
