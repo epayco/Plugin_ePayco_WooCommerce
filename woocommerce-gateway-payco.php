@@ -8,7 +8,7 @@
  * Description: Plugin Davipay Gateway for WooCommerce.
  * Version: 9.0.0
  * Author: Davipay
- * Author URI: http://davipay.co
+ * Author URI: https://www.davipay.com/
  * Tested up to: 6.8.3
  * WC requires at least: 8.4.0
  * WC tested up to: 10.2.1
