@@ -18,6 +18,10 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
     public const PAYMENTS_IDS_LEGACY = 'epayco_meta_data';
     public const APPLIED_REF_PAYCO = 'davipay_applied_ref_payco';
     public const APIFLOW_STATE_CODES = array('Aceptada' => 1, 'Rechazada' => 2, 'Pendiente' => 3, 'Fallida' => 4);
+    public const PENDING_SYNC_BATCH_SIZE = 20;
+    public const APIFY_TOKEN_TRANSIENT = 'davipay_apify_token';
+    public const APIFY_TOKEN_TTL = 600;
+    protected $apifyStatusCode = 0;
     /**
      * Constructor for the gateway.
      *
@@ -1288,7 +1292,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     }
                 }
                 if (is_array($ref_payco_list) && !empty($ref_payco_list)) {
-                    $token = $this->epyacoBerarToken();
+                    $token = $this->getApifyToken();
                     if ($token) {
                         foreach ($ref_payco_list as $ref_payco) {
                             $path = "payment/transaction";
@@ -1313,13 +1317,13 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
         {
             try {
                 $orders = wc_get_orders([
-                    'limit'        => -1,
+                    'limit'        => self::PENDING_SYNC_BATCH_SIZE,
                     'status'       => 'pending',
                     'payment_method' => 'epayco',
                     'orderby'      => 'date',
-                    'order'        => 'DESC',
+                    'order'        => 'ASC',
                 ]);
-                $token = $this->epyacoBerarToken();
+                $token = $this->getApifyToken();
                 foreach ($orders as $order) {
                     $orderId = $order->get_id();
                     if ($token) {
@@ -1377,13 +1381,50 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
         public function getEpaycoStatusOrder($path, $data, $token)
         {
-            if ($token) {
-                $headers = [
-                    'Content-Type'  => 'application/json',
-                    'Authorization' => 'Bearer ' . $token['token'],
-                ];
-                return $this->epayco_realizar_llamada_api($path, $data, $headers);
+            if (!$token) {
+                return false;
             }
+
+            $response = $this->requestEpaycoStatus($path, $data, $token);
+            if (false === $response && in_array($this->apifyStatusCode, [401, 403], true)) {
+                $fresh = $this->getApifyToken(true);
+                if ($fresh) {
+                    return $this->requestEpaycoStatus($path, $data, $fresh);
+                }
+            }
+
+            return $response;
+        }
+
+        private function requestEpaycoStatus($path, $data, $token)
+        {
+            $headers = [
+                'Content-Type'  => 'application/json',
+                'Authorization' => 'Bearer ' . $token['token'],
+            ];
+
+            return $this->epayco_realizar_llamada_api($path, $data, $headers);
+        }
+
+        private function getApifyToken($forceRefresh = false)
+        {
+            if (!$forceRefresh) {
+                $cached = get_transient(self::APIFY_TOKEN_TRANSIENT);
+                if (is_array($cached) && !empty($cached['token'])) {
+                    return $cached;
+                }
+            }
+
+            delete_transient(self::APIFY_TOKEN_TRANSIENT);
+            $login = $this->epyacoBerarToken();
+            if (!is_array($login) || empty($login['token'])) {
+                return false;
+            }
+
+            $token = ['token' => $login['token']];
+            set_transient(self::APIFY_TOKEN_TRANSIENT, $token, self::APIFY_TOKEN_TTL);
+
+            return $token;
         }
 
         public function epaycoUploadOrderStatus($epayco_status)
@@ -1517,6 +1558,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 } else {
                     $response_body = wp_remote_retrieve_body($response);
                     $status_code = wp_remote_retrieve_response_code($response);
+                    $this->apifyStatusCode = (int) $status_code;
                     if ($status_code == 200) {
                         $responseTransaction = json_decode($response_body, true);
                         return $responseTransaction;
