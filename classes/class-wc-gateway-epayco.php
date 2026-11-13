@@ -772,7 +772,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                 $x_signature = $this->get_ipn_request_value($request_data, 'x_signature', '');
                 $x_cod_transaction_state = $this->get_ipn_request_value($request_data, 'x_cod_transaction_state', 0, 'int');
                 $x_ref_payco = $this->get_ipn_request_value($request_data, 'x_ref_payco', '');
-                $x_transaction_id = $this->get_ipn_request_value($request_data, 'x_transaction_id', 0, 'int');
+                $x_transaction_id = $this->get_ipn_request_value($request_data, 'x_transaction_id', '');
                 $x_amount = $this->get_ipn_request_value($request_data, 'x_amount', 0, 'float');
                 $x_currency_code = $this->get_ipn_request_value($request_data, 'x_currency_code', '');
                 $x_test_request = trim($this->get_ipn_request_value($request_data, 'x_test_request', ''));
@@ -827,7 +827,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     echo 'invalid';
                     return;
                 }
-                $x_transaction_id = $this->get_ipn_request_value($request_data, 'x_transaction_id', 0, 'int');
+                $x_transaction_id = $this->get_ipn_request_value($request_data, 'x_transaction_id', '');
                 $x_amount = $this->get_ipn_request_value($request_data, 'x_amount', 0, 'float');
                 $x_currency_code = trim($this->get_ipn_request_value($request_data, 'x_currency_code', ''));
                 $x_test_request = trim($this->get_ipn_request_value($request_data, 'x_test_request', ''));
