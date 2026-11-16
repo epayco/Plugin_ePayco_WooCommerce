@@ -4,7 +4,7 @@ Donate link: https://davipay.com/
 Tags: payments, checkout, woocommerce, davipay, gateway
 Requires at least: 5.5
 Tested up to: 6.8.3
-Stable tag: 9.0.0
+Stable tag: 9.0.1
 Requires PHP: 7.4
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -128,7 +128,11 @@ Approve your account to go to production and receive real payments.
 
 = 8.4.8 =
 
+= 9.0.1 =
+* Hotfix: confirmación de pago verificada contra ePayco (apiflow) con token Bearer; orden atada a la factura de ePayco; ref_payco de uso único.
+* Sincronización de órdenes por cron: un login por corrida con token reutilizado y lotes de 20 pendientes.
+
 = 9.0.0 =
 
 == Additional Info ==
-Contribute to the repository on GitHub: [Visit the GitHub repository](https://github.com/davipay/Plugin_Davipay_WooCommerce)
+Contribute to the repository on GitHub: [Visit the GitHub repository](https://github.com/epayco/Plugin_ePayco_WooCommerce)
