@@ -32,8 +32,8 @@ msgid "Davipay"
 msgstr "Davipay"
 
 #. Author URI of the plugin
-msgid "http://davipay.co"
-msgstr "http://davipay.co"
+msgid "https://www.davipay.com/"
+msgstr "https://www.davipay.com/"
 
 #: classes/class-wc-gateway-epayco.php:26
 msgid "Davipay Checkout Gateway"
