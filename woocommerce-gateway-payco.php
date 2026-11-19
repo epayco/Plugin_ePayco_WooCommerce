@@ -139,7 +139,7 @@ add_filter('woocommerce_can_reduce_order_stock', function ($can_reduce, $order) 
     }
 
     $settings       = get_option('woocommerce_epayco_settings', array());
-    $reduce_pending = ($settings['epayco_reduce_stock_pending'] ?? 'yes') === 'yes';
+    $reduce_pending = ($settings['epayco_reduce_stock_pending'] ?? null) === 'yes';
 
     if (!$reduce_pending && in_array($order->get_status(), array('pending', 'on-hold'), true)) {
         return false;
