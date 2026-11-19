@@ -1040,7 +1040,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             $tokenResponse = $this->epyacoBerarToken();
             $bearerToken = ($tokenResponse && isset($tokenResponse['token'])) ? $tokenResponse['token'] : '';
             $response = wp_remote_get(
-                'https://apiflow.epayco.co/payment/api/v1/transactions/' . rawurlencode($refPayco),
+                'https://apiflow.epayco.io/payment/api/v1/transactions/' . rawurlencode($refPayco),
                 array(
                     'timeout' => 15,
                     'headers' => array(
