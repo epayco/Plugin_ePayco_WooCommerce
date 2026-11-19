@@ -358,12 +358,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             $phone_billing = @$order->billing_phone;
             $email_billing = @$order->billing_email;
 
-            //Busca si ya se restauro el stock
-            if (!EpaycoOrder::ifExist($order_id)) {
-                //si no se restauro el stock restaurarlo inmediatamente
-                EpaycoOrder::create($order_id, 1);
-                //$this->restore_order_stock($order->get_id(),"decrease");
-            }
             $orderStatus = "pending";
             $current_state = $order->get_status();
             if ($current_state != $orderStatus) {
@@ -993,11 +987,6 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
                     self::$logger->add($this->id, "Attempt to process in final status for order {$order_id}, current status: {$current_state}");
                 }
 
-                if (($current_state === 'on-hold' || $current_state === 'pending') && in_array((int) $x_cod_transaction_state, [2, 4, 10, 11], true) && EpaycoOrder::ifStockDiscount($order_id)) {
-                    Epayco_Transaction_Handler::restore_stock($order_id);
-                    EpaycoOrder::updateStockDiscount($order_id, 0);
-                    self::$logger->add($this->id, "Restored stock for order {$order_id} after failed/cancelled Davipay transaction {$x_ref_payco}");
-                }
 
                 if (isset($_REQUEST['confirmation'])) {
                     http_response_code(200);
@@ -1406,7 +1395,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
             return $this->epayco_realizar_llamada_api($path, $data, $headers);
         }
 
-        private function getApifyToken($forceRefresh = false)
+        public function getApifyToken($forceRefresh = false)
         {
             if (!$forceRefresh) {
                 $cached = get_transient(self::APIFY_TOKEN_TRANSIENT);
