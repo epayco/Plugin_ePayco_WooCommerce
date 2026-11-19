@@ -3,7 +3,8 @@
 /**
  * Clase en donde se guardan las transacciones
  */
-class EpaycoOrder{
+class EpaycoOrder
+{
 
     public $id;
     public $order_id;
@@ -18,7 +19,8 @@ class EpaycoOrder{
     {
         global $wpdb;
         $table_name = $wpdb->prefix . "epayco_order";
-        $result = $wpdb->insert( $table_name,
+        $result = $wpdb->insert(
+            $table_name,
             array(
                 'order_id' => $orderId,
                 'order_stock_restore' => $stock
@@ -68,7 +70,7 @@ class EpaycoOrder{
     {
         global $wpdb;
         $table_name = $wpdb->prefix . "epayco_order";
-        $result = $wpdb->update( $table_name, array('order_stock_discount'=>$value), array('order_id'=>(int)$orderId) );
+        $result = $wpdb->update($table_name, array('order_stock_discount' => $value), array('order_id' => (int)$orderId));
         return (int)$result == 1;
     }
 
@@ -81,7 +83,7 @@ class EpaycoOrder{
         global $wpdb;
         $table_name = $wpdb->prefix . "epayco_order";
         $charset_collate = $wpdb->get_charset_collate();
-        $sql = "CREATE TABLE ". $table_name." (
+        $sql = "CREATE TABLE " . $table_name . " (
 		    id INT NOT NULL AUTO_INCREMENT,
 		    id_payco INT NULL,
 		    order_id INT NULL,
@@ -98,15 +100,10 @@ class EpaycoOrder{
      * Borra la tabla en la base de datos.
      * @return true or false
      */
-    public static function remove(){
-        $sql = array(
-            'DROP TABLE IF EXISTS '._DB_PREFIX_.'epayco_order'
-        );
-        foreach ($sql as $query) {
-            if (Db::getInstance()->execute($query) == false) {
-                return false;
-            }
-        }
+    public static function remove()
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . "epayco_order";
+        $wpdb->query("DROP TABLE IF EXISTS {$table_name}");
     }
-
 }
