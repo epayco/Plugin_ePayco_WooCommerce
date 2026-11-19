@@ -84,7 +84,7 @@ class Epayco_Transaction_Handler {
         ];
     }
 
- private static function handle_approved($order, $order_id, $current_state, $settings, $estado_final_exitoso, $franchise) {
+    private static function handle_approved($order, $order_id, $current_state, $settings, $estado_final_exitoso, $franchise) {
     $logger = new WC_Logger();
     try {
         $reduce_pending = ($settings['reduce_stock_pending'] ?? 'yes') === 'yes';

@@ -4,7 +4,7 @@ Donate link: https://davipay.com/
 Tags: payments, checkout, woocommerce, davipay, gateway
 Requires at least: 5.5
 Tested up to: 6.8.3
-Stable tag: 9.0.1
+Stable tag: 9.0.2
 Requires PHP: 7.4
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -127,6 +127,12 @@ Approve your account to go to production and receive real payments.
 * Security hardening for the public callback: strict validation of required parameters, signature verification before processing, and safe prepared queries for the plugin table.
 
 = 8.4.8 =
+
+= 9.0.2 =
+* SDK-1430: un reintento de pago que pasa a Aceptado después de rechazos ahora descuenta el stock una sola vez (reducción nativa de WooCommerce, idempotente).
+* Un rechazo posterior restaura el stock solo si estaba descontado; los rechazos sucesivos no alteran el inventario.
+* Un webhook tardío de rechazo ya no cancela un pedido ya pagado.
+* La sincronización de pendientes reutiliza el token de apify (caché de 10 min) y no hace login por cada orden.
 
 = 9.0.1 =
 * Hotfix: confirmación de pago verificada contra ePayco (apiflow) con token Bearer; orden atada a la factura de ePayco; ref_payco de uso único.
