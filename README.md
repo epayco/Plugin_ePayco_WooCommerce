@@ -80,14 +80,14 @@
 
 ## Requisitos
 
-* Tener una cuenta activa en [Davipay](https://pagaycobra.com).
+* Tener una cuenta activa en [Davipay](https://davipay.com).
 * Tener instalado WordPress y WooCommerce.
 * Acceso a las carpetas donde se encuetra instalado WordPress y WooCommerce.
 * Acceso al admin de WordPress.
 
 ## Instalación
 
-1. [Descarga el plugin.](https://github.com/davipay/Plugin_Davipay_WooCommerce#versiones)
+1. [Descarga el plugin.](https://github.com/davipay/Plugin_ePayco_WooCommerce#versiones)
 2. Ingresa al administrador de tu wordPress.
 3. Ingresa a Plugins / Añadir-Nuevo / Subir-Plugin. 
 4. Busca el plugin descargado en tu equipo y súbelo como cualquier otro archivo.
