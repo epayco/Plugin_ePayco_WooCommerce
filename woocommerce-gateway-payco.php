@@ -6,7 +6,7 @@
  *
  * Plugin Name: WooCommerce Davipay Gateway
  * Description: Plugin Davipay Gateway for WooCommerce.
- * Version: 9.0.1
+ * Version: 9.0.2
  * Author: Davipay
  * Author URI: https://www.davipay.com/
  * Tested up to: 6.8.3
@@ -18,7 +18,7 @@
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
  */
 
-define( 'EPAYCO_WOOCOMMERCE_VERSION', '9.0.1' );
+define( 'EPAYCO_WOOCOMMERCE_VERSION', '9.0.2' );
 define( 'EPAYCO_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 if ( ! defined( 'EPAYCO_PLUGIN_PATH' ) ) {
 	define( 'EPAYCO_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
@@ -133,6 +133,20 @@ function epayco_update_db_check()
     EpaycoOrder::setup();
 }
 add_action('plugins_loaded', 'epayco_update_db_check');
+add_filter('woocommerce_can_reduce_order_stock', function ($can_reduce, $order) {
+    if (!$order instanceof WC_Order || $order->get_payment_method() !== 'epayco') {
+        return $can_reduce;
+    }
+
+    $settings       = get_option('woocommerce_epayco_settings', array());
+    $reduce_pending = ($settings['epayco_reduce_stock_pending'] ?? null) === 'yes';
+
+    if (!$reduce_pending && in_array($order->get_status(), array('pending', 'on-hold'), true)) {
+        return false;
+    }
+
+    return $can_reduce;
+}, 10, 2);
 function register_epayco_order_status() {
     register_post_status( 'wc-epayco-failed', array(
         'label'                     => 'Davipay Pago Fallido',
@@ -472,27 +486,26 @@ function epayco_cron_job_deactivation() {
 register_deactivation_hook(__FILE__, 'epayco_cron_job_deactivation');
 
 function payco_shop_order($postOrOrderObject) {
-    $order = ($postOrOrderObject instanceof WP_Post) ? wc_get_order($postOrOrderObject->ID) : $postOrOrderObject;
     try {
+        $order = ($postOrOrderObject instanceof WP_Post) ? wc_get_order($postOrOrderObject->ID) : $postOrOrderObject;
+        if (!$order instanceof WC_Order) {
+            return false;
+        }
         $logger = new WC_Logger();
-        $paymentsIds   = explode(',', $order->get_meta(WC_Gateway_Epayco::PAYMENTS_IDS, true));
+        $paymentsIds   = explode(',', (string) $order->get_meta(WC_Gateway_Epayco::PAYMENTS_IDS, true));
         $lastPaymentId = trim(end($paymentsIds));
         $orderStatus = $order->get_status();
         $logger->add('Davipay_shop_order', $lastPaymentId);
         if (!$lastPaymentId) {
             return false;
         }
-        if($orderStatus == 'pending' || $orderStatus == 'on-hold'){
+        if (in_array($orderStatus, ['pending', 'on-hold'], true)) {
             $epayco = new WC_Gateway_Epayco();
-            $token = $epayco->epyacoBerarToken();
-            if($token && !isset($token['error'])){
-                $path = "payment/transaction";
-                $data = [ "referencePayco" => $paymentsIds[0]];
-                $epayco_status = $epayco->getEpaycoStatusOrder($path,$data, $token);
-                if ($epayco_status['success']) {
-                    if (isset($epayco_status['data']) && is_array($epayco_status['data'])) {
-                        $epayco->epaycoUploadOrderStatus($epayco_status);
-                    }
+            $token  = $epayco->getApifyToken();
+            if ($token && !isset($token['error'])) {
+                $epayco_status = $epayco->getTransactionStatus($lastPaymentId, $token);
+                if (!empty($epayco_status['success']) && isset($epayco_status['data']) && is_array($epayco_status['data'])) {
+                    $epayco->epaycoUploadOrderStatus($epayco_status);
                 }
             }
         }
