@@ -990,9 +990,7 @@ class WC_Gateway_Epayco extends WC_Payment_Gateway
 
 
                 if (isset($_REQUEST['confirmation'])) {
-                    http_response_code(200);
-                    echo json_encode(['success' => false, 'message' => $x_cod_transaction_state]);
-                    exit();
+                    wp_send_json(array('success' => false, 'message' => (int) $x_cod_transaction_state), 200);
                 } else {
                     if ($this->get_option('epayco_url_response') == 0) {
                         $redirect_url = $order->get_checkout_order_received_url();
