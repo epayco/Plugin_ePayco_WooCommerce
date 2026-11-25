@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **November 25, 2026** - Production transactions no longer marked as test ("Procesando Prueba") after the apiflow confirmation lookup; order sync cron and admin order refresh query apiflow first with apify as fallback and read test mode from each transaction (SDK-1435, SDK-1434)
+- **November 25, 2026** - Payment retry approved after rejections discounts stock once; rejections only restore stock that was discounted (SDK-1430)
+
 ### Changed
 
 - **February 12, 2026** - IP value removed from checkout session creation
